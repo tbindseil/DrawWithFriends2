@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DrawWithFriends2</string>
+
+    <string name="activity_title_ChooseOrCreateActivity">Get Started</string>
 </resources>
