@@ -36,7 +36,7 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
 
         // No going back from here... must logout explicitly
-        getActionBar().setDisplayHomeAsUpEnabled(false);
+        ab.setDisplayHomeAsUpEnabled(false);
 
         displayProjects();
     }
@@ -53,6 +53,7 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
         for (File projectFile: appRoot) {
             try {
                 ProjectListButton next = new ProjectListButton(this, projectFile);
+                // Log.e("ChooseOrCreateActivity", "new project opened found with title" + next.getProjectFile().getTitle());
                 next.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -109,7 +110,7 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
         String projectTitle = projectTitleText.getText().toString();
         ProjectFile newProject = null;
         try {
-            newProject = new ProjectFile(new File(projectTitle));
+            newProject = new ProjectFile(projectTitle, this.getApplicationContext().getFilesDir());
         } catch (Exception e) {
             Log.e("ChooseOrCreateActivity", "failed to create new project File");
             Log.e("ChooseOrCreateActivity", "Exception says: " + e.getMessage());
@@ -134,7 +135,7 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
                 handleNewProject();
                 break;
             case R.id.action_refresh:
-                displayProjects();
+                launchListLayout();
             default:
                 break;
         }

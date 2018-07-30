@@ -1,18 +1,25 @@
 package com.tj.drawwithfriends2;
 
+import android.annotation.TargetApi;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 
 /**
  * Created by TJ on 7/28/2018.
  */
 
+@TargetApi(26)
 public class ProjectFile {
     private File file;
     private String title;
@@ -34,18 +41,13 @@ public class ProjectFile {
         }
     }
 
-    public ProjectFile(String title) throws Exception {
+    public ProjectFile(String title, File dir) throws Exception {
+        // Log.e("ProjectFile", "title is " + title + " and dir is " + dir.getAbsolutePath());
         Date date = new Date();
         Long seconds = date.getTime();
         String secondsStr = seconds.toString();
-
-        try {
-            file = new File(secondsStr);
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-            bw.write("title:" + title);
-        } catch (Exception e) {
-            throw e;
-        }
+        file = new File(dir, secondsStr);
+        setTitle(title);
     }
 
     public String getTitle() {
@@ -61,8 +63,13 @@ public class ProjectFile {
     private void writeChanges() {
         file.delete();
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-            bw.write("title:" + title);
+            file.createNewFile();
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            String toWrite = "title:" + title;
+            file.setWritable(true);
+            fileOutputStream.write(toWrite.getBytes());
+            fileOutputStream.flush();
+            fileOutputStream.close();
         } catch (Exception e) {
             Log.e("ProjectFile", "failed to writeChanges!");
         }
