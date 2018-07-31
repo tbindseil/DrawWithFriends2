@@ -77,8 +77,8 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
     private void launchPaintingActivity(ProjectFile toLaunch) {
         Log.e("ChooseOrCreateActivity", "launching " + toLaunch.getTitle());
 
-        // TODO pass file object through intent
         Intent i = new Intent(ChooseOrCreateActivity.this, ProjectActivity.class);
+        i.putExtra("ProjectFile", toLaunch);
         startActivity(i);
     }
 

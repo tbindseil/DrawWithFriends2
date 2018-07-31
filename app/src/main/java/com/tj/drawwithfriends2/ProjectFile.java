@@ -1,6 +1,7 @@
 package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -11,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -20,7 +22,7 @@ import java.util.Date;
  */
 
 @TargetApi(26)
-public class ProjectFile {
+public class ProjectFile implements Serializable {
     private File file;
     private String title;
 
