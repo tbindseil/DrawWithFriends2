@@ -27,10 +27,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chooseOrCreateToolBar"
         app:layout_constraintVertical_bias="1.0">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="100dp" />
     </LinearLayout>
 
     <android.support.constraint.ConstraintLayout

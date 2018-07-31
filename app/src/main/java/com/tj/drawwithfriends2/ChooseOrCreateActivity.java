@@ -1,5 +1,6 @@
 package com.tj.drawwithfriends2;
 
+import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -75,6 +76,10 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
 
     private void launchPaintingActivity(ProjectFile toLaunch) {
         Log.e("ChooseOrCreateActivity", "launching " + toLaunch.getTitle());
+
+        // TODO pass file object through intent
+        Intent i = new Intent(ChooseOrCreateActivity.this, ProjectActivity.class);
+        startActivity(i);
     }
 
     private void handleProjectChosen(View view) {
