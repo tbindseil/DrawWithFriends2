@@ -10,8 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+
+import java.io.Serializable;
 
 public class ProjectActivity extends AppCompatActivity {
     private ProjectFile currProject;
@@ -22,6 +26,7 @@ public class ProjectActivity extends AppCompatActivity {
     private int thickness;
 
     private LinearLayout colorSeekBars;
+    private Button colorButton;
     private int red, green, blue;
 
     private View currFocus;
@@ -31,14 +36,14 @@ public class ProjectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
 
-        currProject = getIntent().getParcelableExtra("ProjectFile");
-
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.projectToolBar);
-        if (currProject == null) {
-            myToolbar.setTitle("Error opening project!");
-        }
-        else {
+        Serializable ser = getIntent().getSerializableExtra("ProjectFile");
+        Toolbar myToolbar = findViewById(R.id.projectToolBar);
+        if (ser instanceof ProjectFile) {
+            currProject = (ProjectFile)ser;
             myToolbar.setTitle(currProject.getTitle());
+            }
+        else {
+            myToolbar.setTitle("error");
         }
         setSupportActionBar(myToolbar);
 
@@ -62,28 +67,36 @@ public class ProjectActivity extends AppCompatActivity {
         colorSeekBars = findViewById(R.id.colorLayout);
 
         SeekBar s = findViewById(R.id.redSeekBar);
+        s.setMax(255);
         s.setOnSeekBarChangeListener(new SeekBarInterface() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 red = progress;
+                updateColorSample();
             }
         });
 
         s = findViewById(R.id.greenSeekBar);
+        s.setMax(255);
         s.setOnSeekBarChangeListener(new SeekBarInterface() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 green = progress;
+                updateColorSample();
             }
         });
 
         s = findViewById(R.id.blueSeekBar);
+        s.setMax(255);
         s.setOnSeekBarChangeListener(new SeekBarInterface() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 blue = progress;
+                updateColorSample();
             }
         });
+
+        colorButton = findViewById(R.id.colorButton);
     }
 
     public void handleColorClick(View view) {
@@ -118,5 +131,16 @@ public class ProjectActivity extends AppCompatActivity {
         currFocus = normalLayout;
         currFocus.setVisibility(View.VISIBLE);
         return true;
+    }
+
+    private void updateColorSample() {
+        int color = ((int)(0xff << 24)) | ((int)(red << 16)) | ((int)(green << 8)) | ((int)(blue));
+        colorButton.setBackgroundColor(color);
+
+        color = ~color;
+        color |= (0xff000000);
+        colorButton.setTextColor(color);
+
+        colorButton.invalidate();
     }
 }
