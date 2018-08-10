@@ -95,7 +95,7 @@
     <LinearLayout
         android:id="@+id/colorLayout"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
+        android:layout_height="240dp"
         android:orientation="vertical"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"

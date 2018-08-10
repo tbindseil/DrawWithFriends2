@@ -1,13 +1,21 @@
 package com.tj.drawwithfriends2;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -15,12 +23,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import com.tj.drawwithfriends2.InputTool.InputTool;
+import com.tj.drawwithfriends2.InputTool.PencilInputTool;
+
 import java.io.Serializable;
 
+@TargetApi(23)
 public class ProjectActivity extends AppCompatActivity {
     private ProjectFile currProject;
 
     private ConstraintLayout normalLayout;
+    private ImageView projectPicture;
+    private LayerDrawable drawStack; // probably should be in special imageview extension
+
+    private InputTool currTool;
 
     private SeekBar thicknessBar;
     private int thickness;
@@ -97,6 +113,22 @@ public class ProjectActivity extends AppCompatActivity {
         });
 
         colorButton = findViewById(R.id.colorButton);
+
+        currTool = new PencilInputTool(0);
+
+        projectPicture = findViewById(R.id.mainCanvas);
+        Drawable[] d = new Drawable[0];
+        drawStack = new LayerDrawable(d);
+        projectPicture.setImageDrawable(drawStack);
+        projectPicture.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Drawable d = currTool.handleTouch(motionEvent);
+                drawStack.addLayer(d);
+                view.invalidate();
+                return true;
+            }
+        });
     }
 
     public void handleColorClick(View view) {
@@ -126,7 +158,7 @@ public class ProjectActivity extends AppCompatActivity {
         if (viewRect.contains((int)ev.getRawX(), (int)ev.getRawY())) {
             return super.dispatchTouchEvent(ev);
         }
-
+        
         currFocus.setVisibility(View.INVISIBLE);
         currFocus = normalLayout;
         currFocus.setVisibility(View.VISIBLE);
@@ -136,6 +168,8 @@ public class ProjectActivity extends AppCompatActivity {
     private void updateColorSample() {
         int color = ((int)(0xff << 24)) | ((int)(red << 16)) | ((int)(green << 8)) | ((int)(blue));
         colorButton.setBackgroundColor(color);
+
+        currTool.setColor(color);
 
         color = ~color;
         color |= (0xff000000);
