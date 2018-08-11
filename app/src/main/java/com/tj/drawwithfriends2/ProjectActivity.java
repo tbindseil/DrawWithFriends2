@@ -33,8 +33,7 @@ public class ProjectActivity extends AppCompatActivity {
     private ProjectFile currProject;
 
     private ConstraintLayout normalLayout;
-    private ImageView projectPicture;
-    private LayerDrawable drawStack; // probably should be in special imageview extension
+    private PaintingImageView projectPicture;
 
     private InputTool currTool;
 
@@ -117,15 +116,11 @@ public class ProjectActivity extends AppCompatActivity {
         currTool = new PencilInputTool(0);
 
         projectPicture = findViewById(R.id.mainCanvas);
-        Drawable[] d = new Drawable[0];
-        drawStack = new LayerDrawable(d);
-        projectPicture.setImageDrawable(drawStack);
+        projectPicture.setLayerDrawable(new LayerDrawable(new Drawable[0]));
         projectPicture.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                Drawable d = currTool.handleTouch(motionEvent);
-                drawStack.addLayer(d);
-                view.invalidate();
+                projectPicture.addInput(currTool.handleTouch(motionEvent));
                 return true;
             }
         });
@@ -158,7 +153,7 @@ public class ProjectActivity extends AppCompatActivity {
         if (viewRect.contains((int)ev.getRawX(), (int)ev.getRawY())) {
             return super.dispatchTouchEvent(ev);
         }
-        
+
         currFocus.setVisibility(View.INVISIBLE);
         currFocus = normalLayout;
         currFocus.setVisibility(View.VISIBLE);
