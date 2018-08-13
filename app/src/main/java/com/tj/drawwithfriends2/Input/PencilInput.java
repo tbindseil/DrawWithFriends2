@@ -1,4 +1,4 @@
-package com.tj.drawwithfriends2.InputTool;
+package com.tj.drawwithfriends2.Input;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;

@@ -1,8 +1,9 @@
-package com.tj.drawwithfriends2.InputTool;
+package com.tj.drawwithfriends2.Input;
 
+import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
+import android.graphics.drawable.LayerDrawable;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
@@ -12,18 +13,22 @@ import java.util.List;
  * Created by TJ on 8/9/2018.
  */
 
+@TargetApi(23)
 public class PencilInputTool implements InputTool {
+    LayerDrawable currentUpdate;
     Point lastTouch;
     int color;
 
     public PencilInputTool(int color) {
+        currentUpdate = new LayerDrawable(new Drawable[0]);
         lastTouch = null;
         this.color = color;
     }
 
     @Override
-    public Drawable handleTouch(MotionEvent event) {
+    public LayerDrawable handleTouch(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            currentUpdate = new LayerDrawable(new Drawable[0]);
             lastTouch = null;
         }
 
@@ -37,7 +42,13 @@ public class PencilInputTool implements InputTool {
         touchPoints.add(new Point((int)event.getX(), (int)event.getY()));
         Point[] ret = new Point[touchPoints.size()];
         touchPoints.toArray(ret);
-        return new PencilInput(ret, color);
+        currentUpdate.addLayer(new PencilInput(ret, color));
+
+        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            return currentUpdate;
+        } else {
+            return null;
+        }
     }
 
     public void setColor(int color) { this.color = color; }

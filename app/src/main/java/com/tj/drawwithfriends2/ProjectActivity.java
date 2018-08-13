@@ -2,7 +2,6 @@ package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
@@ -15,8 +14,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
-import com.tj.drawwithfriends2.InputTool.InputTool;
-import com.tj.drawwithfriends2.InputTool.PencilInputTool;
+import com.tj.drawwithfriends2.Input.InputTool;
+import com.tj.drawwithfriends2.Input.PencilInputTool;
 
 import java.io.Serializable;
 
@@ -51,6 +50,7 @@ public class ProjectActivity extends AppCompatActivity {
                 myToolbar.setTitle("null");
             } else {
                 myToolbar.setTitle(currProject.getTitle());
+                currProject.loadEdits();
             }
         }
         else {
@@ -112,11 +112,18 @@ public class ProjectActivity extends AppCompatActivity {
         currTool = new PencilInputTool(0);
 
         projectPicture = findViewById(R.id.mainCanvas);
-        projectPicture.setLayerDrawable(new LayerDrawable(new Drawable[0]));
+        projectPicture.setLayerDrawable(currProject.getEdits());
+
+        // pretty rad, a new update is produced by the currTool, ownership of this newUpdate is
+        // taken by the currProject (which will hopefully serialize things to sqlite soon), and
+        // then when this newUpdate changes via the input tool, those updates are automatically
+        // seen on the image view
         projectPicture.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                projectPicture.addInput(currTool.handleTouch(motionEvent));
+                LayerDrawable newUpdate = currTool.handleTouch(motionEvent);
+                if (newUpdate != null) { currProject.addEdit(newUpdate); }
+                projectPicture.invalidate();
                 return true;
             }
         });

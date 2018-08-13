@@ -1,6 +1,7 @@
-package com.tj.drawwithfriends2.InputTool;
+package com.tj.drawwithfriends2.Input;
 
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.MotionEvent;
 
 /**
@@ -8,6 +9,6 @@ import android.view.MotionEvent;
  */
 
 public interface InputTool {
-    public Drawable handleTouch(MotionEvent event);
+    public LayerDrawable handleTouch(MotionEvent event);
     public void setColor(int color);
 }

@@ -37,6 +37,4 @@ public class PaintingImageView extends AppCompatImageView {
         inputs = ld;
         setImageDrawable(inputs);
     }
-
-    public void addInput(Drawable d) { inputs.addLayer(d); invalidate(); }
 }

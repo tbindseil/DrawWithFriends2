@@ -1,6 +1,8 @@
 package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -9,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by TJ on 7/28/2018.
@@ -22,10 +23,14 @@ public class ProjectFiles implements Serializable {
     private static final String CONFIG_FILE_NAME = "config";
     private String title;
 
+    // will be sqlitified
+    // todo init this much better
+    private LayerDrawable edits = null;//new LayerDrawable(new Drawable[0]);
+
     public ProjectFiles(File dir) throws Exception {
         this.dir = dir;
         this.config = new File(dir, CONFIG_FILE_NAME);
-        
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(config));
             String titleLine = br.readLine();
@@ -45,6 +50,9 @@ public class ProjectFiles implements Serializable {
         Long seconds = date.getTime();
         String secondsStr = seconds.toString();
         this.dir = new File(dir, secondsStr);
+        this.dir.mkdir();
+        dir.setWritable(true);
+        this.config = new File(this.dir, CONFIG_FILE_NAME);
         setTitle(title);
     }
 
@@ -72,4 +80,9 @@ public class ProjectFiles implements Serializable {
             Log.e("ProjectFiles", "failed to writeChanges!");
         }
     }
+
+    public void loadEdits() { edits = new LayerDrawable(new Drawable[0]); }
+    public LayerDrawable getEdits() { return edits; }
+
+    public void addEdit(LayerDrawable next) { edits.addLayer(next); }
 }
