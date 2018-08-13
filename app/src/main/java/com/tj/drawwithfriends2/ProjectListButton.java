@@ -11,13 +11,13 @@ import java.io.File;
  */
 
 public class ProjectListButton extends android.support.v7.widget.AppCompatButton {
-    ProjectFile projectFile;
+    ProjectFiles projectFile;
 
     public ProjectListButton(Context context, File file) throws Exception {
         super(context);
 
         try {
-            projectFile = new ProjectFile(file);
+            projectFile = new ProjectFiles(file);
         } catch (Exception e) {
             throw e;
         }
@@ -35,5 +35,5 @@ public class ProjectListButton extends android.support.v7.widget.AppCompatButton
         Log.e("ProjectListButton", "Wrong constructor called");
     }
 
-    public ProjectFile getProjectFile() { return projectFile; }
+    public ProjectFiles getProjectFile() { return projectFile; }
 }

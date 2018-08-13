@@ -26,4 +26,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     compile 'com.android.support:support-annotations:27.1.1'
+
+
+    // room stuff from https://code.tutsplus.com/tutorials/android-architecture-components-room--cms-29946
+    compile "android.arch.persistence.room:runtime:1.0.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+    // note there is a test thing, but testing? seriously??
 }

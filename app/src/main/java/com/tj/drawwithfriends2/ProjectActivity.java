@@ -1,25 +1,17 @@
 package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
@@ -30,7 +22,7 @@ import java.io.Serializable;
 
 @TargetApi(23)
 public class ProjectActivity extends AppCompatActivity {
-    private ProjectFile currProject;
+    private ProjectFiles currProject;
 
     private ConstraintLayout normalLayout;
     private PaintingImageView projectPicture;
@@ -51,12 +43,16 @@ public class ProjectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
 
-        Serializable ser = getIntent().getSerializableExtra("ProjectFile");
+        Serializable ser = getIntent().getSerializableExtra("ProjectFiles");
         Toolbar myToolbar = findViewById(R.id.projectToolBar);
-        if (ser instanceof ProjectFile) {
-            currProject = (ProjectFile)ser;
-            myToolbar.setTitle(currProject.getTitle());
+        if (ser instanceof ProjectFiles) {
+            currProject = (ProjectFiles) ser;
+            if (currProject == null) {
+                myToolbar.setTitle("null");
+            } else {
+                myToolbar.setTitle(currProject.getTitle());
             }
+        }
         else {
             myToolbar.setTitle("error");
         }

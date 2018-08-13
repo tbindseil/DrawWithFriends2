@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -55,7 +54,8 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
         for (File projectFile: appRoot) {
             try {
                 ProjectListButton next = new ProjectListButton(this, projectFile);
-                // Log.e("ChooseOrCreateActivity", "new project opened found with title" + next.getProjectFile().getTitle());
+                Log.e("ChooseOrCreateActivity", "new project opened found with title" + next.getProjectFile().getTitle());
+                Log.e("ChooseOrCreateActivity", "found @ " + projectFile.getAbsolutePath());
                 next.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -75,11 +75,11 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
         editProjectLayout.setVisibility(View.VISIBLE);
     }
 
-    private void launchPaintingActivity(ProjectFile toLaunch) {
+    private void launchPaintingActivity(ProjectFiles toLaunch) {
         Log.e("ChooseOrCreateActivity", "launching " + toLaunch.getTitle());
 
         Intent i = new Intent(ChooseOrCreateActivity.this, ProjectActivity.class);
-        i.putExtra("ProjectFile", toLaunch);
+        i.putExtra("ProjectFiles", toLaunch);
         startActivity(i);
     }
 
@@ -114,9 +114,9 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
     public void handleCreateButton(View view) {
         TextView projectTitleText = findViewById(R.id.nameStdText);
         String projectTitle = projectTitleText.getText().toString();
-        ProjectFile newProject = null;
+        ProjectFiles newProject = null;
         try {
-            newProject = new ProjectFile(projectTitle, this.getApplicationContext().getFilesDir());
+            newProject = new ProjectFiles(projectTitle, this.getApplicationContext().getFilesDir());
         } catch (Exception e) {
             Log.e("ChooseOrCreateActivity", "failed to create new project File");
             Log.e("ChooseOrCreateActivity", "Exception says: " + e.getMessage());

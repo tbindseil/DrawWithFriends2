@@ -1,54 +1,50 @@
 package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
-import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by TJ on 7/28/2018.
  */
 
 @TargetApi(26)
-public class ProjectFile implements Serializable {
-    private File file;
+public class ProjectFiles implements Serializable {
+    private File dir;
+    private File config; // TODO lock config file... and probably others... in fact, let this TODO represent all synchronization
+    private static final String CONFIG_FILE_NAME = "config";
     private String title;
 
-    public ProjectFile(File file) throws Exception {
-        this.file = file;
-
+    public ProjectFiles(File dir) throws Exception {
+        this.dir = dir;
+        this.config = new File(dir, CONFIG_FILE_NAME);
+        
         try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedReader br = new BufferedReader(new FileReader(config));
             String titleLine = br.readLine();
             if (titleLine.startsWith("title:")) {
                 title = titleLine.substring(6); // "title: is 6 chars
-            }
-            else {
-                throw new Exception("invalid project file format");
+            } else {
+                throw new Exception("invalid project dir format");
             }
         } catch (Exception e) {
             throw e;
         }
     }
 
-    public ProjectFile(String title, File dir) throws Exception {
-        // Log.e("ProjectFile", "title is " + title + " and dir is " + dir.getAbsolutePath());
+    public ProjectFiles(String title, File dir) throws Exception {
+        // Log.e("ProjectFiles", "title is " + title + " and dir is " + dir.getAbsolutePath());
         Date date = new Date();
         Long seconds = date.getTime();
         String secondsStr = seconds.toString();
-        file = new File(dir, secondsStr);
+        this.dir = new File(dir, secondsStr);
         setTitle(title);
     }
 
@@ -63,17 +59,17 @@ public class ProjectFile implements Serializable {
     }
 
     private void writeChanges() {
-        file.delete();
+        config.delete();
         try {
-            file.createNewFile();
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            config.createNewFile();
+            FileOutputStream fileOutputStream = new FileOutputStream(config);
             String toWrite = "title:" + title;
-            file.setWritable(true);
+            config.setWritable(true);
             fileOutputStream.write(toWrite.getBytes());
             fileOutputStream.flush();
             fileOutputStream.close();
         } catch (Exception e) {
-            Log.e("ProjectFile", "failed to writeChanges!");
+            Log.e("ProjectFiles", "failed to writeChanges!");
         }
     }
 }
