@@ -15,20 +15,20 @@ import java.util.List;
 
 @TargetApi(23)
 public class PencilInputTool implements InputTool {
-    LayerDrawable currentUpdate;
+    PencilInput currentUpdate;
     Point lastTouch;
     int color;
 
     public PencilInputTool(int color) {
-        currentUpdate = new LayerDrawable(new Drawable[0]);
+        currentUpdate = new PencilInput(color);
         lastTouch = null;
         this.color = color;
     }
 
     @Override
-    public LayerDrawable handleTouch(MotionEvent event) {
+    public Input handleTouch(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            currentUpdate = new LayerDrawable(new Drawable[0]);
+            currentUpdate = new PencilInput(color);
             lastTouch = null;
         }
 
@@ -42,7 +42,7 @@ public class PencilInputTool implements InputTool {
         touchPoints.add(new Point((int)event.getX(), (int)event.getY()));
         Point[] ret = new Point[touchPoints.size()];
         touchPoints.toArray(ret);
-        currentUpdate.addLayer(new PencilInput(ret, color));
+        currentUpdate.addToThis(ret, color);
 
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
             return currentUpdate;

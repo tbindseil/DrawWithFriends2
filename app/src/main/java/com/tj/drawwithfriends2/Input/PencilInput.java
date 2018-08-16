@@ -10,16 +10,34 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by TJ on 8/10/2018.
  */
 
-public class PencilInput extends Drawable {
-    Point[] points;
+public class PencilInput extends Input {
+    List<Point> points;
+    List<Line> lines;
     int color;
 
-    public PencilInput(Point[] points, int color) {
-        this.points = points;
+    public PencilInput(int color) {
+        points = new ArrayList<>();
+        lines = new ArrayList<>();
+        this.color = color;
+    }
+
+    public void addToThis(Point[] points, int color) {
+        if (points.length == 1) {
+            this.points.add(points[0]);
+        }
+        else if (points.length == 2) {
+            lines.add(new Line(points[0].x, points[0].y, points[1].x, points[1].y));
+        }
+        else {
+            Log.e("PencilInput", "Too many points or zero!");
+        }
         this.color = color;
     }
 
@@ -28,14 +46,12 @@ public class PencilInput extends Drawable {
         Paint paint = new Paint();
         paint.setColor(color);
 
-        if (points.length == 1) {
-            canvas.drawPoint(points[0].x, points[0].y, paint);
+        for (Point p: points) {
+            canvas.drawPoint(p.x, p.y, paint);
         }
-        else if (points.length == 2) {
-            canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, paint);
-        }
-        else {
-            Log.e("PencilInput", "Too many points or zero!");
+
+        for (Line l: lines) {
+            canvas.drawLine(l.x1, l.y1, l.x2, l.y2, paint);
         }
     }
 
@@ -54,5 +70,15 @@ public class PencilInput extends Drawable {
     @Override
     public int getOpacity() {
         return PixelFormat.OPAQUE;
+    }
+}
+
+class Line {
+    public int x1, x2, y1, y2;
+    public Line(int x1, int y1, int x2, int y2) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
     }
 }

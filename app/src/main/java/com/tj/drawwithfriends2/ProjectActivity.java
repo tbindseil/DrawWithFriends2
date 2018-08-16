@@ -2,6 +2,7 @@ package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import com.tj.drawwithfriends2.Input.Input;
 import com.tj.drawwithfriends2.Input.InputTool;
 import com.tj.drawwithfriends2.Input.PencilInputTool;
 
@@ -121,7 +123,7 @@ public class ProjectActivity extends AppCompatActivity {
         projectPicture.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                LayerDrawable newUpdate = currTool.handleTouch(motionEvent);
+                Input newUpdate = currTool.handleTouch(motionEvent);
                 if (newUpdate != null) { currProject.addEdit(newUpdate); }
                 projectPicture.invalidate();
                 return true;

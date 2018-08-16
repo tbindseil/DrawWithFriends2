@@ -9,6 +9,6 @@ import android.view.MotionEvent;
  */
 
 public interface InputTool {
-    public LayerDrawable handleTouch(MotionEvent event);
+    public Input handleTouch(MotionEvent event);
     public void setColor(int color);
 }

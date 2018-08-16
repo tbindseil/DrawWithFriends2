@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 
+import com.tj.drawwithfriends2.Input.Input;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -84,5 +86,5 @@ public class ProjectFiles implements Serializable {
     public void loadEdits() { edits = new LayerDrawable(new Drawable[0]); }
     public LayerDrawable getEdits() { return edits; }
 
-    public void addEdit(LayerDrawable next) { edits.addLayer(next); }
+    public void addEdit(Input next) { edits.addLayer(next); }
 }
