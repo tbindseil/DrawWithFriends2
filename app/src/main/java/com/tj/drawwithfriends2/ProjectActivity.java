@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,21 +46,6 @@ public class ProjectActivity extends AppCompatActivity {
     private int red, green, blue;
 
     private View currFocus;
-
-    // cuts first two integers off the byte array and returns it
-    private byte[] fakeProjectFilesPart(byte[] bytes) {
-        if (bytes.length >= 8) {
-            byte[] retBytes = new byte[bytes.length - 8];
-            for (int i = 0; i < retBytes.length; i++) {
-                retBytes[i] = bytes[i + 8];
-            }
-
-            return retBytes;
-        }
-
-        bytes = new byte[0];
-        return bytes;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,15 +146,19 @@ public class ProjectActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        currProject.saveEdits();
+    }
+
     public void handleColorClick(View view) {
         colorSeekBars.setVisibility(View.VISIBLE);
-
         currFocus = colorSeekBars;
     }
 
     public void handleThicknessClick(View view) {
         thicknessBar.setVisibility(View.VISIBLE);
-
         currFocus = thicknessBar;
     }
 
@@ -222,6 +212,9 @@ public class ProjectActivity extends AppCompatActivity {
             case R.id.action_save:
                 currProject.saveEdits();
                 break;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             default:
                 break;
         }
