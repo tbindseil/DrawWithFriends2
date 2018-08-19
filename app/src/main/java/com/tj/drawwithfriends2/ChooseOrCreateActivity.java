@@ -42,6 +42,13 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
         displayProjects();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        launchListLayout();
+    }
+
     private void displayProjects() {
         if (fileListLayout.getVisibility() == View.INVISIBLE) {
             Log.e("ChooseOrCreate", "displaying projects when fileListLayout is invivsible");
