@@ -1,12 +1,8 @@
 package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
-import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,10 +18,7 @@ import android.widget.SeekBar;
 
 import com.tj.drawwithfriends2.Input.Input;
 import com.tj.drawwithfriends2.Input.InputTool;
-import com.tj.drawwithfriends2.Input.PencilInput;
 import com.tj.drawwithfriends2.Input.PencilInputTool;
-
-import junit.framework.Assert;
 
 import java.io.Serializable;
 
@@ -54,24 +47,16 @@ public class ProjectActivity extends AppCompatActivity {
 
         Serializable ser = getIntent().getSerializableExtra("ProjectFiles");
         Toolbar myToolbar = findViewById(R.id.projectToolBar);
-        if (ser instanceof ProjectFiles) {
+        try {
             currProject = (ProjectFiles) ser;
-            if (currProject == null) {
-                myToolbar.setTitle("null");
-            } else {
-                myToolbar.setTitle(currProject.getTitle());
-                try {
-                    Log.e("ProjectActivity", "loading");
-                    currProject.loadEdits();
-                    Log.e("ProjectActivity", "loading done");
-                } catch (Exception e) {
-                    Log.e("ProjectActivity", "error loading edits");
-                }
-            }
-        }
-        else {
+            myToolbar.setTitle(currProject.getTitle());
+            currProject.loadInputs();
+        } catch (Exception e) {
             myToolbar.setTitle("error");
+            Log.e("ProjectActivity", "exception loading edits or getting title");
+            Log.e("ProjectActivity", e.toString());
         }
+
         setSupportActionBar(myToolbar);
 
         // Get a support ActionBar corresponding to this toolbar
@@ -128,7 +113,7 @@ public class ProjectActivity extends AppCompatActivity {
         currTool = new PencilInputTool(0);
 
         projectPicture = findViewById(R.id.mainCanvas);
-        projectPicture.setLayerDrawable(currProject.getEdits());
+        projectPicture.setLayerDrawable(currProject.getCurrLayerDrawable());
 
         // pretty rad, a new update is produced by the currTool, ownership of this newUpdate is
         // taken by the currProject (which will hopefully serialize things to sqlite soon), and
@@ -138,8 +123,10 @@ public class ProjectActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 Input newUpdate = currTool.handleTouch(motionEvent);
-                if (newUpdate != null) { currProject.addEdit(newUpdate); }
-                projectPicture.setLayerDrawable(currProject.getEdits());
+                if (newUpdate != null) {
+                    currProject.addInput(newUpdate);
+                }
+                projectPicture.setLayerDrawable(currProject.getCurrLayerDrawable());
                 projectPicture.invalidate();
                 return true;
             }
@@ -149,7 +136,7 @@ public class ProjectActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        currProject.saveEdits();
+        currProject.saveInputs();
     }
 
     public void handleColorClick(View view) {
@@ -165,8 +152,12 @@ public class ProjectActivity extends AppCompatActivity {
     private abstract class SeekBarInterface implements SeekBar.OnSeekBarChangeListener {
         @Override
         public abstract void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser);
-        public void onStartTrackingTouch(SeekBar seekBar) {}
-        public void onStopTrackingTouch(SeekBar seekBar) {}
+
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
+
+        public void onStopTrackingTouch(SeekBar seekBar) {
+        }
     }
 
     // this assumes normalLayout is whole screen i think
@@ -174,7 +165,7 @@ public class ProjectActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Rect viewRect = new Rect();
         currFocus.getGlobalVisibleRect(viewRect);
-        if (viewRect.contains((int)ev.getRawX(), (int)ev.getRawY())) {
+        if (viewRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
             return super.dispatchTouchEvent(ev);
         }
 
@@ -185,7 +176,7 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     private void updateColorSample() {
-        int color = ((int)(0xff << 24)) | ((int)(red << 16)) | ((int)(green << 8)) | ((int)(blue));
+        int color = ((int) (0xff << 24)) | ((int) (red << 16)) | ((int) (green << 8)) | ((int) (blue));
         colorButton.setBackgroundColor(color);
 
         currTool.setColor(color);
@@ -210,7 +201,7 @@ public class ProjectActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
-                currProject.saveEdits();
+                currProject.saveInputs();
                 break;
             case android.R.id.home:
                 onBackPressed();

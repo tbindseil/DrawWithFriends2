@@ -42,7 +42,6 @@ public class ProjectFiles implements Serializable {
     private String title;
 
     List<Input> inputs;
-    private LayerDrawable edits = null;
 
     public ProjectFiles(File dir) throws Exception {
         this.dir = dir;
@@ -100,7 +99,7 @@ public class ProjectFiles implements Serializable {
         }
     }
 
-    public void saveEdits() {
+    public void saveInputs() {
         picture.delete();
         try {
             picture.createNewFile();
@@ -114,25 +113,23 @@ public class ProjectFiles implements Serializable {
             workingStream.flush();
             workingStream.close();
         } catch (Exception e) {
-            Log.e("ProjectFiles", "failed to saveEdits");
+            Log.e("ProjectFiles", "failed to saveInputs");
             Log.e("ProjectFiles,", e.toString());
         }
     }
 
-    public void loadEdits() throws Exception {
+    public void loadInputs() throws Exception {
         inputs = new ArrayList<>();
 
         long pictureLen = picture.length();
 
         if (pictureLen == 0) {
-            Log.e("loadEdits", "no inputs to load");
-            resetEdits();
+            Log.e("loadInputs", "no inputs to load");
             return;
         }
 
         if (pictureLen > Integer.MAX_VALUE) {
-            Log.e("loadEdits", "file too big");
-            resetEdits();
+            Log.e("loadInputs", "file too big");
         }
 
         try {
@@ -160,24 +157,15 @@ public class ProjectFiles implements Serializable {
         } catch (Exception e) {
             throw e;
         }
-
-        resetEdits();
     }
 
-    public LayerDrawable getEdits() {
-        return edits;
+    public LayerDrawable getCurrLayerDrawable() {
+        Input[] currInputs = new Input[inputs.size()];
+        inputs.toArray(currInputs);
+        return new LayerDrawable(currInputs);
     }
 
-    public List<Input> getInputs() { return inputs; }
-
-    public void addEdit(Input next) {
+    public void addInput(Input next) {
         inputs.add(next);
-        resetEdits();
-    }
-
-    private void resetEdits() {
-        Input[] dr = new Input[inputs.size()];
-        inputs.toArray(dr);
-        edits = new LayerDrawable(dr);
     }
 }
