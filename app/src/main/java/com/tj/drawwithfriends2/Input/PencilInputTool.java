@@ -20,7 +20,7 @@ public class PencilInputTool implements InputTool {
     int color;
 
     public PencilInputTool(int color) {
-        currentUpdate = new PencilInput(color);
+        currentUpdate = new PencilInput();
         lastTouch = null;
         this.color = color;
     }
@@ -28,7 +28,7 @@ public class PencilInputTool implements InputTool {
     @Override
     public Input handleTouch(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            currentUpdate = new PencilInput(color);
+            currentUpdate = new PencilInput();
             lastTouch = null;
         }
 

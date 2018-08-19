@@ -142,6 +142,7 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
                 break;
             case R.id.action_refresh:
                 launchListLayout();
+                break;
             default:
                 break;
         }

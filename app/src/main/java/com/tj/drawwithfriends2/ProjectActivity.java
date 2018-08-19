@@ -1,6 +1,7 @@
 package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -9,6 +10,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +21,10 @@ import android.widget.SeekBar;
 
 import com.tj.drawwithfriends2.Input.Input;
 import com.tj.drawwithfriends2.Input.InputTool;
+import com.tj.drawwithfriends2.Input.PencilInput;
 import com.tj.drawwithfriends2.Input.PencilInputTool;
+
+import junit.framework.Assert;
 
 import java.io.Serializable;
 
@@ -39,6 +46,21 @@ public class ProjectActivity extends AppCompatActivity {
 
     private View currFocus;
 
+    // cuts first two integers off the byte array and returns it
+    private byte[] fakeProjectFilesPart(byte[] bytes) {
+        if (bytes.length >= 8) {
+            byte[] retBytes = new byte[bytes.length - 8];
+            for (int i = 0; i < retBytes.length; i++) {
+                retBytes[i] = bytes[i + 8];
+            }
+
+            return retBytes;
+        }
+
+        bytes = new byte[0];
+        return bytes;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +74,13 @@ public class ProjectActivity extends AppCompatActivity {
                 myToolbar.setTitle("null");
             } else {
                 myToolbar.setTitle(currProject.getTitle());
-                currProject.loadEdits();
+                try {
+                    Log.e("ProjectActivity", "loading");
+                    currProject.loadEdits();
+                    Log.e("ProjectActivity", "loading done");
+                } catch (Exception e) {
+                    Log.e("ProjectActivity", "error loading edits");
+                }
             }
         }
         else {
@@ -125,10 +153,201 @@ public class ProjectActivity extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 Input newUpdate = currTool.handleTouch(motionEvent);
                 if (newUpdate != null) { currProject.addEdit(newUpdate); }
+                projectPicture.setLayerDrawable(currProject.getEdits());
                 projectPicture.invalidate();
                 return true;
             }
         });
+
+        /*
+        Log.e("PencilInputTests", "starting");
+
+        Log.e("PencilInputTests", "empty test starting");
+        PencilInput p1 = new PencilInput();
+        PencilInput p2 = new PencilInput();
+        if (!p1.equals(p2)) {
+            Log.e("PencilInputTests","failed empty comparison");
+            return;
+        }
+
+        currProject.clearInputs();
+        currProject.addEdit(p1);
+        currProject.saveEdits();
+        try {
+            currProject.loadEdits();
+        } catch (Exception e) {
+            Log.e("PencilInputTests", "loading exception empty");
+            return;
+        }
+        if (currProject.getInputs() == null || currProject.getInputs().size() != 1) {
+            Log.e("PencilInputTests", "invalid edits after loading empty");
+            return;
+        }
+        if (!currProject.getInputs().get(0).equals(p2)) {
+            Log.e("PencilInputTests", "incorrect edits after loading empty");
+        }
+        Log.e("PencilInputTests","passed empty test");
+
+        Log.e("PencilInputTests","one point test starting");
+        p1 = new PencilInput();
+        p2 = new PencilInput();
+
+        Point[] points = new Point[1];
+        points[0] = new Point();
+        points[0].x = 1;
+        points[0].y = 3;
+        int color = 0xff00ff00;
+        p1.addToThis(points, color);
+        p2.addToThis(points, color);
+        if (!p1.equals(p2)) {
+            Log.e("PencilInputTests","failed one point comparison");
+            return;
+        }
+
+        currProject.clearInputs();
+        currProject.addEdit(p1);
+        currProject.saveEdits();
+        try {
+            currProject.loadEdits();
+        } catch (Exception e) {
+            Log.e("PencilInputTests", "loading exception one point");
+            return;
+        }
+        if (currProject.getInputs() == null || currProject.getInputs().size() != 1) {
+            Log.e("PencilInputTests", "invalid edits after loading one point");
+            return;
+        }
+        if (!currProject.getInputs().get(0).equals(p2)) {
+            Log.e("PencilInputTests", "incorrect edits after loading one point");
+        }
+        Log.e("PencilInputTests","one point test passed");
+
+
+        Log.e("PencilInputTests","starting one line test");
+        p1 = new PencilInput();
+        p2 = new PencilInput();
+
+        points = new Point[2];
+        points[0] = new Point();
+        points[1] = new Point();
+        points[0].x = 1;
+        points[0].y = 3;
+        points[1].x = 4;
+        points[1].y = 2;
+        color = 0xff00ff00;
+        p1.addToThis(points, color);
+        p2.addToThis(points, color);
+        if (!p1.equals(p2)) {
+            Log.e("PencilInputTests","failed one line comparison");
+            return;
+        }
+
+        currProject.clearInputs();
+        currProject.addEdit(p1);
+        currProject.saveEdits();
+        try {
+            currProject.loadEdits();
+        } catch (Exception e) {
+            Log.e("PencilInputTests", "loading exception one line");
+            return;
+        }
+        if (currProject.getInputs() == null || currProject.getInputs().size() != 1) {
+            Log.e("PencilInputTests", "invalid edits after loading one line");
+            return;
+        }
+        if (!currProject.getInputs().get(0).equals(p2)) {
+            Log.e("PencilInputTests", "incorrect edits after loading one line");
+        }
+        Log.e("PencilInputTests","one line test passed");
+
+        Log.e("PencilInputTests", "one line one point starting");
+        p1 = new PencilInput();
+        p2 = new PencilInput();
+
+        points = new Point[2];
+        points[0] = new Point();
+        points[1] = new Point();
+        points[0].x = 1;
+        points[0].y = 3;
+        points[1].x = 4;
+        points[1].y = 2;
+        color = 0xff00ff00;
+        p1.addToThis(points, color);
+        p2.addToThis(points, color);
+        points = new Point[1];
+        points[0] = new Point();
+        points[0].x = 56;
+        points[0].y = 75;
+        p1.addToThis(points, color);
+        p2.addToThis(points, color);
+        if (!p1.equals(p2)) {
+            Log.e("PencilInputTests","failed one line one point comparison");
+            return;
+        }
+
+        currProject.clearInputs();
+        currProject.addEdit(p1);
+        currProject.saveEdits();
+        try {
+            currProject.loadEdits();
+        } catch (Exception e) {
+            Log.e("PencilInputTests", "loading exception one point one line");
+            return;
+        }
+        if (currProject.getInputs() == null || currProject.getInputs().size() != 1) {
+            Log.e("PencilInputTests", "invalid edits after loading one point one line");
+            return;
+        }
+        if (!currProject.getInputs().get(0).equals(p2)) {
+            Log.e("PencilInputTests", "incorrect edits after loading one point one line");
+        }
+        Log.e("PencilInputTests", "passed one point one line");
+
+        Log.e("PencilInputTests", "one point one line starting");
+        p1 = new PencilInput();
+        p2 = new PencilInput();
+
+        points = new Point[1];
+        points[0] = new Point();
+        points[0].x = 56;
+        points[0].y = 75;
+        p1.addToThis(points, color);
+        p2.addToThis(points, color);
+        points = new Point[2];
+        points[0] = new Point();
+        points[1] = new Point();
+        points[0].x = 1;
+        points[0].y = 3;
+        points[1].x = 4;
+        points[1].y = 2;
+        color = 0xff00ff00;
+        p1.addToThis(points, color);
+        p2.addToThis(points, color);
+        if (!p1.equals(p2)) {
+            Log.e("PencilInputTests","failed one point one line comparison");
+            return;
+        }
+
+        currProject.clearInputs();
+        currProject.addEdit(p1);
+        currProject.saveEdits();
+        try {
+            currProject.loadEdits();
+        } catch (Exception e) {
+            Log.e("PencilInputTests", "loading exception one line one point");
+            return;
+        }
+        if (currProject.getInputs() == null || currProject.getInputs().size() != 1) {
+            Log.e("PencilInputTests", "invalid edits after loading one line one point");
+            return;
+        }
+        if (!currProject.getInputs().get(0).equals(p2)) {
+            Log.e("PencilInputTests", "incorrect edits after loading one line one point");
+        }
+        Log.e("PencilInputTests", "passed one line one point");
+
+        Log.e("PencilInputTests", "finished");
+        */
     }
 
     public void handleColorClick(View view) {
@@ -176,5 +395,26 @@ public class ProjectActivity extends AppCompatActivity {
         colorButton.setTextColor(color);
 
         colorButton.invalidate();
+    }
+
+    /**
+     * the menu layout has the 'add/new' menu item
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.project_action_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                currProject.saveEdits();
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 }
