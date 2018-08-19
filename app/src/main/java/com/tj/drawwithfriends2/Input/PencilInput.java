@@ -80,51 +80,25 @@ public class PencilInput extends Input {
         // 4 bytes for num lines, 4 bytes for each of x1,x2,y1,y2,color for each line,
         // 4 bytes for num points, 4 bytes for each of x,y,color for each point
         int numBytes = 4 + 4 + 4 + (((4 * 4) + 4) * lines.size()) + 4 + (((2 * 4) + 4) * points.size());
-        ByteBuffer retBuff = ByteBuffer.allocate(numBytes);
-        IntBuffer workingBuff = retBuff.asIntBuffer();
 
         try {
             out.writeInt(numBytes);
-            //workingBuff.put(numBytes);
-            //Log.e("toBytes", "putting " + numBytes);
             out.writeInt(Input.PENCIL_INPUT);
-            //workingBuff.put(Input.PENCIL_INPUT);
-            //Log.e("toBytes", "putting " + Input.PENCIL_INPUT);
 
-            //workingBuff.put(lines.size());
             out.writeInt(lines.size());
-            //Log.e("toBytes", "putting " + lines.size());
             for (ColorAnd<Line> l : lines) {
-                //workingBuff.put(l.thing.x1);
                 out.writeInt(l.thing.x1);
-                //Log.e("toBytes", "putting " + l.thing.x1);
-                //workingBuff.put(l.thing.y1);
                 out.writeInt(l.thing.y1);
-                //Log.e("toBytes", "putting " + l.thing.y1);
-                //workingBuff.put(l.thing.x2);
                 out.writeInt(l.thing.x2);
-                //Log.e("toBytes", "putting " + l.thing.x2);
-                //workingBuff.put(l.thing.y2);
                 out.writeInt(l.thing.y2);
-                //Log.e("toBytes", "putting " + l.thing.y2);
-                //workingBuff.put(l.color);
                 out.writeInt(l.color);
-                //Log.e("toBytes", "putting " + l.color);
             }
 
-            //workingBuff.put(points.size());
             out.writeInt(points.size());
-            //Log.e("toBytes", "putting " + points.size());
             for (ColorAnd<Point> p : points) {
-                //workingBuff.put(p.thing.x);
                 out.writeInt(p.thing.x);
-                //Log.e("toBytes", "putting " + p.thing.x);
-                //workingBuff.put(p.thing.y);
                 out.writeInt(p.thing.y);
-                //Log.e("toBytes", "putting " + p.thing.y);
-                //workingBuff.put(p.color);
                 out.writeInt(p.color);
-                //Log.e("toBytes", "putting " + p.color);
             }
         } catch (Exception e) {
             Log.e("toOutputStream", "exception caught " + e.toString());
@@ -133,30 +107,17 @@ public class PencilInput extends Input {
 
     @Override
     public void fromInputStream(DataInputStream in) {
-        //IntBuffer workingBuf = ByteBuffer.wrap(bytes).asIntBuffer();
         try {
             int numLines = in.readInt();
-            //int numLines = workingBuf.get();
-            //Log.e("fromBytes", "numLines is " + numLines);
             lines = new ArrayList<>(numLines);
             for (int i = 0; i < numLines; i++) {
                 lines.add(new ColorAnd<Line>(new Line(in.readInt(), in.readInt(), in.readInt(), in.readInt()), in.readInt()));
-                //Log.e("fromBytes", "line[" + i + "].x1 is " + lines.get(i).thing.x1);
-                //Log.e("fromBytes", "line[" + i + "].y1 is " + lines.get(i).thing.y1);
-                //Log.e("fromBytes", "line[" + i + "].x2 is " + lines.get(i).thing.x2);
-                //Log.e("fromBytes", "line[" + i + "].y2 is " + lines.get(i).thing.y2);
-                //Log.e("fromBytes", "line[" + i + "].color is " + lines.get(i).color);
             }
 
             int numPoints = in.readInt();
-            //Log.e("fromBytes", "numPoints is " + numPoints);
             points = new ArrayList<>(numPoints);
             for (int i = 0; i < numPoints; i++) {
                 points.add(new ColorAnd(new Point(in.readInt(), in.readInt()), in.readInt()));
-                //Log.e("fromBytes", "points.size() is " + points.size());
-                //Log.e("fromBytes", "points[" + i + "].x is " + points.get(i).thing.x);
-                //Log.e("fromBytes", "points[" + i + "].y is " + points.get(i).thing.y);
-                //Log.e("fromBytes", "points[" + i + "].color is " + points.get(i).color);
             }
         } catch (Exception e) {
             Log.e("fromBytes", "error reading byte packet");

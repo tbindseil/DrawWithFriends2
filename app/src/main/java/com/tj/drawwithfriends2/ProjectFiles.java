@@ -170,11 +170,6 @@ public class ProjectFiles implements Serializable {
 
     public List<Input> getInputs() { return inputs; }
 
-    // remove this when not testing
-    //public void clearInputs() {
-      //  inputs.clear();
-    //}
-
     public void addEdit(Input next) {
         inputs.add(next);
         resetEdits();
