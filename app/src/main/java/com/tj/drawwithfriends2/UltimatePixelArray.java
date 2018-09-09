@@ -1,8 +1,14 @@
 package com.tj.drawwithfriends2;
 
-import com.tj.drawwithfriends2.Input.Input;
+import android.util.Log;
 
+import com.tj.drawwithfriends2.Input.Input;
+import com.tj.drawwithfriends2.Input.Zoom;
+
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -33,11 +39,7 @@ public class UltimatePixelArray extends PixelArray {
         }
     }
 
-    public void handleInput(Input i) {
-        // update file
-    }
-
-    public void fillPixels(int[] pixelArrray, int xOffset, int yOffset, int width, int height) {
+    public void fillPixels(int[] pixelArrray, Zoom currZoom) {
         // zoom effects localpixels bitmap width
 
         // many file pixel to one bitmap pixel? i guess that would mean the
@@ -53,4 +55,30 @@ public class UltimatePixelArray extends PixelArray {
     }
 
     // save, read some bytes, modify if needed, write those bytes, repeat till eof
+    void update(LocalPixelArray localPixelArray) {
+        Zoom currZoom = localPixelArray.getZoom();
+        try {
+            int[] toWrite = new int[currZoom.getNumPixels()];
+            localPixelArray.fillPixels(toWrite);
+
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(picture));
+            DataOutputStream workingStream = new DataOutputStream(bufferedOutputStream);
+            for (int i = 0; i < currZoom.height; i++) {
+                workingStream.
+                for (int j = 0; j < currZoom.width; j++) {
+                    workingStream.writeInt(toWrite[i * currZoom.width + j]);
+                }
+            }
+
+            workingStream.flush();
+            workingStream.close();
+        } catch (Exception e) {
+            Log.e("update", "exception: " + e.toString());
+            return;
+        }
+    }
+
+    public int getZoomStartOffset(int x, int y, Zoom currZoom) {
+        return getPixelsWide() * currZoom.yOffset + currZoom.xOffset;
+    }
 }

@@ -100,7 +100,6 @@ public class ProjectFiles implements Serializable {
     }
 
     public void saveInputs() {
-        picture.delete();
         try {
             picture.createNewFile();
             picture.setWritable(true);
@@ -139,17 +138,9 @@ public class ProjectFiles implements Serializable {
             int totalBytes = 0;
             while (totalBytes < pictureLen) {
                 totalBytes += workingStream.readInt();
-                int type = workingStream.readInt();
-                switch (type) {
-                    case Input.PENCIL_INPUT:
-                        PencilInput pi = new PencilInput();
-                        pi.fromInputStream(workingStream);
-                        inputs.add(pi);
-                        break;
-                    default:
-                        Log.e("load edits", "unknown type!!!!");
-                        break;
-                }
+                Input pi = new Input();
+                pi.fromInputStream(workingStream);
+                inputs.add(pi);
             }
         } catch (FileNotFoundException fne) {
             Log.e("ProjectFiles", "no inputs to load!");

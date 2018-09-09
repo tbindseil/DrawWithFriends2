@@ -19,5 +19,6 @@ public abstract class PixelArray {
         pixelsTall = height;
     }
 
-    public abstract void handleInput(Input next);
+    public int getPixelsWide() { return pixelsWide; }
+    public int getPixelsTall() { return pixelsTall; }
 }

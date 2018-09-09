@@ -2,6 +2,10 @@ package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.annotation.Nullable;
@@ -37,4 +41,21 @@ public class PaintingImageView extends AppCompatImageView {
         inputs = ld;
         setImageDrawable(inputs);
     }
+
+    /* TODO test one 1x1 rect
+    @Override
+    protected void onDraw(Canvas canvas) {
+        int width = this.getWidth();
+        int height = this.getHeight();
+
+        Paint p = new Paint();
+        for (int row = 0; row < width / 2; row++) {
+            for (int col = 0; col < height / 2; col++) {
+                Rect r = new Rect(col, row, col, row);
+                p.setColor(Color.RED);
+                canvas.drawRect(r, p);
+            }
+        }
+    }*/
+
 }

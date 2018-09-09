@@ -1,9 +1,13 @@
 package com.tj.drawwithfriends2;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 
 import com.tj.drawwithfriends2.Input.Input;
+import com.tj.drawwithfriends2.Input.Zoom;
 
 /**
  * Created by TJ on 8/26/2018.
@@ -13,27 +17,36 @@ public class LocalPixelArray extends PixelArray {
     int xOffset;
     int yOffset;
 
-    int[] pixelArray;
-    BitmapDrawable mostRecent;
+    Bitmap mostRecent;
+    Context context;
 
     public LocalPixelArray(int width, int height, int xOffset, int yOffset,
-                           UltimatePixelArray ultimatePixelArray) {
+                           UltimatePixelArray ultimatePixelArray, Context context) {
         super(width, height);
         this.xOffset = xOffset;
         this.yOffset = yOffset;
 
-        pixelArray = new int[width * height];
-        ultimatePixelArray.fillPixels(pixelArray, xOffset, yOffset, width, height);
+        int[] pixelArray = new int[width * height];
+        ultimatePixelArray.fillPixels(pixelArray, new Zoom(xOffset, yOffset, width, height));
+        this.context = context;
 
-        loadMostRecent();
+        mostRecent = Bitmap.createBitmap(pixelArray, getPixelsWide(), getPixelsTall(), Bitmap.Config.ARGB_8888);
     }
 
-    private void loadMostRecent() {
-        //mostRecent = new BitmapDrawable(Bitmap.createBitmap());
+    public Zoom getZoom() {
+        return new Zoom(xOffset, yOffset, getPixelsWide(), getPixelsTall());
     }
 
-    @Override
+    public void fillPixels(int[] ret) {
+        mostRecent.getPixels(ret, 0, 1, 0, 0, getPixelsWide(), getPixelsTall());
+    }
+
+    public BitmapDrawable getBitmapDrawable() {
+        return new BitmapDrawable(context.getResources(), mostRecent);
+    }
+
     public void handleInput(Input next) {
-// for each pixel in pixel array, check if in map! this is faster than for
+        Canvas drawnOn = next.finalize(mostRecent);
+        // bitmap is drawn
     }
 }

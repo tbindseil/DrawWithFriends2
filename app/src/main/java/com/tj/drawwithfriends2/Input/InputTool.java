@@ -9,6 +9,7 @@ import android.view.MotionEvent;
  */
 
 public interface InputTool {
-    public Input handleTouch(MotionEvent event);
+    public void handleTouch(MotionEvent event);
     public void setColor(int color);
+    public void setThickness(int thickness);
 }

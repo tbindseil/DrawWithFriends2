@@ -1,10 +1,14 @@
 package com.tj.drawwithfriends2.Input;
 
 import android.annotation.TargetApi;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.MotionEvent;
+
+import com.tj.drawwithfriends2.InputTransporter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,41 +19,51 @@ import java.util.List;
 
 @TargetApi(23)
 public class PencilInputTool implements InputTool {
-    PencilInput currentUpdate;
     Point lastTouch;
     int color;
+    int thickness;
 
-    public PencilInputTool(int color) {
-        currentUpdate = new PencilInput();
+    Zoom currZoom;
+
+    public PencilInputTool() {
         lastTouch = null;
-        this.color = color;
+        this.color = Color.RED;
+        this.thickness = 0;
     }
 
     @Override
-    public Input handleTouch(MotionEvent event) {
+    public void handleTouch(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            currentUpdate = new PencilInput();
             lastTouch = null;
         }
 
-        List<Point> touchPoints = new ArrayList<>();
-        if (lastTouch != null) {
-            touchPoints.add(new Point(lastTouch.x, lastTouch.y));
-        }
-        lastTouch = new Point((int)event.getX(), (int)event.getY());
+        Point currTouch = new Point((int)event.getX(), (int)event.getY());
 
-        // note deep copy is important, lasttouch is mutable
-        touchPoints.add(new Point((int)event.getX(), (int)event.getY()));
-        Point[] ret = new Point[touchPoints.size()];
-        touchPoints.toArray(ret);
-        currentUpdate.addToThis(ret, color);
-
-        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            return currentUpdate;
+        Rect toAdd = null;
+        double rotation = 0;
+        if (lastTouch == null) {
+            toAdd = new Rect(currTouch.x - thickness,
+                    currTouch.y - thickness,
+                    currTouch.x + thickness,
+                    currTouch.y + thickness);
         } else {
-            return null;
+            int deltaX = currTouch.x - lastTouch.x;
+            int deltaY = currTouch.y - lastTouch.y;
+            Point midPoint = new Point(deltaX / 2, deltaY / 2);
+            int lineLenth = (int)Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+            toAdd = new Rect(midPoint.x - (lineLenth / 2), midPoint.y + thickness, midPoint.x + (lineLenth / 2), midPoint.y - thickness);
+            rotation = Math.atan(deltaY / deltaX);
+        }
+        lastTouch = new Point((int) event.getX(), (int) event.getY());
+
+        InputTransporter.getInstance().addRect(toAdd, color, rotation);
+
+        if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+            InputTransporter.getInstance().finishInput();
         }
     }
 
     public void setColor(int color) { this.color = color; }
+
+    public void setThickness(int thickness) { this.thickness = thickness; }
 }

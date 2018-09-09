@@ -122,6 +122,8 @@ public class ProjectActivity extends AppCompatActivity {
         projectPicture.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+
+
                 Input newUpdate = currTool.handleTouch(motionEvent);
                 if (newUpdate != null) {
                     currProject.addInput(newUpdate);
