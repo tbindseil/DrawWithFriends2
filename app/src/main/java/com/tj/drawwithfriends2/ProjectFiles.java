@@ -6,7 +6,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 
 import com.tj.drawwithfriends2.Input.Input;
-import com.tj.drawwithfriends2.Input.PencilInput;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

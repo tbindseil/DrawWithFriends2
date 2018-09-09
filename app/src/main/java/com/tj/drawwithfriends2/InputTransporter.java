@@ -40,6 +40,10 @@ public class InputTransporter {
         return instance;
     }
 
+    public void setProjectFiles(ProjectFiles projectFiles) {
+        this.projectFiles = projectFiles;
+    }
+
     public void startTransporter(final UltimatePixelArray ultimatePixels,
                                  final LocalPixelArray localPixels,
                                  ProjectFiles projectFiles,
@@ -55,8 +59,8 @@ public class InputTransporter {
             public void run() {
                 while (true) {
                     Input next = toSave.peek();
-                    ultimatePixels.handleInput(next);
                     localPixels.handleInput(next);
+                    ultimatePixels.update(localPixels);
                     toSave.remove();
                 }
             }

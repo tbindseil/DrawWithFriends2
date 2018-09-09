@@ -5,6 +5,7 @@ package com.tj.drawwithfriends2.Input;
  */
 
 public class Zoom {
+    // note all values are measured as ints, ie width ints by height ints is in the picture currently
     public final int xOffset, yOffset, width, height;
 
     public Zoom(int x, int y, int w, int h) {

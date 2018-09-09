@@ -37,9 +37,11 @@ public class LocalPixelArray extends PixelArray {
         return new Zoom(xOffset, yOffset, getPixelsWide(), getPixelsTall());
     }
 
-    public void fillPixels(int[] ret) {
+    /*public void fillPixels(int[] ret) {
         mostRecent.getPixels(ret, 0, 1, 0, 0, getPixelsWide(), getPixelsTall());
-    }
+    }*/
+
+    public Bitmap getBitmap() { return mostRecent; }
 
     public BitmapDrawable getBitmapDrawable() {
         return new BitmapDrawable(context.getResources(), mostRecent);

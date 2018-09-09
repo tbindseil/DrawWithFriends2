@@ -1,25 +1,29 @@
 package com.tj.drawwithfriends2;
 
+import android.annotation.TargetApi;
+import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.tj.drawwithfriends2.Input.Input;
 import com.tj.drawwithfriends2.Input.Zoom;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.nio.IntBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.StandardOpenOption;
 
 /**
  * Created by TJ on 8/26/2018.
  */
 
 // owned by project files
+@TargetApi(26)
 public class UltimatePixelArray extends PixelArray {
     File file;
+    MappedByteBuffer[] buffs;
 
     public UltimatePixelArray(int width, int height, File projectRoot) throws Exception {
         super(width, height);
@@ -33,52 +37,54 @@ public class UltimatePixelArray extends PixelArray {
             } catch (Exception e) {
                 throw e;
             }
-            return;
-        } else {
-            // load
         }
     }
 
     public void fillPixels(int[] pixelArrray, Zoom currZoom) {
-        // zoom effects localpixels bitmap width
+        if (pixelArrray.length < currZoom.width * currZoom.height) {
+            Log.e("fillPixels", "array too small!");
+            return;
+        }
 
-        // many file pixel to one bitmap pixel? i guess that would mean the
-        // change on the bitmap pixel would happen to all file pixels, this is thickness!
-        // not making this thickness, thickness needs to radiate evenly from the touchpoint
-
-        // pixels are bitmap pixels, the ones i make. So one bitmap pixel could take up multiple
-        // led pixels, this doesn't matter, if the user touches within a bitmap pixels perimeter
-        // then the bitmap pixel is affected. When the bitmap pixel is effected it will always be
-        // be mapped to one ultimate pixel.
-
-        // so.. seek, read whats needed, repeat
+        try {
+            buffs = new MappedByteBuffer[currZoom.height];
+            FileChannel channel = FileChannel.open(file.toPath(), StandardOpenOption.WRITE);
+            for (int i = 0; i < buffs.length; i++) {
+                buffs[i] = channel.map(FileChannel.MapMode.READ_WRITE, getZoomStartOffset(i, currZoom), currZoom.width);
+                buffs[i].load();
+                IntBuffer toCopy = buffs[i].asIntBuffer();
+                toCopy.get(pixelArrray, currZoom.width * i, currZoom.width);
+            }
+        } catch (Exception e) {
+            Log.e("fillPixels", "exception: " + e.toString());
+        }
     }
 
-    // save, read some bytes, modify if needed, write those bytes, repeat till eof
+    // NOTE: assumes buffs is already mapped and the right dimensions
     void update(LocalPixelArray localPixelArray) {
         Zoom currZoom = localPixelArray.getZoom();
         try {
-            int[] toWrite = new int[currZoom.getNumPixels()];
-            localPixelArray.fillPixels(toWrite);
-
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(picture));
-            DataOutputStream workingStream = new DataOutputStream(bufferedOutputStream);
-            for (int i = 0; i < currZoom.height; i++) {
-                workingStream.
-                for (int j = 0; j < currZoom.width; j++) {
-                    workingStream.writeInt(toWrite[i * currZoom.width + j]);
+            Bitmap fillFrom = localPixelArray.getBitmap();
+            for (int row = 0; row < currZoom.height; row++) {
+                IntBuffer copyTo = buffs[row].asIntBuffer();
+                // Note: I'm not even gonna bother with hasArray stuff
+                // just gonna use a small transfer array
+                int[] toFill = new int[currZoom.width];
+                for (int col = 0; col < currZoom.width; col++) {
+                    toFill[col] = fillFrom.getPixel(row, col);
                 }
+                copyTo.put(toFill);
             }
-
-            workingStream.flush();
-            workingStream.close();
+            // turn mapped byte buffers to int buffers,
+            // get underlying int array,
+            // fill underlying int array via the get pixels method of Bitmap toWrite
         } catch (Exception e) {
             Log.e("update", "exception: " + e.toString());
             return;
         }
     }
 
-    public int getZoomStartOffset(int x, int y, Zoom currZoom) {
-        return getPixelsWide() * currZoom.yOffset + currZoom.xOffset;
+    public int getZoomStartOffset(int rowNum, Zoom currZoom) {
+        return getPixelsWide() * (currZoom.yOffset + rowNum) + currZoom.xOffset;
     }
 }
