@@ -23,8 +23,6 @@ public class PencilInputTool implements InputTool {
     int color;
     int thickness;
 
-    Zoom currZoom;
-
     public PencilInputTool() {
         lastTouch = null;
         this.color = Color.RED;

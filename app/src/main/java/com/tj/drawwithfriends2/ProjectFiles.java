@@ -9,7 +9,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 
 import com.tj.drawwithfriends2.Input.Input;
-import com.tj.drawwithfriends2.Input.Zoom;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -42,12 +41,10 @@ public class ProjectFiles implements Serializable {
     private static final String ULTIMATE_FILE_NAME = "UltimatePixels";
     private static final int DEFAULT_WIDTH = 4096;
     private static final int DEFAULT_HEIGHT = 7020;
-    private static final Zoom DEFAULT_ZOOM = new Zoom(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
     private String title;
     // TODO add these to config file
     private int width, height;
-    private Zoom currZoom;
 
     private Bitmap mostRecent;
 
@@ -58,7 +55,6 @@ public class ProjectFiles implements Serializable {
 
         width = DEFAULT_WIDTH;
         height = DEFAULT_HEIGHT;
-        currZoom = DEFAULT_ZOOM;
 
         // create file object instances
         this.config = new File(dir, CONFIG_FILE_NAME);
@@ -74,9 +70,9 @@ public class ProjectFiles implements Serializable {
         ultimatePixelArray = new UltimatePixelArray(width, height, ultimatePixelsFile);
 
         // todo remove in a commit
-        int[] pixelArray = new int[currZoom.width * currZoom.height];
-        ultimatePixelArray.fillPixels(pixelArray, new Zoom(currZoom.xOffset, currZoom.yOffset, currZoom.width, currZoom.height));
-        mostRecent = Bitmap.createBitmap(pixelArray, currZoom.width, currZoom.height, Bitmap.Config.ARGB_8888);
+        int[] pixelArray = new int[width * height];
+        ultimatePixelArray.fillPixels(pixelArray);
+        mostRecent = Bitmap.createBitmap(pixelArray, width, height, Bitmap.Config.ARGB_8888);
     }
 
     // create new
@@ -95,7 +91,6 @@ public class ProjectFiles implements Serializable {
 
         width = DEFAULT_WIDTH;
         height = DEFAULT_HEIGHT;
-        currZoom = DEFAULT_ZOOM;
 
         ultimatePixelsFile.createNewFile();
         ultimatePixelsFile.setWritable(true);
@@ -109,10 +104,6 @@ public class ProjectFiles implements Serializable {
 
     public String getTitle() {
         return title;
-    }
-
-    public Zoom getCurrZoom() {
-        return currZoom;
     }
 
     public void setTitle(String newTitle) {
@@ -194,6 +185,6 @@ public class ProjectFiles implements Serializable {
         saveInput(next);
 
         // TODO put the following on its own super fucking low prio thread
-        ultimatePixelArray.update(mostRecent, currZoom);
+        ultimatePixelArray.update(mostRecent);
     }
 }

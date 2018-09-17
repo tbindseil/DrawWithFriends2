@@ -4,8 +4,6 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.tj.drawwithfriends2.Input.Zoom;
-
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -33,20 +31,20 @@ public class UltimatePixelArray {
         this.file = file;
     }
 
-    public void fillPixels(int[] pixelArrray, Zoom currZoom) {
-        if (pixelArrray.length < currZoom.width * currZoom.height) {
+    public void fillPixels(int[] pixelArrray) {
+        if (pixelArrray.length < width * height) {
             Log.e("fillPixels", "array too small!");
             return;
         }
 
         try {
-            buffs = new MappedByteBuffer[currZoom.height];
+            buffs = new MappedByteBuffer[height];
             FileChannel channel = FileChannel.open(file.toPath(), StandardOpenOption.WRITE);
             for (int i = 0; i < buffs.length; i++) {
-                buffs[i] = channel.map(FileChannel.MapMode.READ_WRITE, getZoomStartOffset(i, currZoom), currZoom.width);
+                buffs[i] = channel.map(FileChannel.MapMode.READ_WRITE, i * width, width);
                 buffs[i].load();
                 IntBuffer toCopy = buffs[i].asIntBuffer();
-                toCopy.get(pixelArrray, currZoom.width * i, currZoom.width);
+                toCopy.get(pixelArrray, width * i, width);
             }
         } catch (Exception e) {
             Log.e("fillPixels", "exception: " + e.toString());
@@ -54,14 +52,15 @@ public class UltimatePixelArray {
     }
 
     // NOTE: assumes buffs is already mapped and the right dimensions
-    void update(Bitmap fillFrom, Zoom currZoom) {
+    // todo probably just replace with compress as png
+    void update(Bitmap fillFrom) {
         try {
-            for (int row = 0; row < currZoom.height; row++) {
+            for (int row = 0; row < height; row++) {
                 IntBuffer copyTo = buffs[row].asIntBuffer();
                 // Note: I'm not even gonna bother with hasArray stuff
                 // just gonna use a small transfer array
-                int[] toFill = new int[currZoom.width];
-                for (int col = 0; col < currZoom.width; col++) {
+                int[] toFill = new int[width];
+                for (int col = 0; col < width; col++) {
                     toFill[col] = fillFrom.getPixel(row, col);
                 }
                 copyTo.put(toFill);
@@ -73,9 +72,5 @@ public class UltimatePixelArray {
             Log.e("update", "exception: " + e.toString());
             return;
         }
-    }
-
-    public int getZoomStartOffset(int rowNum, Zoom currZoom) {
-        return width * (currZoom.yOffset + rowNum) + currZoom.xOffset;
     }
 }
