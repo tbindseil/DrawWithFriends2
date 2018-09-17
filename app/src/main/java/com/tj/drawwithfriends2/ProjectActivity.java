@@ -1,7 +1,10 @@
 package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +16,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
@@ -21,13 +25,17 @@ import com.tj.drawwithfriends2.Input.InputTool;
 import com.tj.drawwithfriends2.Input.PencilInputTool;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @TargetApi(23)
 public class ProjectActivity extends AppCompatActivity {
     private ProjectFiles currProject;
 
     private ConstraintLayout normalLayout;
-    private PaintingImageView projectPicture;
+    private ImageView projectPicture;
 
     private InputTool currTool;
 
@@ -50,7 +58,7 @@ public class ProjectActivity extends AppCompatActivity {
         try {
             currProject = (ProjectFiles) ser;
             myToolbar.setTitle(currProject.getTitle());
-            currProject.loadInputs();
+            currProject.loadInputs(); // WHERE I LEFT OFF, set up input transporter and start things in the right order, tie up loose ends, begin long strenuous process of making this actually work
         } catch (Exception e) {
             myToolbar.setTitle("error");
             Log.e("ProjectActivity", "exception loading edits or getting title");
@@ -110,35 +118,38 @@ public class ProjectActivity extends AppCompatActivity {
 
         colorButton = findViewById(R.id.colorButton);
 
-        currTool = new PencilInputTool(0);
+        currTool = new PencilInputTool();
 
         projectPicture = findViewById(R.id.mainCanvas);
-        projectPicture.setLayerDrawable(currProject.getCurrLayerDrawable());
 
-        // pretty rad, a new update is produced by the currTool, ownership of this newUpdate is
-        // taken by the currProject (which will hopefully serialize things to sqlite soon), and
-        // then when this newUpdate changes via the input tool, those updates are automatically
-        // seen on the image view
+        // start input transporter
+        InputTransporter.getInstance().setProjectFiles(currProject);
+        Queue<Input> toSave = new LinkedBlockingQueue<>();
+        InputTransporter.getInstance().startTransporter(toSave);
+        updatePaintingImage();
+
         projectPicture.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
-
-                Input newUpdate = currTool.handleTouch(motionEvent);
-                if (newUpdate != null) {
-                    currProject.addInput(newUpdate);
-                }
-                projectPicture.setLayerDrawable(currProject.getCurrLayerDrawable());
-                projectPicture.invalidate();
+                currTool.handleTouch(motionEvent);
+                updatePaintingImage();
                 return true;
             }
         });
     }
 
+    private void updatePaintingImage() {
+        Bitmap toDraw = currProject.getBitmap();
+        Drawable base = new BitmapDrawable(ProjectActivity.super.getResources(), toDraw);
+        base = InputTransporter.getInstance().produceDrawable(base);
+        projectPicture.setImageDrawable(base);
+        projectPicture.invalidate();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
-        currProject.saveInputs();
+        // see handleInput TODO currProject.saveInputs();
     }
 
     public void handleColorClick(View view) {
@@ -190,6 +201,11 @@ public class ProjectActivity extends AppCompatActivity {
         colorButton.invalidate();
     }
 
+
+    public BitmapDrawable getBitmapDrawable() {
+        return new BitmapDrawable(this.getResources(), currProject.getBitmap());
+    }
+
     /**
      * the menu layout has the 'add/new' menu item
      */
@@ -203,7 +219,8 @@ public class ProjectActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
-                currProject.saveInputs();
+                // todo implement a flush method or something
+                // currProject.saveInputs();
                 break;
             case android.R.id.home:
                 onBackPressed();

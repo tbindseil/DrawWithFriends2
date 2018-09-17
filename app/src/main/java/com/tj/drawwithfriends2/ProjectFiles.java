@@ -1,16 +1,19 @@
 package com.tj.drawwithfriends2;
 
 import android.annotation.TargetApi;
-import android.graphics.drawable.Drawable;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 
 import com.tj.drawwithfriends2.Input.Input;
+import com.tj.drawwithfriends2.Input.Zoom;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -18,11 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,46 +34,85 @@ import java.util.List;
 public class ProjectFiles implements Serializable {
     private File dir;
     private File config; // TODO lock config file... and probably others... in fact, let this TODO represent all synchronization
-    private File picture;
+    private File inputsFile;
+    private UltimatePixelArray ultimatePixelArray;
+
     private static final String CONFIG_FILE_NAME = "config";
-    private static final String PICTURE_FILE_NAME = "picture";
+    private static final String INPUTS_FILE_NAME = "inputsFile";
+    private static final String ULTIMATE_FILE_NAME = "UltimatePixels";
+    private static final int DEFAULT_WIDTH = 4096;
+    private static final int DEFAULT_HEIGHT = 7020;
+    private static final Zoom DEFAULT_ZOOM = new Zoom(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+
     private String title;
+    // TODO add these to config file
+    private int width, height;
+    private Zoom currZoom;
 
-    List<Input> inputs;
+    private Bitmap mostRecent;
 
+    // open existing
     public ProjectFiles(File dir) throws Exception {
+        // save project root
         this.dir = dir;
-        this.config = new File(dir, CONFIG_FILE_NAME);
-        this.picture = new File(dir, PICTURE_FILE_NAME);
 
+        width = DEFAULT_WIDTH;
+        height = DEFAULT_HEIGHT;
+        currZoom = DEFAULT_ZOOM;
+
+        // create file object instances
+        this.config = new File(dir, CONFIG_FILE_NAME);
+        this.inputsFile = new File(dir, INPUTS_FILE_NAME);
+        File ultimatePixelsFile = new File(dir, ULTIMATE_FILE_NAME);
         try {
-            BufferedReader br = new BufferedReader(new FileReader(config));
-            String titleLine = br.readLine();
-            if (titleLine.startsWith("title:")) {
-                title = titleLine.substring(6); // "title: is 6 chars
-            } else {
-                throw new Exception("invalid project dir format");
-            }
+            ultimatePixelsFile.createNewFile();
+            ultimatePixelsFile.setWritable(true);
         } catch (Exception e) {
             throw e;
         }
+
+        ultimatePixelArray = new UltimatePixelArray(width, height, ultimatePixelsFile);
+
+        // todo remove in a commit
+        int[] pixelArray = new int[currZoom.width * currZoom.height];
+        ultimatePixelArray.fillPixels(pixelArray, new Zoom(currZoom.xOffset, currZoom.yOffset, currZoom.width, currZoom.height));
+        mostRecent = Bitmap.createBitmap(pixelArray, currZoom.width, currZoom.height, Bitmap.Config.ARGB_8888);
     }
 
+    // create new
     public ProjectFiles(String title, File dir) throws Exception {
-        // Log.e("ProjectFiles", "title is " + title + " and dir is " + dir.getAbsolutePath());
         Date date = new Date();
         Long seconds = date.getTime();
         String secondsStr = seconds.toString();
+
         this.dir = new File(dir, secondsStr);
         this.dir.mkdir();
         dir.setWritable(true);
+
         this.config = new File(this.dir, CONFIG_FILE_NAME);
-        this.picture = new File(this.dir, PICTURE_FILE_NAME);
+        this.inputsFile = new File(this.dir, INPUTS_FILE_NAME);
+        File ultimatePixelsFile = new File(this.dir, ULTIMATE_FILE_NAME);
+
+        width = DEFAULT_WIDTH;
+        height = DEFAULT_HEIGHT;
+        currZoom = DEFAULT_ZOOM;
+
+        ultimatePixelsFile.createNewFile();
+        ultimatePixelsFile.setWritable(true);
+        ultimatePixelArray = new UltimatePixelArray(width, height, ultimatePixelsFile);
+        // todo init file after removing zoom stuff
+
         setTitle(title);
+        inputsFile.createNewFile();
+        inputsFile.setWritable(true);
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public Zoom getCurrZoom() {
+        return currZoom;
     }
 
     public void setTitle(String newTitle) {
@@ -98,16 +136,15 @@ public class ProjectFiles implements Serializable {
         }
     }
 
-    public void saveInputs() {
-        try {
-            picture.createNewFile();
-            picture.setWritable(true);
+    public Bitmap getBitmap() {
+        return mostRecent;
+    }
 
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(picture));
+    public void saveInput(Input toSave) {
+        try {
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(inputsFile));
             DataOutputStream workingStream = new DataOutputStream(bufferedOutputStream);
-            for (Input i : inputs) {
-                i.toOutputStream(workingStream);
-            }
+            toSave.toOutputStream(workingStream);
             workingStream.flush();
             workingStream.close();
         } catch (Exception e) {
@@ -116,14 +153,14 @@ public class ProjectFiles implements Serializable {
         }
     }
 
-    public void loadInputs() throws Exception {
-        inputs = new ArrayList<>();
+    public List<Input> loadInputs() {
+        List<Input> inputs = new ArrayList<>();
 
-        long pictureLen = picture.length();
+        long pictureLen = inputsFile.length();
 
         if (pictureLen == 0) {
             Log.e("loadInputs", "no inputs to load");
-            return;
+            return inputs;
         }
 
         if (pictureLen > Integer.MAX_VALUE) {
@@ -131,7 +168,7 @@ public class ProjectFiles implements Serializable {
         }
 
         try {
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(picture));
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(inputsFile));
             DataInputStream workingStream = new DataInputStream(bufferedInputStream);
 
             int totalBytes = 0;
@@ -143,19 +180,20 @@ public class ProjectFiles implements Serializable {
             }
         } catch (FileNotFoundException fne) {
             Log.e("ProjectFiles", "no inputs to load!");
-            return; // no inputs to load
         } catch (Exception e) {
-            throw e;
+            Log.e("Projectfiles", "exception: " + e.toString());
         }
+
+        return inputs; // no inputs to load
     }
 
-    public LayerDrawable getCurrLayerDrawable() {
-        Input[] currInputs = new Input[inputs.size()];
-        inputs.toArray(currInputs);
-        return new LayerDrawable(currInputs);
-    }
+    public void handleInput(Input next) {
+        // next draws itself to the bitmap in finalize
+        next.finalize(mostRecent);
 
-    public void addInput(Input next) {
-        inputs.add(next);
+        saveInput(next);
+
+        // TODO put the following on its own super fucking low prio thread
+        ultimatePixelArray.update(mostRecent, currZoom);
     }
 }

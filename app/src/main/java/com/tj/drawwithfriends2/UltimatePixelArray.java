@@ -21,23 +21,16 @@ import java.nio.file.StandardOpenOption;
 
 // owned by project files
 @TargetApi(26)
-public class UltimatePixelArray extends PixelArray {
+public class UltimatePixelArray {
+    int width, height;
     File file;
     MappedByteBuffer[] buffs;
 
-    public UltimatePixelArray(int width, int height, File projectRoot) throws Exception {
-        super(width, height);
+    public UltimatePixelArray(int width, int height, File file) throws Exception {
+        this.width = width;
+        this.height = height;
 
-        file = new File(projectRoot, "UltimatePixelArray");
-
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-                file.setWritable(true);
-            } catch (Exception e) {
-                throw e;
-            }
-        }
+        this.file = file;
     }
 
     public void fillPixels(int[] pixelArrray, Zoom currZoom) {
@@ -61,10 +54,8 @@ public class UltimatePixelArray extends PixelArray {
     }
 
     // NOTE: assumes buffs is already mapped and the right dimensions
-    void update(LocalPixelArray localPixelArray) {
-        Zoom currZoom = localPixelArray.getZoom();
+    void update(Bitmap fillFrom, Zoom currZoom) {
         try {
-            Bitmap fillFrom = localPixelArray.getBitmap();
             for (int row = 0; row < currZoom.height; row++) {
                 IntBuffer copyTo = buffs[row].asIntBuffer();
                 // Note: I'm not even gonna bother with hasArray stuff
@@ -85,6 +76,6 @@ public class UltimatePixelArray extends PixelArray {
     }
 
     public int getZoomStartOffset(int rowNum, Zoom currZoom) {
-        return getPixelsWide() * (currZoom.yOffset + rowNum) + currZoom.xOffset;
+        return width * (currZoom.yOffset + rowNum) + currZoom.xOffset;
     }
 }

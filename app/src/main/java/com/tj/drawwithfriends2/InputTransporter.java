@@ -23,7 +23,6 @@ public class InputTransporter {
 
     private Queue<Input> toSave;
     private UltimatePixelArray ultimatePixels;
-    private LocalPixelArray localPixels;
     private ProjectFiles projectFiles;
     private Thread backgroundThread;
 
@@ -33,7 +32,6 @@ public class InputTransporter {
 
         toSave = null;
         ultimatePixels = null;
-        localPixels = null;
     }
 
     public static InputTransporter getInstance() {
@@ -42,15 +40,10 @@ public class InputTransporter {
 
     public void setProjectFiles(ProjectFiles projectFiles) {
         this.projectFiles = projectFiles;
+        inputs = projectFiles.loadInputs();
     }
 
-    public void startTransporter(final UltimatePixelArray ultimatePixels,
-                                 final LocalPixelArray localPixels,
-                                 ProjectFiles projectFiles,
-                                 Queue<Input> inputs) {
-        this.ultimatePixels = ultimatePixels;
-        this.localPixels = localPixels;
-        this.projectFiles = projectFiles;
+    public void startTransporter(Queue<Input> inputs) {
         toSave = inputs;
 
         // create background task
@@ -59,8 +52,7 @@ public class InputTransporter {
             public void run() {
                 while (true) {
                     Input next = toSave.peek();
-                    localPixels.handleInput(next);
-                    ultimatePixels.update(localPixels);
+                    projectFiles.handleInput(next);
                     toSave.remove();
                 }
             }
@@ -80,12 +72,17 @@ public class InputTransporter {
         // TODO
     }
 
-    public Drawable produceDrawable() {
+    // base needs to come in from project activity ow we need to save a context instance
+    public Drawable produceDrawable(Drawable base) {
         // get from local pix, add inputs one by one, add curr input lastly
         List<Drawable> beingProduced = new ArrayList<>();
-        beingProduced.add(localPixels.getBitmapDrawable());
-        for (int i = 0; i < inputs.size(); i++) {
-            beingProduced.add(inputs.get(i));
+        beingProduced.add(base);
+
+        Input[] toIt = new Input[toSave.size()];
+        toSave.toArray(toIt);
+
+        for (int i = 0; i < toIt.length; i++) {
+            beingProduced.add(toIt[i]);
         }
         beingProduced.add(nextInput);
         Drawable[] drawables = new Drawable[beingProduced.size()];

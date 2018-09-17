@@ -3,7 +3,6 @@ package com.tj.drawwithfriends2.Input;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
@@ -13,14 +12,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.tj.drawwithfriends2.LocalPixelArray;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by TJ on 8/14/2018.
@@ -53,11 +48,10 @@ public class Input extends Drawable implements InputSaver {
 
     }
 
-    public Canvas finalize(Bitmap underlying) {
+    public void finalize(Bitmap underlying) {
         Canvas drawTo = new Canvas();
         drawTo.setBitmap(underlying);
         draw(drawTo);
-        return drawTo;
     }
 
     @Override

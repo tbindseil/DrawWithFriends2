@@ -67,7 +67,7 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <com.tj.drawwithfriends2.PaintingImageView
+    <ImageView
         android:id="@+id/mainCanvas"
         android:layout_width="0dp"
         android:layout_height="0dp"
