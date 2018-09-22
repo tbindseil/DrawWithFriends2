@@ -1,5 +1,6 @@
 package com.tj.drawwithfriends2;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -52,11 +53,20 @@ public class InputTransporter {
             public void run() {
                 while (true) {
                     Input next = toSave.peek();
+                    if (next == null) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (Exception e) {
+                            continue;
+                        }
+                        continue;
+                    }
                     projectFiles.handleInput(next);
                     toSave.remove();
                 }
             }
         });
+        backgroundThread.start();
     }
 
     public void addRect(Rect r, int c, double rotation) {
@@ -73,21 +83,14 @@ public class InputTransporter {
     }
 
     // base needs to come in from project activity ow we need to save a context instance
-    public Drawable produceDrawable(Drawable base) {
-        // get from local pix, add inputs one by one, add curr input lastly
-        List<Drawable> beingProduced = new ArrayList<>();
-        beingProduced.add(base);
-
+    public Bitmap produceDrawable(Bitmap drawTo) {
         Input[] toIt = new Input[toSave.size()];
         toSave.toArray(toIt);
 
         for (int i = 0; i < toIt.length; i++) {
-            beingProduced.add(toIt[i]);
+            drawTo = toIt[i].imprintOnto(drawTo);
         }
-        beingProduced.add(nextInput);
-        Drawable[] drawables = new Drawable[beingProduced.size()];
-        beingProduced.toArray(drawables);
-        LayerDrawable ret = new LayerDrawable(drawables);
-        return ret;
+
+        return drawTo;
     }
 }

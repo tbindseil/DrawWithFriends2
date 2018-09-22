@@ -39,14 +39,12 @@ public class ProjectFiles implements Serializable {
     private static final String CONFIG_FILE_NAME = "config";
     private static final String INPUTS_FILE_NAME = "inputsFile";
     private static final String ULTIMATE_FILE_NAME = "UltimatePixels";
-    private static final int DEFAULT_WIDTH = 4096;
-    private static final int DEFAULT_HEIGHT = 7020;
+    private static final int DEFAULT_WIDTH = 48;
+    private static final int DEFAULT_HEIGHT = 64;
 
     private String title;
     // TODO add these to config file
     private int width, height;
-
-    private Bitmap mostRecent;
 
     // open existing
     public ProjectFiles(File dir) throws Exception {
@@ -59,20 +57,6 @@ public class ProjectFiles implements Serializable {
         // create file object instances
         this.config = new File(dir, CONFIG_FILE_NAME);
         this.inputsFile = new File(dir, INPUTS_FILE_NAME);
-        File ultimatePixelsFile = new File(dir, ULTIMATE_FILE_NAME);
-        try {
-            ultimatePixelsFile.createNewFile();
-            ultimatePixelsFile.setWritable(true);
-        } catch (Exception e) {
-            throw e;
-        }
-
-        ultimatePixelArray = new UltimatePixelArray(width, height, ultimatePixelsFile);
-
-        // todo remove in a commit
-        int[] pixelArray = new int[width * height];
-        ultimatePixelArray.fillPixels(pixelArray);
-        mostRecent = Bitmap.createBitmap(pixelArray, width, height, Bitmap.Config.ARGB_8888);
     }
 
     // create new
@@ -87,24 +71,24 @@ public class ProjectFiles implements Serializable {
 
         this.config = new File(this.dir, CONFIG_FILE_NAME);
         this.inputsFile = new File(this.dir, INPUTS_FILE_NAME);
-        File ultimatePixelsFile = new File(this.dir, ULTIMATE_FILE_NAME);
 
         width = DEFAULT_WIDTH;
         height = DEFAULT_HEIGHT;
-
-        ultimatePixelsFile.createNewFile();
-        ultimatePixelsFile.setWritable(true);
-        ultimatePixelArray = new UltimatePixelArray(width, height, ultimatePixelsFile);
-        // todo init file after removing zoom stuff
 
         setTitle(title);
         inputsFile.createNewFile();
         inputsFile.setWritable(true);
     }
 
+    public File getDir() { return dir; }
+
     public String getTitle() {
         return title;
     }
+
+    public int getWidth() { return width; }
+
+    public int getHeight() { return height; }
 
     public void setTitle(String newTitle) {
         title = newTitle;
@@ -128,7 +112,7 @@ public class ProjectFiles implements Serializable {
     }
 
     public Bitmap getBitmap() {
-        return mostRecent;
+        return ultimatePixelArray.getBitmap();
     }
 
     public void saveInput(Input toSave) {
@@ -178,13 +162,16 @@ public class ProjectFiles implements Serializable {
         return inputs; // no inputs to load
     }
 
-    public void handleInput(Input next) {
-        // next draws itself to the bitmap in finalize
-        next.finalize(mostRecent);
+    public void init() throws Exception {
+        File ultimatePixelsFile = new File(this.dir, ULTIMATE_FILE_NAME);
+        ultimatePixelArray = new UltimatePixelArray(width, height, ultimatePixelsFile.getAbsolutePath());
+        ultimatePixelArray.init();
+    }
 
+    public void handleInput(Input next) {
         saveInput(next);
 
         // TODO put the following on its own super fucking low prio thread
-        ultimatePixelArray.update(mostRecent);
+        ultimatePixelArray.update(next);
     }
 }

@@ -86,7 +86,7 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
         Log.e("ChooseOrCreateActivity", "launching " + toLaunch.getTitle());
 
         Intent i = new Intent(ChooseOrCreateActivity.this, ProjectActivity.class);
-        i.putExtra("ProjectFiles", toLaunch);
+        i.putExtra("ProjectFilesDirName", toLaunch.getDir());
         startActivity(i);
     }
 

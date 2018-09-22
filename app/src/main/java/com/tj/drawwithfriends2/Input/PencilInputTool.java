@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.tj.drawwithfriends2.InputTransporter;
@@ -23,10 +24,14 @@ public class PencilInputTool implements InputTool {
     int color;
     int thickness;
 
-    public PencilInputTool() {
+    int width, height;
+
+    public PencilInputTool(int width, int height) {
         lastTouch = null;
         this.color = Color.RED;
-        this.thickness = 0;
+        this.thickness = 2;
+        this.width = width;
+        this.height = height;
     }
 
     @Override
@@ -35,30 +40,45 @@ public class PencilInputTool implements InputTool {
             lastTouch = null;
         }
 
-        Point currTouch = new Point((int)event.getX(), (int)event.getY());
+        int filteredX = filterX((int)event.getX());
+        int filteredY = filterY((int)event.getY());
+        Point currTouch = new Point(filteredX, filteredY);
 
         Rect toAdd = null;
         double rotation = 0;
-        if (lastTouch == null) {
+        //if (lastTouch == null) {
             toAdd = new Rect(currTouch.x - thickness,
                     currTouch.y - thickness,
                     currTouch.x + thickness,
                     currTouch.y + thickness);
-        } else {
+        /*} else {
             int deltaX = currTouch.x - lastTouch.x;
             int deltaY = currTouch.y - lastTouch.y;
             Point midPoint = new Point(deltaX / 2, deltaY / 2);
             int lineLenth = (int)Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
             toAdd = new Rect(midPoint.x - (lineLenth / 2), midPoint.y + thickness, midPoint.x + (lineLenth / 2), midPoint.y - thickness);
-            rotation = Math.atan(deltaY / deltaX);
-        }
-        lastTouch = new Point((int) event.getX(), (int) event.getY());
+            if (deltaX != 0) {
+                rotation = Math.toDegrees(Math.atan(deltaY / deltaX));
+            } else {
+                rotation = 90 * (deltaY > 0 ? 1 : -1);
+            }
+            rotation = 0; // remove
+        }*/
+        lastTouch = new Point(filteredX, filteredY);
 
-        InputTransporter.getInstance().addRect(toAdd, color, rotation);
+        InputTransporter.getInstance().addRect(toAdd, Color.RED, rotation);
 
         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             InputTransporter.getInstance().finishInput();
         }
+    }
+
+    private int filterX(int x) {
+        return x / width;
+    }
+
+    private int filterY(int y) {
+        return y / height;
     }
 
     public void setColor(int color) { this.color = color; }

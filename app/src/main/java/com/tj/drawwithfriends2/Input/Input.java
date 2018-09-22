@@ -3,6 +3,7 @@ package com.tj.drawwithfriends2.Input;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
@@ -38,6 +39,8 @@ public class Input extends Drawable implements InputSaver {
     public void draw(@NonNull Canvas drawTo) {
         Paint paint = new Paint();
 
+        Log.e("draw", "canvas height is " + drawTo.getHeight() + "and width is " + drawTo.getWidth());
+
         for (RotatedRect rotatedRect : rects) {
             paint.setColor(rotatedRect.c);
             drawTo.save();
@@ -45,13 +48,15 @@ public class Input extends Drawable implements InputSaver {
             drawTo.drawRect(rotatedRect.r, paint);
             drawTo.restore();
         }
-
     }
 
-    public void finalize(Bitmap underlying) {
+    public Bitmap imprintOnto(Bitmap underlying) {
         Canvas drawTo = new Canvas();
-        drawTo.setBitmap(underlying);
+        Bitmap mutable = underlying.copy(Bitmap.Config.ARGB_8888, true);
+        drawTo.setBitmap(mutable);
         draw(drawTo);
+
+        return mutable;
     }
 
     @Override

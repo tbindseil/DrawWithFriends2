@@ -24,6 +24,7 @@ import com.tj.drawwithfriends2.Input.Input;
 import com.tj.drawwithfriends2.Input.InputTool;
 import com.tj.drawwithfriends2.Input.PencilInputTool;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -53,16 +54,17 @@ public class ProjectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
 
-        Serializable ser = getIntent().getSerializableExtra("ProjectFiles");
+        Serializable ser = getIntent().getSerializableExtra("ProjectFilesDirName");
         Toolbar myToolbar = findViewById(R.id.projectToolBar);
         try {
-            currProject = (ProjectFiles) ser;
+            File dirName = (File) ser;
+            currProject = new ProjectFiles(dirName);
             myToolbar.setTitle(currProject.getTitle());
-            currProject.loadInputs(); // WHERE I LEFT OFF, set up input transporter and start things in the right order, tie up loose ends, begin long strenuous process of making this actually work
+            currProject.init();
         } catch (Exception e) {
             myToolbar.setTitle("error");
             Log.e("ProjectActivity", "exception loading edits or getting title");
-            Log.e("ProjectActivity", e.toString());
+            e.printStackTrace();
         }
 
         setSupportActionBar(myToolbar);
@@ -118,9 +120,9 @@ public class ProjectActivity extends AppCompatActivity {
 
         colorButton = findViewById(R.id.colorButton);
 
-        currTool = new PencilInputTool();
-
         projectPicture = findViewById(R.id.mainCanvas);
+
+        currTool = new PencilInputTool(currProject.getWidth(), currProject.getHeight());
 
         // start input transporter
         InputTransporter.getInstance().setProjectFiles(currProject);
@@ -140,9 +142,9 @@ public class ProjectActivity extends AppCompatActivity {
 
     private void updatePaintingImage() {
         Bitmap toDraw = currProject.getBitmap();
-        Drawable base = new BitmapDrawable(ProjectActivity.super.getResources(), toDraw);
-        base = InputTransporter.getInstance().produceDrawable(base);
-        projectPicture.setImageDrawable(base);
+        toDraw = InputTransporter.getInstance().produceDrawable(toDraw);
+        Drawable result = new BitmapDrawable(ProjectActivity.super.getResources(), toDraw);
+        projectPicture.setImageDrawable(result);
         projectPicture.invalidate();
     }
 
@@ -199,11 +201,6 @@ public class ProjectActivity extends AppCompatActivity {
         colorButton.setTextColor(color);
 
         colorButton.invalidate();
-    }
-
-
-    public BitmapDrawable getBitmapDrawable() {
-        return new BitmapDrawable(this.getResources(), currProject.getBitmap());
     }
 
     /**
