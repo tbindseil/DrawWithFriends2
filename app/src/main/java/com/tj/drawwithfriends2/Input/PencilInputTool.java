@@ -40,12 +40,10 @@ public class PencilInputTool implements InputTool {
         int filteredX = filterX((int)event.getX());
         int filteredY = filterY((int)event.getY());
 
-        InputTransporter.getInstance().addPoint(filteredX, filteredY, color);
-/*
-        Log.e("handleTouch", "x is " + event.getX() + " y is " + event.getY());
-        Log.e("handleTouch", "raw x is " + event.getRawX() + " raw y is " + event.getRawY());
-        Log.e("handleTouch", "filteredX is " + filteredX + " filteredY is " + filteredY);
-*/
+        if (filteredX >= 0 && filteredX < width && filteredY >= 0 && filteredY < height) {
+            InputTransporter.getInstance().addPoint(filteredX, filteredY, color);
+        }
+
         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             InputTransporter.getInstance().finishInput();
         }
