@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.tj.drawwithfriends2.InputTransporter;
@@ -18,12 +19,20 @@ public class PencilInputTool implements InputTool {
     int thickness;
 
     int width, height;
+    double maxX, maxY;
 
     public PencilInputTool(int width, int height) {
         this.color = Color.RED;
         this.thickness = 2;
         this.width = width;
         this.height = height;
+        this.maxX = -1;
+        this.maxY = -1;
+    }
+
+    public void setMaxXY(double maxX, double maxY) {
+        this.maxX = maxX;
+        this.maxY = maxY;
     }
 
     @Override
@@ -32,18 +41,30 @@ public class PencilInputTool implements InputTool {
         int filteredY = filterY((int)event.getY());
 
         InputTransporter.getInstance().addPoint(filteredX, filteredY, color);
-
+/*
+        Log.e("handleTouch", "x is " + event.getX() + " y is " + event.getY());
+        Log.e("handleTouch", "raw x is " + event.getRawX() + " raw y is " + event.getRawY());
+        Log.e("handleTouch", "filteredX is " + filteredX + " filteredY is " + filteredY);
+*/
         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             InputTransporter.getInstance().finishInput();
         }
     }
 
     private int filterX(int x) {
-        return x / width;
+        if (maxX < 0) {
+            Log.e("filterX", "maxX not set yet");
+            return 0;
+        }
+        return (int)((width / maxX) * x);
     }
 
     private int filterY(int y) {
-        return y / height;
+        if (maxY < 0) {
+            Log.e("filterY", "maxY not set yet");
+            return 0;
+        }
+        return (int)((height / maxY) * y);
     }
 
     public void setColor(int color) { this.color = color; }

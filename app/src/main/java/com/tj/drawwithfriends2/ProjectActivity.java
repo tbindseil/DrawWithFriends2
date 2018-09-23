@@ -120,13 +120,13 @@ public class ProjectActivity extends AppCompatActivity {
 
         projectPicture = findViewById(R.id.mainCanvas);
 
-        currTool = new PencilInputTool(currProject.getWidth(), currProject.getHeight());
-
         // start input transporter
         InputTransporter.getInstance().setProjectFiles(currProject);
         Queue<Input> toSave = new LinkedBlockingQueue<>();
         InputTransporter.getInstance().startTransporter(toSave);
         updatePaintingImage();
+
+        currTool = new PencilInputTool(currProject.getWidth(), currProject.getHeight());
 
         projectPicture.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -150,6 +150,11 @@ public class ProjectActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         // see handleInput TODO currProject.saveInputs();
+    }
+
+
+    public void onWindowFocusChanged(boolean hasFocus) {
+        currTool.setMaxXY(projectPicture.getWidth(), projectPicture.getHeight());
     }
 
     public void handleColorClick(View view) {

@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 
 public interface InputTool {
     public void handleTouch(MotionEvent event);
+    public void setMaxXY(double maxX, double maxY);
     public void setColor(int color);
     public void setThickness(int thickness);
 }

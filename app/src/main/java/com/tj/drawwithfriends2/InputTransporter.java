@@ -20,7 +20,6 @@ public class InputTransporter {
     private Input nextInput;
 
     private Queue<Input> toSave;
-    private UltimatePixelArray ultimatePixels;
     private ProjectFiles projectFiles;
     private Thread backgroundThread;
 
@@ -29,7 +28,6 @@ public class InputTransporter {
         nextInput = new Input();
 
         toSave = null;
-        ultimatePixels = null;
     }
 
     public static InputTransporter getInstance() {
