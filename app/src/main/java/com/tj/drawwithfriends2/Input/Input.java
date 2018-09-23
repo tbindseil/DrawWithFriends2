@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -16,64 +17,38 @@ import android.util.Log;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TJ on 8/14/2018.
  */
 
 @TargetApi(26)
-public class Input extends Drawable implements InputSaver {
+public class Input implements InputSaver {
     // Note: these will always represents UltimateCoordinates
-    private List<RotatedRect> rects;
+    Map<HashPoint, Integer> pointToColorMap;
 
     public Input() {
-        rects = new ArrayList<>();
+        pointToColorMap = new HashMap<>();
     }
 
-    public void addRect(Rect r, int color, double rotation) {
-        rects.add(new RotatedRect(r, color, rotation));
-    }
-
-    @Override
-    public void draw(@NonNull Canvas drawTo) {
-        Paint paint = new Paint();
-
-        for (RotatedRect rotatedRect : rects) {
-            paint.setColor(rotatedRect.c);
-            drawTo.save();
-            drawTo.rotate((float) rotatedRect.rotation, rotatedRect.r.left, rotatedRect.r.top);
-            drawTo.drawRect(rotatedRect.r, paint);
-            drawTo.restore();
-        }
+    public void addPoint(int x, int y, int color) {
+        pointToColorMap.put(new HashPoint(x, y), color);
     }
 
     public Bitmap imprintOnto(Bitmap underlying) {
-        Canvas drawTo = new Canvas();
         Bitmap mutable = underlying.copy(Bitmap.Config.ARGB_8888, true);
-        drawTo.setBitmap(mutable);
-        draw(drawTo);
-
+        for (Point p: pointToColorMap.keySet()) {
+            mutable.setPixel(p.x, p.y, pointToColorMap.get(p));
+        }
         return mutable;
     }
 
     @Override
-    public void setAlpha(int alpha) {
-        Log.e("PencilInput", "setAlpha was called... you should find out why");
-    }
-
-    @Override
-    public void setColorFilter(@Nullable ColorFilter colorFilter) {
-        // do nothing
-    }
-
-    @Override
-    public int getOpacity() {
-        return PixelFormat.OPAQUE;
-    }
-
-    @Override
     public void toOutputStream(DataOutputStream out) {
+/*TODO
         int totalBytes = 1 + 1 + (rects.size() * (2 + 1 + 4));
         try {
             out.writeInt(totalBytes);
@@ -89,11 +64,14 @@ public class Input extends Drawable implements InputSaver {
         } catch (Exception e) {
             Log.e("toOutputStream", "excecpion: " + e.toString());
         }
+       */
     }
 
     @Override
     public void fromInputStream(DataInputStream in) {
+        /* TODO
         try {
+
             int numRects = in.readInt();
             rects.clear();
             for (int i = 0; i < numRects; i++) {
@@ -101,6 +79,6 @@ public class Input extends Drawable implements InputSaver {
             }
         } catch (Exception e) {
             Log.e("fromInputStream", "exeption: " + e.toString());
-        }
+        }*/
     }
 }

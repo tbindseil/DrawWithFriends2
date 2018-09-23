@@ -1,10 +1,7 @@
 package com.tj.drawwithfriends2;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 
 import com.tj.drawwithfriends2.Input.Input;
 
@@ -69,8 +66,8 @@ public class InputTransporter {
         backgroundThread.start();
     }
 
-    public void addRect(Rect r, int c, double rotation) {
-        nextInput.addRect(r, c, rotation);
+    public void addPoint(int x, int y, int c) {
+        nextInput.addPoint(x, y, c);
     }
 
     public void finishInput() {
