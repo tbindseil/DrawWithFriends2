@@ -39,8 +39,6 @@ public class Input extends Drawable implements InputSaver {
     public void draw(@NonNull Canvas drawTo) {
         Paint paint = new Paint();
 
-        Log.e("draw", "canvas height is " + drawTo.getHeight() + "and width is " + drawTo.getWidth());
-
         for (RotatedRect rotatedRect : rects) {
             paint.setColor(rotatedRect.c);
             drawTo.save();

@@ -26,9 +26,7 @@ import com.tj.drawwithfriends2.Input.PencilInputTool;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @TargetApi(23)
@@ -142,7 +140,7 @@ public class ProjectActivity extends AppCompatActivity {
 
     private void updatePaintingImage() {
         Bitmap toDraw = currProject.getBitmap();
-        toDraw = InputTransporter.getInstance().produceDrawable(toDraw);
+        toDraw = InputTransporter.getInstance().produceBitmapToDraw(toDraw);
         Drawable result = new BitmapDrawable(ProjectActivity.super.getResources(), toDraw);
         projectPicture.setImageDrawable(result);
         projectPicture.invalidate();

@@ -42,19 +42,20 @@ public class PencilInputTool implements InputTool {
 
         int filteredX = filterX((int)event.getX());
         int filteredY = filterY((int)event.getY());
+
         Point currTouch = new Point(filteredX, filteredY);
 
         Rect toAdd = null;
         double rotation = 0;
-        //if (lastTouch == null) {
+        if (lastTouch == null) {
             toAdd = new Rect(currTouch.x - thickness,
                     currTouch.y - thickness,
                     currTouch.x + thickness,
                     currTouch.y + thickness);
-        /*} else {
+        } else {
             int deltaX = currTouch.x - lastTouch.x;
             int deltaY = currTouch.y - lastTouch.y;
-            Point midPoint = new Point(deltaX / 2, deltaY / 2);
+            Point midPoint = new Point(currTouch.x + (deltaX / 2), currTouch.y + (deltaY / 2));
             int lineLenth = (int)Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
             toAdd = new Rect(midPoint.x - (lineLenth / 2), midPoint.y + thickness, midPoint.x + (lineLenth / 2), midPoint.y - thickness);
             if (deltaX != 0) {
@@ -62,11 +63,10 @@ public class PencilInputTool implements InputTool {
             } else {
                 rotation = 90 * (deltaY > 0 ? 1 : -1);
             }
-            rotation = 0; // remove
-        }*/
+        }
         lastTouch = new Point(filteredX, filteredY);
 
-        InputTransporter.getInstance().addRect(toAdd, Color.RED, rotation);
+        InputTransporter.getInstance().addRect(toAdd, color, rotation);
 
         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             InputTransporter.getInstance().finishInput();

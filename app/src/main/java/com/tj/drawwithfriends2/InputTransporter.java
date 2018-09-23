@@ -82,14 +82,15 @@ public class InputTransporter {
         // TODO
     }
 
-    // base needs to come in from project activity ow we need to save a context instance
-    public Bitmap produceDrawable(Bitmap drawTo) {
+    public Bitmap produceBitmapToDraw(Bitmap drawTo) {
         Input[] toIt = new Input[toSave.size()];
         toSave.toArray(toIt);
 
         for (int i = 0; i < toIt.length; i++) {
             drawTo = toIt[i].imprintOnto(drawTo);
         }
+
+        drawTo = nextInput.imprintOnto(drawTo);
 
         return drawTo;
     }
