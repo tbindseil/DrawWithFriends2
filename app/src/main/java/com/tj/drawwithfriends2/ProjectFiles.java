@@ -57,6 +57,8 @@ public class ProjectFiles implements Serializable {
         // create file object instances
         this.config = new File(dir, CONFIG_FILE_NAME);
         this.inputsFile = new File(dir, INPUTS_FILE_NAME);
+
+        ReadConfigFile();
     }
 
     // create new
@@ -80,15 +82,21 @@ public class ProjectFiles implements Serializable {
         inputsFile.setWritable(true);
     }
 
-    public File getDir() { return dir; }
+    public File getDir() {
+        return dir;
+    }
 
     public String getTitle() {
         return title;
     }
 
-    public int getWidth() { return width; }
+    public int getWidth() {
+        return width;
+    }
 
-    public int getHeight() { return height; }
+    public int getHeight() {
+        return height;
+    }
 
     public void setTitle(String newTitle) {
         title = newTitle;
@@ -108,6 +116,21 @@ public class ProjectFiles implements Serializable {
             fileOutputStream.close();
         } catch (Exception e) {
             Log.e("ProjectFiles", "failed to writeChanges!");
+        }
+    }
+
+    private void ReadConfigFile() {
+        try {
+            BufferedReader fr = new BufferedReader(new FileReader(config));
+            String line = fr.readLine();
+            String[] arr = line.split(":");
+            if (arr.length > 1) {
+                title = arr[1];
+            } else {
+                Log.e("readConfigFile", "invalid format, couldn't find title");
+            }
+        } catch (Exception e) {
+            Log.e("readConfigFile", e.toString());
         }
     }
 

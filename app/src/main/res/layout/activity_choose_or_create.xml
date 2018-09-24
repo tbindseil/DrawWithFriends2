@@ -15,11 +15,10 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"></android.support.v7.widget.Toolbar>
 
-    <LinearLayout
-        android:id="@+id/fileListLayout"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,7 +26,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chooseOrCreateToolBar"
         app:layout_constraintVertical_bias="1.0">
-    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fileListLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible"></LinearLayout>
+    </ScrollView>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/editProjectLayout"
@@ -72,8 +78,8 @@
             android:id="@+id/createStdButton"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:text="Create"
             android:onClick="handleCreateButton"
+            android:text="Create"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.25"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -85,8 +91,8 @@
             android:id="@+id/cancelStdButton"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:text="Cancel"
             android:onClick="handleCancelButton"
+            android:text="Cancel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.75"
             app:layout_constraintLeft_toLeftOf="parent"
