@@ -34,7 +34,7 @@ public class ProjectActivity extends AppCompatActivity {
     private ProjectFiles currProject;
 
     private ConstraintLayout normalLayout;
-    private ImageView projectPicture;
+    private NoFilterImageView projectPicture;
 
     private InputTool currTool;
 
