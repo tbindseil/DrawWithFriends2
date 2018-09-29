@@ -42,6 +42,13 @@ public class PencilInputTool implements InputTool {
             lastTouch = null;
         }
 
+        // TODO: what to do with multiple pointers?
+        if (event.getPointerCount() > 1) {
+            lastTouch = null;
+            InputTransporter.getInstance().finishInput();
+            return;
+        }
+
         int filteredX = filterX((int) event.getX());
         int filteredY = filterY((int) event.getY());
         Point currTouch = new Point(filteredX, filteredY);

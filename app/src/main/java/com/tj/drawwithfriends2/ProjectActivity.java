@@ -11,9 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -34,9 +36,7 @@ public class ProjectActivity extends AppCompatActivity {
     private ProjectFiles currProject;
 
     private ConstraintLayout normalLayout;
-    private NoFilterImageView projectPicture;
-
-    private InputTool currTool;
+    private PaintingImageView projectPicture;
 
     private SeekBar thicknessBar;
     private int thickness;
@@ -46,6 +46,9 @@ public class ProjectActivity extends AppCompatActivity {
     private int red, green, blue;
 
     private View currFocus;
+
+    private ScaleGestureDetector mScaleDetector;
+    float mScaleFactor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,30 +123,15 @@ public class ProjectActivity extends AppCompatActivity {
 
         projectPicture = findViewById(R.id.mainCanvas);
 
+        projectPicture.setContext(this.getApplicationContext());
+        projectPicture.setProjectFiles(currProject);
+        projectPicture.setInputTool(new PencilInputTool(currProject.getWidth(), currProject.getHeight()));
+
         // start input transporter
         InputTransporter.getInstance().setProjectFiles(currProject);
         Queue<Input> toSave = new LinkedBlockingQueue<>();
         InputTransporter.getInstance().startTransporter(toSave);
-        updatePaintingImage();
-
-        currTool = new PencilInputTool(currProject.getWidth(), currProject.getHeight());
-
-        projectPicture.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                currTool.handleTouch(motionEvent);
-                updatePaintingImage();
-                return true;
-            }
-        });
-    }
-
-    private void updatePaintingImage() {
-        Bitmap toDraw = currProject.getBitmap();
-        toDraw = InputTransporter.getInstance().produceBitmapToDraw(toDraw);
-        Drawable result = new BitmapDrawable(ProjectActivity.super.getResources(), toDraw);
-        projectPicture.setImageDrawable(result);
-        projectPicture.invalidate();
+        projectPicture.updatePaintingImage();
     }
 
     @Override
@@ -154,7 +142,7 @@ public class ProjectActivity extends AppCompatActivity {
 
 
     public void onWindowFocusChanged(boolean hasFocus) {
-        currTool.setMaxXY(projectPicture.getWidth(), projectPicture.getHeight());
+        projectPicture.setMaxXY();
     }
 
     public void handleColorClick(View view) {
@@ -197,7 +185,7 @@ public class ProjectActivity extends AppCompatActivity {
         int color = ((int) (0xff << 24)) | ((int) (red << 16)) | ((int) (green << 8)) | ((int) (blue));
         colorButton.setBackgroundColor(color);
 
-        currTool.setColor(color);
+        projectPicture.setColor(color);
 
         color = ~color;
         color |= (0xff000000);

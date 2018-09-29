@@ -57,6 +57,9 @@ public class InputTransporter {
                         continue;
                     }
                     projectFiles.handleInput(next);
+                    // note this line caused a no such element exception after testing
+                    // that no drawing occurred when i used more than one finger. then
+                    // i think i touched the back button
                     toSave.remove();
                 }
             }
