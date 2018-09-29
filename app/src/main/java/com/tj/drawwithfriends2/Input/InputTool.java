@@ -4,13 +4,17 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.MotionEvent;
 
+import com.tj.drawwithfriends2.Zoom;
+
 /**
  * Created by TJ on 8/9/2018.
  */
 
 public interface InputTool {
-    public void handleTouch(MotionEvent event);
-    public void setMaxXY(double maxX, double maxY);
-    public void setColor(int color);
-    public void setThickness(int thickness);
+    void handleTouch(MotionEvent event);
+    void setCurrZoom(Zoom currZoom);
+    void setPixelsWide(double pixelsWide);
+    void setPixelsTall(double pixelsTall);
+    void setColor(int color);
+    void setThickness(int thickness);
 }

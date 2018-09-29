@@ -1,7 +1,6 @@
 package com.tj.drawwithfriends2;
 
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 
 import com.tj.drawwithfriends2.Input.Input;
 
@@ -56,7 +55,7 @@ public class InputTransporter {
                         }
                         continue;
                     }
-                    projectFiles.handleInput(next);
+                    projectFiles.processInput(next);
                     // note this line caused a no such element exception after testing
                     // that no drawing occurred when i used more than one finger. then
                     // i think i touched the back button

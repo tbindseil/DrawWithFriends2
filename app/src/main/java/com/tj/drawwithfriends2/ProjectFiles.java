@@ -41,9 +41,15 @@ public class ProjectFiles implements Serializable {
     private static final String ULTIMATE_FILE_NAME = "UltimatePixels";
     private static final int DEFAULT_WIDTH = 48;
     private static final int DEFAULT_HEIGHT = 64;
+    private static final int DEFAULT_ZOOM_WIDTH = DEFAULT_WIDTH;
+    private static final int DEFAULT_ZOOM_HEIGHT = DEFAULT_HEIGHT;
+    private static final int DEFAULT_XOFFSET = 0;
+    private static final int DEFAULT_YOFFSET = 0;
+
 
     private String title;
     // TODO add these to config file
+    private Zoom currZoom;
     private int width, height;
 
     // open existing
@@ -51,6 +57,11 @@ public class ProjectFiles implements Serializable {
         // save project root
         this.dir = dir;
 
+        int zoomWidth = DEFAULT_ZOOM_WIDTH;
+        int zoomHeight = DEFAULT_ZOOM_HEIGHT;
+        int xOffset = DEFAULT_XOFFSET;
+        int yOffset = DEFAULT_YOFFSET;
+        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight);
         width = DEFAULT_WIDTH;
         height = DEFAULT_HEIGHT;
 
@@ -74,6 +85,11 @@ public class ProjectFiles implements Serializable {
         this.config = new File(this.dir, CONFIG_FILE_NAME);
         this.inputsFile = new File(this.dir, INPUTS_FILE_NAME);
 
+        int zoomWidth = DEFAULT_ZOOM_WIDTH;
+        int zoomHeight = DEFAULT_ZOOM_HEIGHT;
+        int xOffset = DEFAULT_XOFFSET;
+        int yOffset = DEFAULT_YOFFSET;
+        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight);
         width = DEFAULT_WIDTH;
         height = DEFAULT_HEIGHT;
 
@@ -90,18 +106,16 @@ public class ProjectFiles implements Serializable {
         return title;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
+    public Zoom getCurrZoom() { return currZoom; }
 
     public void setTitle(String newTitle) {
         title = newTitle;
 
         writeConfigChanges();
+    }
+
+    public void updateZoom() {
+        // this should be easy if the caller does shit right....
     }
 
     private void writeConfigChanges() {
@@ -191,7 +205,7 @@ public class ProjectFiles implements Serializable {
         ultimatePixelArray.init();
     }
 
-    public void handleInput(Input next) {
+    public void processInput(Input next) {
         saveInput(next);
 
         // TODO put the following on its own super fucking low prio thread

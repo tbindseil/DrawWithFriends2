@@ -125,7 +125,7 @@ public class ProjectActivity extends AppCompatActivity {
 
         projectPicture.setContext(this.getApplicationContext());
         projectPicture.setProjectFiles(currProject);
-        projectPicture.setInputTool(new PencilInputTool(currProject.getWidth(), currProject.getHeight()));
+        projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom()));
 
         // start input transporter
         InputTransporter.getInstance().setProjectFiles(currProject);
@@ -137,12 +137,12 @@ public class ProjectActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // see handleInput TODO currProject.saveInputs();
+        // see processInput TODO currProject.saveInputs();
     }
 
 
     public void onWindowFocusChanged(boolean hasFocus) {
-        projectPicture.setMaxXY();
+        projectPicture.notifyOfWidthAndHeight();
     }
 
     public void handleColorClick(View view) {

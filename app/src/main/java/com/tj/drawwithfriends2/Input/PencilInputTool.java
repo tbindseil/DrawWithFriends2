@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.tj.drawwithfriends2.InputTransporter;
+import com.tj.drawwithfriends2.Zoom;
 
 /**
  * Created by TJ on 8/9/2018.
@@ -15,25 +16,19 @@ import com.tj.drawwithfriends2.InputTransporter;
 
 @TargetApi(23)
 public class PencilInputTool implements InputTool {
+    // note last touch is in terms of ultimatecoords
     Point lastTouch;
     int color;
     int thickness;
 
-    int width, height;
-    double maxX, maxY;
+    double pixelsWide, pixelsTall;
 
-    public PencilInputTool(int width, int height) {
+    Zoom currZoom;
+
+    public PencilInputTool(Zoom currZoom) {
         this.color = Color.RED;
         this.thickness = 2;
-        this.width = width;
-        this.height = height;
-        this.maxX = -1;
-        this.maxY = -1;
-    }
-
-    public void setMaxXY(double maxX, double maxY) {
-        this.maxX = maxX;
-        this.maxY = maxY;
+        this.currZoom = currZoom;
     }
 
     @Override
@@ -49,25 +44,32 @@ public class PencilInputTool implements InputTool {
             return;
         }
 
-        int filteredX = filterX((int) event.getX());
-        int filteredY = filterY((int) event.getY());
-        Point currTouch = new Point(filteredX, filteredY);
+        // convert from absolute position on the screen to where in my grid the point is
+        // TODO i think my scaling is off for some reason
+        int currX = pixelXToCurrX((int) event.getX());
+        int currY = pixelYToCurrY((int) event.getY());
 
-        if (filteredX < 0) {
-            filteredX = 0;
+        // check bounds, don't mark stuff thats not in the currently zoomed version of the painting
+        if (currX < 0) {
+            currX = 0;
         }
-        if (filteredX >= width) {
-            filteredX = width;
+        if (currX >= currZoom.currWidth) {
+            currX = currZoom.currWidth;
         }
-        if (filteredY < 0) {
-            filteredY = 0;
+        if (currY < 0) {
+            currY = 0;
         }
-        if (filteredY >= height) {
-            filteredY = height;
+        if (currY >= currZoom.currHeight) {
+            currY = currZoom.currHeight;
         }
+
+        // convert from currCoord to ultimateCoord
+        int ultimateX = currZoom.currXToUltimateX(currX);
+        int ultimateY = currZoom.currYToUltimateY(currY);
+        Point currTouch = new Point(ultimateX, ultimateY);
 
         if (lastTouch == null) {
-            InputTransporter.getInstance().addPoint(filteredX, filteredY, color);
+            InputTransporter.getInstance().addPoint(currX, currY, color);
         } else {
             plotLine(currTouch);
         }
@@ -79,6 +81,13 @@ public class PencilInputTool implements InputTool {
         }
     }
 
+    @Override
+    public void setCurrZoom(Zoom currZoom) {
+        this.currZoom = currZoom;
+    }
+
+    public void setPixelsWide(double pixelsWide) { this.pixelsWide = pixelsWide; }
+    public void setPixelsTall(double pixelsTall) { this.pixelsTall = pixelsTall; }
     // thanks wikipedia and Jack Bresenham
 
     private void plotLineLow(int x0, int y0, int x1, int y1) {
@@ -143,20 +152,20 @@ public class PencilInputTool implements InputTool {
         }
     }
 
-    private int filterX(int x) {
-        if (maxX < 0) {
-            Log.e("filterX", "maxX not set yet");
+    public int pixelXToCurrX(int x) {
+        if (pixelsWide < 0) {
+            Log.e("filterX", "pixelsWide not set yet");
             return 0;
         }
-        return (int) ((width / maxX) * x);
+        return (int) ((currZoom.currWidth / pixelsWide) * x);
     }
 
-    private int filterY(int y) {
-        if (maxY < 0) {
-            Log.e("filterY", "maxY not set yet");
+    public int pixelYToCurrY(int y) {
+        if (pixelsTall < 0) {
+            Log.e("filterY", "pixelsTall not set yet");
             return 0;
         }
-        return (int) ((height / maxY) * y);
+        return (int) ((currZoom.currHeight / pixelsTall) * y);
     }
 
     public void setColor(int color) {

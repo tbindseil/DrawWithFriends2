@@ -18,6 +18,8 @@ import android.view.View;
 import com.tj.drawwithfriends2.Input.Input;
 import com.tj.drawwithfriends2.Input.InputTool;
 
+import static junit.framework.Assert.assertTrue;
+
 /**
  * Created by TJ on 9/29/2018.
  */
@@ -51,6 +53,7 @@ public class PaintingImageView extends AppCompatImageView {
     }
 
     public void setContext(Context context) {
+        mScaleFactor = 1;
         mContext = context;
         mScaleDetector = new ScaleGestureDetector(mContext, new PaintingImageView.ScaleListener());
     }
@@ -67,8 +70,9 @@ public class PaintingImageView extends AppCompatImageView {
         mContext = null;
     }
 
-    public void setMaxXY() {
-        currTool.setMaxXY(getWidth(), getHeight());
+    public void notifyOfWidthAndHeight() {
+        currTool.setPixelsWide(getWidth());
+        currTool.setPixelsTall(getHeight());
     }
 
     public void setColor(int color) {
@@ -85,6 +89,7 @@ public class PaintingImageView extends AppCompatImageView {
 
     public void updatePaintingImage() {
         Bitmap toDraw = mProjectFiles.getBitmap();
+        // got a weird exception saying that toDraw was null when scaling
         toDraw = InputTransporter.getInstance().produceBitmapToDraw(toDraw);
         Drawable result = new BitmapDrawable(mContext.getResources(), toDraw);
         setImageDrawable(result);
@@ -93,9 +98,18 @@ public class PaintingImageView extends AppCompatImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        // no anti aliasing
         DrawFilter oldDrawFilter = canvas.getDrawFilter();
         canvas.setDrawFilter(DRAW_FILTER);
+
+        // scaling
+        canvas.save();
+        canvas.scale(mScaleFactor, mScaleFactor);
+
         super.onDraw(canvas);
+
+        // restore state
+        canvas.restore();
         canvas.setDrawFilter(oldDrawFilter);
     }
 
