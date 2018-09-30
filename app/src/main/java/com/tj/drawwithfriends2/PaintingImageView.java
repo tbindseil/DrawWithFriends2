@@ -13,12 +13,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
 
-import com.tj.drawwithfriends2.Input.Input;
 import com.tj.drawwithfriends2.Input.InputTool;
 
-import static junit.framework.Assert.assertTrue;
+import java.nio.MappedByteBuffer;
 
 /**
  * Created by TJ on 9/29/2018.
@@ -28,14 +26,13 @@ public class PaintingImageView extends AppCompatImageView {
     private static final DrawFilter DRAW_FILTER =
             new PaintFlagsDrawFilter(Paint.FILTER_BITMAP_FLAG, 0);
 
-    Context mContext;
+    private Context mContext;
 
-    ProjectFiles mProjectFiles;
+    private ProjectFiles mProjectFiles;
 
     private InputTool currTool;
 
     private ScaleGestureDetector mScaleDetector;
-    float mScaleFactor;
 
     public PaintingImageView(Context context) {
         super(context);
@@ -53,9 +50,9 @@ public class PaintingImageView extends AppCompatImageView {
     }
 
     public void setContext(Context context) {
-        mScaleFactor = 1;
         mContext = context;
         mScaleDetector = new ScaleGestureDetector(mContext, new PaintingImageView.ScaleListener());
+        mScaleDetector.setQuickScaleEnabled(false);
     }
 
     public void setProjectFiles(ProjectFiles files) {
@@ -102,9 +99,8 @@ public class PaintingImageView extends AppCompatImageView {
         DrawFilter oldDrawFilter = canvas.getDrawFilter();
         canvas.setDrawFilter(DRAW_FILTER);
 
-        // scaling
         canvas.save();
-        canvas.scale(mScaleFactor, mScaleFactor);
+        canvas.scale(mProjectFiles.getCurrZoom().getXScale(), mProjectFiles.getCurrZoom().getYScale());
 
         super.onDraw(canvas);
 
@@ -116,14 +112,29 @@ public class PaintingImageView extends AppCompatImageView {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            mScaleFactor *= detector.getScaleFactor();
+            // in progress questions
+            Log.e("ScaleDetector", "in progress? " + (detector.isInProgress() ? "true" : "false"));
+            Log.e("ScaleDetector", "quick scale enabled?" + (detector.isQuickScaleEnabled() ? "true" : "false"));
 
-            // Don't let the object get too small or too large.
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 10.0f));
+            // set currWidth and currHeight based off how zoomy we get
+            int newCurrWidth = (int)(mProjectFiles.getCurrWidth() / detector.getScaleFactor());
+            int newCurrHeight = (int)(mProjectFiles.getCurrHeight() / detector.getScaleFactor());
+            mProjectFiles.setCurrWidth(Math.max(mProjectFiles.MIN_WIDTH, Math.min(newCurrWidth, mProjectFiles.getWidth())));
+            mProjectFiles.setCurrHeight(Math.max(mProjectFiles.MIN_HEIGHT, Math.min(newCurrHeight, mProjectFiles.getHeight())));
 
-            Log.e("ScaleDetector", "mSaleFactor set to " + mScaleFactor);
+            // record focus in pixel coordinates
+            double pixelFocusX = detector.getFocusX();
+            double pixelFocusY = detector.getFocusY();
 
-            // invalidate();
+            // convert to out current grid coordinates
+            int currCoordX = currTool.pixelXToCurrX(pixelFocusX);
+            int currCoordY = currTool.pixelYToCurrY(pixelFocusY);
+
+            // set currZoom's x and y offset based off some cool math I'm about to do
+
+            // ensure that we don't show area that's not part of the painting
+
+            invalidate();
             return true;
         }
     }

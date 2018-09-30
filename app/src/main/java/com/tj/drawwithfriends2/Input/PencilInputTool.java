@@ -15,17 +15,16 @@ import com.tj.drawwithfriends2.Zoom;
  */
 
 @TargetApi(23)
-public class PencilInputTool implements InputTool {
+public class PencilInputTool extends InputTool {
     // note last touch is in terms of ultimatecoords
     Point lastTouch;
     int color;
     int thickness;
 
-    double pixelsWide, pixelsTall;
-
     Zoom currZoom;
 
     public PencilInputTool(Zoom currZoom) {
+        super(currZoom);
         this.color = Color.RED;
         this.thickness = 2;
         this.currZoom = currZoom;
@@ -46,21 +45,21 @@ public class PencilInputTool implements InputTool {
 
         // convert from absolute position on the screen to where in my grid the point is
         // TODO i think my scaling is off for some reason
-        int currX = pixelXToCurrX((int) event.getX());
-        int currY = pixelYToCurrY((int) event.getY());
+        int currX = pixelXToCurrX(event.getX());
+        int currY = pixelYToCurrY(event.getY());
 
         // check bounds, don't mark stuff thats not in the currently zoomed version of the painting
         if (currX < 0) {
             currX = 0;
         }
-        if (currX >= currZoom.currWidth) {
-            currX = currZoom.currWidth;
+        if (currX >= currZoom.getCurrWidth()) {
+            currX = currZoom.getCurrWidth();
         }
         if (currY < 0) {
             currY = 0;
         }
-        if (currY >= currZoom.currHeight) {
-            currY = currZoom.currHeight;
+        if (currY >= currZoom.getCurrHeight()) {
+            currY = currZoom.getCurrHeight();
         }
 
         // convert from currCoord to ultimateCoord
@@ -81,15 +80,7 @@ public class PencilInputTool implements InputTool {
         }
     }
 
-    @Override
-    public void setCurrZoom(Zoom currZoom) {
-        this.currZoom = currZoom;
-    }
-
-    public void setPixelsWide(double pixelsWide) { this.pixelsWide = pixelsWide; }
-    public void setPixelsTall(double pixelsTall) { this.pixelsTall = pixelsTall; }
     // thanks wikipedia and Jack Bresenham
-
     private void plotLineLow(int x0, int y0, int x1, int y1) {
         int dx = x1 - x0;
         int dy = y1 - y0;
@@ -150,22 +141,6 @@ public class PencilInputTool implements InputTool {
                 plotLineHigh(x0, y0, x1, y1);
             }
         }
-    }
-
-    public int pixelXToCurrX(int x) {
-        if (pixelsWide < 0) {
-            Log.e("filterX", "pixelsWide not set yet");
-            return 0;
-        }
-        return (int) ((currZoom.currWidth / pixelsWide) * x);
-    }
-
-    public int pixelYToCurrY(int y) {
-        if (pixelsTall < 0) {
-            Log.e("filterY", "pixelsTall not set yet");
-            return 0;
-        }
-        return (int) ((currZoom.currHeight / pixelsTall) * y);
     }
 
     public void setColor(int color) {
