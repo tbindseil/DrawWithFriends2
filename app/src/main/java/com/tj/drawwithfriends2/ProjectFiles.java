@@ -39,15 +39,15 @@ public class ProjectFiles implements Serializable {
     private static final String CONFIG_FILE_NAME = "config";
     private static final String INPUTS_FILE_NAME = "inputsFile";
     private static final String ULTIMATE_FILE_NAME = "UltimatePixels";
-    private static final int DEFAULT_WIDTH = 48;
-    private static final int DEFAULT_HEIGHT = 64;
+    private static final int DEFAULT_WIDTH = 196;
+    private static final int DEFAULT_HEIGHT = 256;
     private static final int DEFAULT_ZOOM_WIDTH = DEFAULT_WIDTH;
     private static final int DEFAULT_ZOOM_HEIGHT = DEFAULT_HEIGHT;
     private static final int DEFAULT_XOFFSET = 0;
     private static final int DEFAULT_YOFFSET = 0;
 
-    public static final int MIN_WIDTH = DEFAULT_WIDTH / 10;
-    public static final int MIN_HEIGHT = DEFAULT_HEIGHT / 10;
+    public static final int MIN_WIDTH = DEFAULT_WIDTH / 32;
+    public static final int MIN_HEIGHT = DEFAULT_HEIGHT / 32;
 
     private String title;
     // TODO add these to config file

@@ -87,7 +87,15 @@ public class PaintingImageView extends AppCompatImageView {
     public void updatePaintingImage() {
         Bitmap toDraw = mProjectFiles.getBitmap();
         // got a weird exception saying that toDraw was null when scaling
-        toDraw = InputTransporter.getInstance().produceBitmapToDraw(toDraw);
+        // got it again....
+        try {
+            toDraw = InputTransporter.getInstance().produceBitmapToDraw(toDraw);
+        } catch (Exception e) {
+            Log.e("updatePaintingImage", "exception: " + e.toString());
+            Log.e("updatePaintingImage", "stacktrace:");
+            e.printStackTrace();
+            return;
+        }
         Drawable result = new BitmapDrawable(mContext.getResources(), toDraw);
         setImageDrawable(result);
         invalidate();
@@ -101,6 +109,7 @@ public class PaintingImageView extends AppCompatImageView {
 
         canvas.save();
         canvas.scale(mProjectFiles.getCurrZoom().getXScale(), mProjectFiles.getCurrZoom().getYScale());
+        canvas.translate(mProjectFiles.getXOffset(), mProjectFiles.getYOffset());
 
         super.onDraw(canvas);
 
@@ -112,27 +121,41 @@ public class PaintingImageView extends AppCompatImageView {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            // in progress questions
-            Log.e("ScaleDetector", "in progress? " + (detector.isInProgress() ? "true" : "false"));
-            Log.e("ScaleDetector", "quick scale enabled?" + (detector.isQuickScaleEnabled() ? "true" : "false"));
-
+            // note, I'm gonna need to do some bad assery here for zoomout it looks like,
+            // probably just cause 4 / .9, .8, .7 ... doesn't grow very fast? Maybe not tho
             // set currWidth and currHeight based off how zoomy we get
             int newCurrWidth = (int)(mProjectFiles.getCurrWidth() / detector.getScaleFactor());
             int newCurrHeight = (int)(mProjectFiles.getCurrHeight() / detector.getScaleFactor());
-            mProjectFiles.setCurrWidth(Math.max(mProjectFiles.MIN_WIDTH, Math.min(newCurrWidth, mProjectFiles.getWidth())));
-            mProjectFiles.setCurrHeight(Math.max(mProjectFiles.MIN_HEIGHT, Math.min(newCurrHeight, mProjectFiles.getHeight())));
+
+            // limit zoomyness
+            newCurrWidth = Math.max(mProjectFiles.MIN_WIDTH, Math.min(newCurrWidth, mProjectFiles.getWidth()));
+            newCurrHeight = Math.max(mProjectFiles.MIN_HEIGHT, Math.min(newCurrHeight, mProjectFiles.getHeight()));
+
+            // set zoomyness, note this is before we convert pixelXToCurrX etc because
+            // convert our focal point to the NEW coordinates
+            mProjectFiles.setCurrWidth(newCurrWidth);
+            mProjectFiles.setCurrHeight(newCurrHeight);
 
             // record focus in pixel coordinates
             double pixelFocusX = detector.getFocusX();
             double pixelFocusY = detector.getFocusY();
 
-            // convert to out current grid coordinates
+            // convert to out current grid coordinates and then to the ultimate grid
             int currCoordX = currTool.pixelXToCurrX(pixelFocusX);
             int currCoordY = currTool.pixelYToCurrY(pixelFocusY);
+            int ultimateCoordX = mProjectFiles.getCurrZoom().currXToUltimateX(currCoordX);
+            int ultimateCoordY = mProjectFiles.getCurrZoom().currYToUltimateY(currCoordY);
 
-            // set currZoom's x and y offset based off some cool math I'm about to do
+            // where the focal point was needs to be the middle of the offset.
+            // this requires that we know the width and height, which we computed above
+            // now we take that width and height and shift it over until currCoordX is
+            // half of the newCurrWidth and the currCoordY is half of newCurrHeight
+            int newXOffset = ultimateCoordX - (newCurrWidth / 2);
+            int newYOffset = ultimateCoordY - (newCurrHeight / 2);
+            mProjectFiles.setXOffset(-1 * newXOffset); // why -1 * ?????????
+            mProjectFiles.setYOffset(-1 * newYOffset);
 
-            // ensure that we don't show area that's not part of the painting
+            // TODO ensure that we don't show area that's not part of the painting
 
             invalidate();
             return true;
