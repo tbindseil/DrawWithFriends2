@@ -45,10 +45,9 @@ public class ProjectActivity extends AppCompatActivity {
     private Button colorButton;
     private int red, green, blue;
 
-    private View currFocus;
+    private LinearLayout zoomLayout;
 
-    private ScaleGestureDetector mScaleDetector;
-    float mScaleFactor;
+    private View currFocus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +120,8 @@ public class ProjectActivity extends AppCompatActivity {
 
         colorButton = findViewById(R.id.colorButton);
 
+        zoomLayout = findViewById(R.id.zoomLayout);
+
         projectPicture = findViewById(R.id.mainCanvas);
 
         projectPicture.setContext(this.getApplicationContext());
@@ -153,6 +154,11 @@ public class ProjectActivity extends AppCompatActivity {
     public void handleThicknessClick(View view) {
         thicknessBar.setVisibility(View.VISIBLE);
         currFocus = thicknessBar;
+    }
+
+    public void handleZoomClick(View view) {
+        zoomLayout.setVisibility(View.VISIBLE);
+        currFocus = zoomLayout;
     }
 
     private abstract class SeekBarInterface implements SeekBar.OnSeekBarChangeListener {
