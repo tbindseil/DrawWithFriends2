@@ -42,7 +42,13 @@ public class Input implements InputSaver {
         // TJTAG will likely need an imprint onto and an imprint onto zoom
         Bitmap mutable = underlying.copy(Bitmap.Config.ARGB_8888, true);
         for (Point p: pointToColorMap.keySet()) {
-            mutable.setPixel(p.x, p.y, pointToColorMap.get(p));
+            try {
+                mutable.setPixel(p.x, p.y, pointToColorMap.get(p));
+            } catch (Exception e) {
+                Log.e("imprintOnto", "exception: " + e.toString());
+                Log.e("imprintOnto", "stackTrace: ");
+                e.printStackTrace();
+            }
         }
         return mutable;
     }

@@ -39,18 +39,19 @@ public class ProjectFiles implements Serializable {
     private static final String CONFIG_FILE_NAME = "config";
     private static final String INPUTS_FILE_NAME = "inputsFile";
     private static final String ULTIMATE_FILE_NAME = "UltimatePixels";
-    private static final int DEFAULT_WIDTH = 48;
-    private static final int DEFAULT_HEIGHT = 64;
+    private static final int DEFAULT_WIDTH = 196;
+    private static final int DEFAULT_HEIGHT = 256;
     private static final int DEFAULT_ZOOM_WIDTH = DEFAULT_WIDTH;
     private static final int DEFAULT_ZOOM_HEIGHT = DEFAULT_HEIGHT;
     private static final int DEFAULT_XOFFSET = 0;
     private static final int DEFAULT_YOFFSET = 0;
 
+    public static final int MIN_WIDTH = DEFAULT_WIDTH / 32;
+    public static final int MIN_HEIGHT = DEFAULT_HEIGHT / 32;
 
     private String title;
     // TODO add these to config file
     private Zoom currZoom;
-    private int width, height;
 
     // open existing
     public ProjectFiles(File dir) throws Exception {
@@ -61,9 +62,9 @@ public class ProjectFiles implements Serializable {
         int zoomHeight = DEFAULT_ZOOM_HEIGHT;
         int xOffset = DEFAULT_XOFFSET;
         int yOffset = DEFAULT_YOFFSET;
-        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight);
-        width = DEFAULT_WIDTH;
-        height = DEFAULT_HEIGHT;
+        int width = DEFAULT_WIDTH;
+        int height = DEFAULT_HEIGHT;
+        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height);
 
         // create file object instances
         this.config = new File(dir, CONFIG_FILE_NAME);
@@ -89,9 +90,9 @@ public class ProjectFiles implements Serializable {
         int zoomHeight = DEFAULT_ZOOM_HEIGHT;
         int xOffset = DEFAULT_XOFFSET;
         int yOffset = DEFAULT_YOFFSET;
-        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight);
-        width = DEFAULT_WIDTH;
-        height = DEFAULT_HEIGHT;
+        int width = DEFAULT_WIDTH;
+        int height = DEFAULT_HEIGHT;
+        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height);
 
         setTitle(title);
         inputsFile.createNewFile();
@@ -114,9 +115,17 @@ public class ProjectFiles implements Serializable {
         writeConfigChanges();
     }
 
-    public void updateZoom() {
-        // this should be easy if the caller does shit right....
-    }
+    public int getWidth() { return currZoom.getUltimateWidth(); }
+    public int getHeight() { return currZoom.getUltimateHeight(); }
+    public int getCurrWidth() { return currZoom.getCurrWidth(); }
+    public int getCurrHeight() { return currZoom.getCurrHeight(); }
+    public int getXOffset() { return currZoom.getxOffset(); }
+    public int getYOffset() { return currZoom.getyOffset(); }
+
+    public void setCurrWidth(int currWidth) { currZoom.setCurrWidth(currWidth); }
+    public void setCurrHeight(int currHeight) { currZoom.setCurrHeight(currHeight); }
+    public void setXOffset(int xOffset) { currZoom.setxOffset(xOffset); }
+    public void setYOffset(int yOffset) { currZoom.setyOffset(yOffset); }
 
     private void writeConfigChanges() {
         config.delete();
@@ -201,7 +210,7 @@ public class ProjectFiles implements Serializable {
 
     public void init() throws Exception {
         File ultimatePixelsFile = new File(this.dir, ULTIMATE_FILE_NAME);
-        ultimatePixelArray = new UltimatePixelArray(width, height, ultimatePixelsFile.getAbsolutePath());
+        ultimatePixelArray = new UltimatePixelArray(currZoom.getUltimateWidth(), currZoom.getUltimateHeight(), ultimatePixelsFile.getAbsolutePath());
         ultimatePixelArray.init();
     }
 
