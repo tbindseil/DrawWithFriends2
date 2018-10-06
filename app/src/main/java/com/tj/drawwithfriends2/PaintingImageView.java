@@ -102,9 +102,18 @@ public class PaintingImageView extends AppCompatImageView {
         DrawFilter oldDrawFilter = canvas.getDrawFilter();
         canvas.setDrawFilter(DRAW_FILTER);
 
+        float xScale = getWidth() / mProjectFiles.getWidth();
+        float yScale = getHeight() / mProjectFiles.getHeight();
+
+        canvas.save();
+        canvas.translate(mProjectFiles.getXOffset() * xScale, mProjectFiles.getYOffset() * yScale);
+        canvas.scale(mProjectFiles.getWidth() / mProjectFiles.getCurrWidth(),
+                mProjectFiles.getHeight() / mProjectFiles.getCurrHeight());
+
         super.onDraw(canvas);
 
         // restore state
+        canvas.restore();
         canvas.setDrawFilter(oldDrawFilter);
     }
 }

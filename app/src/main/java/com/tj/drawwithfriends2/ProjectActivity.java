@@ -133,8 +133,6 @@ public class ProjectActivity extends AppCompatActivity {
                 currProject.setCurrWidth(currProject.getWidth() / progress);
                 currProject.setCurrHeight(currProject.getHeight() / progress);
 
-                Log.e("ZoomSlide", "currWidth is " + currProject.getCurrWidth() + " and currHeight is " + currProject.getCurrHeight());
-
                 zoomImage.invalidate();
             }
         });
@@ -232,6 +230,7 @@ public class ProjectActivity extends AppCompatActivity {
     private void resetCurrFocus() {
         currFocus.setVisibility(View.INVISIBLE);
         currFocus = normalLayout;
+        projectPicture.invalidate();
         currFocus.setVisibility(View.VISIBLE);
     }
 
