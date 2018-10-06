@@ -140,10 +140,10 @@
                 android:background="@color/actionBarPrimary" />
         </LinearLayout>
 
-        <ImageView
+        <com.tj.drawwithfriends2.ZoomImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black"/>
+            android:id="@+id/zoomImage"/>
     </LinearLayout>
 
     <LinearLayout

@@ -46,6 +46,8 @@ public class ProjectActivity extends AppCompatActivity {
     private int red, green, blue;
 
     private LinearLayout zoomLayout;
+    private ZoomImageView zoomImage;
+    private SeekBar zoomSeekBar;
 
     private View currFocus;
 
@@ -121,6 +123,21 @@ public class ProjectActivity extends AppCompatActivity {
         colorButton = findViewById(R.id.colorButton);
 
         zoomLayout = findViewById(R.id.zoomLayout);
+        zoomImage = findViewById(R.id.zoomImage);
+        zoomSeekBar = findViewById(R.id.zoomSeekBar);
+        zoomSeekBar.setMax(ProjectFiles.MAX_SHRINKAGE - 1); // note: 0 is possible, adding one to accomplish a shift
+        zoomSeekBar.setOnSeekBarChangeListener(new SeekBarInterface() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progress = progress + 1; // see zoomSeekBar.setMax
+                currProject.setCurrWidth(currProject.getWidth() / progress);
+                currProject.setCurrHeight(currProject.getHeight() / progress);
+
+                Log.e("ZoomSlide", "currWidth is " + currProject.getCurrWidth() + " and currHeight is " + currProject.getCurrHeight());
+
+                zoomImage.invalidate();
+            }
+        });
 
         projectPicture = findViewById(R.id.mainCanvas);
 
@@ -144,6 +161,7 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void onWindowFocusChanged(boolean hasFocus) {
         projectPicture.notifyOfWidthAndHeight();
+        //zoomImage
     }
 
     public void handleColorClick(View view) {
@@ -160,19 +178,17 @@ public class ProjectActivity extends AppCompatActivity {
         zoomLayout.setVisibility(View.VISIBLE);
         currFocus = zoomLayout;
 
-        // save currZoom,
-        // set currZoom to all the way zoomed out,
-        // show currZoom as wireframe
-        // handle ok and handle cancel
+        zoomImage.init(currProject.getCurrZoom(), this, currProject.getBitmap());
+        zoomSeekBar.setProgress(currProject.getWidth() / currProject.getCurrWidth());
     }
 
     public void handleZoomOkClick(View view) {
-        // apply currZoom
+        currProject.setCurrZoom(zoomImage.getCurrZoom());
         resetCurrFocus();
     }
 
     public void handleZoomCancelClick(View view) {
-        // apply saveZoom
+        currProject.setCurrZoom(zoomImage.getSaveZoom());
         resetCurrFocus();
     }
 

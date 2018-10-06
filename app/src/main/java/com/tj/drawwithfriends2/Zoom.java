@@ -7,6 +7,7 @@ import android.util.Log;
  */
 
 public class Zoom {
+    // random thought, scale could basically be an enum
     private int xOffset;
     private int yOffset;
     private int currWidth;
@@ -82,5 +83,10 @@ public class Zoom {
 
     public int currYToUltimateY(int currY) {
         return currY + yOffset;
+    }
+
+    public Zoom deepCopy() {
+        Zoom ret = new Zoom(xOffset, yOffset, currWidth, currHeight, ultimateWidth, ultimateHeight);
+        return ret;
     }
 }
