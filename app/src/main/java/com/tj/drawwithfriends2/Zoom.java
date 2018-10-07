@@ -2,12 +2,16 @@ package com.tj.drawwithfriends2;
 
 import android.util.Log;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 /**
  * Created by TJ on 9/29/2018.
  */
 
 public class Zoom {
     // random thought, scale could basically be an enum
+    // TODO move scale calculations all to in here
     private int xOffset;
     private int yOffset;
     private int currWidth;
@@ -31,6 +35,7 @@ public class Zoom {
 
     public void setxOffset(int xOffset) {
         this.xOffset = xOffset;
+        boundChanges();
     }
 
     public int getyOffset() {
@@ -39,6 +44,7 @@ public class Zoom {
 
     public void setyOffset(int yOffset) {
         this.yOffset = yOffset;
+        boundChanges();
     }
 
     public int getCurrWidth() {
@@ -47,6 +53,7 @@ public class Zoom {
 
     public void setCurrWidth(int currWidth) {
         this.currWidth = currWidth;
+        boundChanges();
     }
 
     public int getCurrHeight() {
@@ -55,6 +62,7 @@ public class Zoom {
 
     public void setCurrHeight(int currHeight) {
         this.currHeight = currHeight;
+        boundChanges();
     }
 
     public int getUltimateWidth() {
@@ -63,6 +71,19 @@ public class Zoom {
 
     public int getUltimateHeight() {
         return ultimateHeight;
+    }
+
+    private void boundChanges() {
+        // xOff = current x offset + distance moved bounded by 0 and width - currWidth
+        // same for y
+        int xOff = xOffset;
+        int yOff = yOffset;
+        xOff = max(xOff, 0);
+        yOff = max(yOff, 0);
+        xOff = min(xOff, ultimateWidth - currWidth);
+        yOff = min(yOff, ultimateHeight - currHeight);
+        xOffset = xOff;
+        yOffset = yOff;
     }
 
     public int getXScale() {

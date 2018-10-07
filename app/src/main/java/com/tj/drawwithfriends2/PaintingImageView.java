@@ -104,8 +104,13 @@ public class PaintingImageView extends AppCompatImageView {
 
         float xScale = getWidth() / mProjectFiles.getWidth();
         float yScale = getHeight() / mProjectFiles.getHeight();
+        xScale *= mProjectFiles.getWidth() / mProjectFiles.getCurrWidth();
+        yScale *= mProjectFiles.getHeight() / mProjectFiles.getCurrHeight();
+        xScale *= -1;
+        yScale *= -1;
 
         canvas.save();
+
         canvas.translate(mProjectFiles.getXOffset() * xScale, mProjectFiles.getYOffset() * yScale);
         canvas.scale(mProjectFiles.getWidth() / mProjectFiles.getCurrWidth(),
                 mProjectFiles.getHeight() / mProjectFiles.getCurrHeight());

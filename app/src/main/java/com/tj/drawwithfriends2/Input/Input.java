@@ -39,7 +39,6 @@ public class Input implements InputSaver {
     }
 
     public Bitmap imprintOnto(Bitmap underlying) {
-        // TJTAG will likely need an imprint onto and an imprint onto zoom
         Bitmap mutable = underlying.copy(Bitmap.Config.ARGB_8888, true);
         for (Point p: pointToColorMap.keySet()) {
             try {
@@ -53,39 +52,49 @@ public class Input implements InputSaver {
         return mutable;
     }
 
+    // format, 4 bytes num colors, 4 bytes a color, 8 bytes coord, 8 bytes coord...,
+    // 4 bytes color, 8 bytes coord etc
     @Override
     public void toOutputStream(DataOutputStream out) {
-/*TODO
-        int totalBytes = 1 + 1 + (rects.size() * (2 + 1 + 4));
+        /* to check
+        // prepare data
+        List<Integer> colorsEncountered = new ArrayList<>();
+        List<List<Point>> pointsOfColor = new ArrayList<>();
+        for (HashPoint p: pointToColorMap.keySet()) {
+            int color = pointToColorMap.get(p);
+            int index = 0;
+            for (; index < colorsEncountered.size(); index++) {
+                int c = colorsEncountered.get(index);
+                if (c == color) {
+                    pointsOfColor.get(index).add(p);
+                    break;
+                }
+            }
+            if (index == colorsEncountered.size()) {
+                colorsEncountered.add(color);
+                pointsOfColor.add(new ArrayList<Point>());
+                pointsOfColor.get(index).add(p);
+            }
+        }
+
+        // pack data
         try {
-            out.writeInt(totalBytes);
-            out.writeInt(rects.size());
-            for (RotatedRect rect: rects) {
-                out.writeInt(rect.r.left);
-                out.writeInt(rect.r.top);
-                out.writeInt(rect.r.width());
-                out.writeInt(rect.r.height());
-                out.writeInt(rect.c);
-                out.writeDouble(rect.rotation);
+            out.writeInt(colorsEncountered.size());
+            for (int index = 0; index < colorsEncountered.size(); index++) {
+                out.writeInt(colorsEncountered.get(index));
+                for (Point p: pointsOfColor.get(index)) {
+                    out.writeInt(p.x);
+                    out.writeInt(p.y);
+                }
             }
         } catch (Exception e) {
-            Log.e("toOutputStream", "excecpion: " + e.toString());
+            Log.e("toOutputStream", "exception: " + e.toString());
         }
-       */
+        */
     }
 
     @Override
     public void fromInputStream(DataInputStream in) {
-        /* TODO
-        try {
-
-            int numRects = in.readInt();
-            rects.clear();
-            for (int i = 0; i < numRects; i++) {
-                rects.add(new RotatedRect(new Rect(in.readInt(), in.readInt(), in.readInt(), in.readInt()), in.readInt(), in.readDouble()));
-            }
-        } catch (Exception e) {
-            Log.e("fromInputStream", "exeption: " + e.toString());
-        }*/
+        // TODO
     }
 }

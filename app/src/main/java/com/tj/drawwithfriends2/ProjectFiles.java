@@ -45,7 +45,7 @@ public class ProjectFiles implements Serializable {
     private static final int DEFAULT_ZOOM_HEIGHT = DEFAULT_HEIGHT;
     private static final int DEFAULT_XOFFSET = 0;
     private static final int DEFAULT_YOFFSET = 0;
-    public static final int MAX_SHRINKAGE = 32;
+    public static final int MAX_SHRINKAGE = 4;
 
     public static final int MIN_WIDTH = DEFAULT_WIDTH / MAX_SHRINKAGE;
     public static final int MIN_HEIGHT = DEFAULT_HEIGHT / MAX_SHRINKAGE;

@@ -177,7 +177,7 @@ public class ProjectActivity extends AppCompatActivity {
         currFocus = zoomLayout;
 
         zoomImage.init(currProject.getCurrZoom(), this, currProject.getBitmap());
-        zoomSeekBar.setProgress(currProject.getWidth() / currProject.getCurrWidth());
+        zoomSeekBar.setProgress((currProject.getWidth() / currProject.getCurrWidth()) - 1);
     }
 
     public void handleZoomOkClick(View view) {
@@ -189,19 +189,6 @@ public class ProjectActivity extends AppCompatActivity {
         currProject.setCurrZoom(zoomImage.getSaveZoom());
         resetCurrFocus();
     }
-
-    // questions:
-    // can i just have another type of image view that handles curr zoom differently?
-    // ie shows the wire frame and moves it around on touch??
-    // or should i have my paintingimageview have two modes?
-    // ok I am going to make a new sub class of an image view and have that
-    // be brought to the fore front with the zoom layout. This way my
-    // logic for undisplaying the top thing (like color and thickness)
-    // doesn't need to change. The new view will draw the whole bitmap always,
-    // and draw a wire frame with curr Width and currHeight and x,y offsets
-    // upon touch in that area, it till drag the rect, upon slide of zoom slider
-    // the box will grow or shrink, and upon ok the area in the box will be the
-    // new curr zoom, and upon cancel we will go to the original saved zoom
 
     private abstract class SeekBarInterface implements SeekBar.OnSeekBarChangeListener {
         @Override
