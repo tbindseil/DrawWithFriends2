@@ -84,4 +84,8 @@ public class UltimatePixelArray {
 
         write();
     }
+
+    void clearPicture() {
+        create();
+    }
 }

@@ -1,6 +1,7 @@
 package com.tj.drawwithfriends2;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.tj.drawwithfriends2.Input.Input;
 
@@ -82,7 +83,7 @@ public class InputTransporter {
     public Bitmap produceBitmapToDraw(Bitmap drawTo) {
         Input[] toIt = new Input[toSave.size()];
         toSave.toArray(toIt);
-
+        Log.e("tosave.lenth is", " " + toIt.length);
         for (int i = 0; i < toIt.length; i++) {
             drawTo = toIt[i].imprintOnto(drawTo);
         }

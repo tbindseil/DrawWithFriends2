@@ -15,6 +15,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -108,7 +109,9 @@ public class ProjectFiles implements Serializable {
         return title;
     }
 
-    public Zoom getCurrZoom() { return currZoom; }
+    public Zoom getCurrZoom() {
+        return currZoom;
+    }
 
     public void setTitle(String newTitle) {
         title = newTitle;
@@ -116,18 +119,49 @@ public class ProjectFiles implements Serializable {
         writeConfigChanges();
     }
 
-    public int getWidth() { return currZoom.getUltimateWidth(); }
-    public int getHeight() { return currZoom.getUltimateHeight(); }
-    public int getCurrWidth() { return currZoom.getCurrWidth(); }
-    public int getCurrHeight() { return currZoom.getCurrHeight(); }
-    public int getXOffset() { return currZoom.getxOffset(); }
-    public int getYOffset() { return currZoom.getyOffset(); }
+    public int getWidth() {
+        return currZoom.getUltimateWidth();
+    }
 
-    public void setCurrWidth(int currWidth) { currZoom.setCurrWidth(currWidth); }
-    public void setCurrHeight(int currHeight) { currZoom.setCurrHeight(currHeight); }
-    public void setXOffset(int xOffset) { currZoom.setxOffset(xOffset); }
-    public void setYOffset(int yOffset) { currZoom.setyOffset(yOffset); }
-    public void setCurrZoom(Zoom newZoom) { currZoom = newZoom; }
+    public int getHeight() {
+        return currZoom.getUltimateHeight();
+    }
+
+    public int getCurrWidth() {
+        return currZoom.getCurrWidth();
+    }
+
+    public int getCurrHeight() {
+        return currZoom.getCurrHeight();
+    }
+
+    public int getXOffset() {
+        return currZoom.getxOffset();
+    }
+
+    public int getYOffset() {
+        return currZoom.getyOffset();
+    }
+
+    public void setCurrWidth(int currWidth) {
+        currZoom.setCurrWidth(currWidth);
+    }
+
+    public void setCurrHeight(int currHeight) {
+        currZoom.setCurrHeight(currHeight);
+    }
+
+    public void setXOffset(int xOffset) {
+        currZoom.setxOffset(xOffset);
+    }
+
+    public void setYOffset(int yOffset) {
+        currZoom.setyOffset(yOffset);
+    }
+
+    public void setCurrZoom(Zoom newZoom) {
+        currZoom = newZoom;
+    }
 
     private void writeConfigChanges() {
         config.delete();
@@ -195,14 +229,17 @@ public class ProjectFiles implements Serializable {
             DataInputStream workingStream = new DataInputStream(bufferedInputStream);
 
             int totalBytes = 0;
-            while (totalBytes < pictureLen) {
-                totalBytes += workingStream.readInt();
+            // just reading till eof now while (totalBytes < pictureLen) {
+            while (true) {
+                // totalBytes += workingStream.readInt();
                 Input pi = new Input();
                 pi.fromInputStream(workingStream);
                 inputs.add(pi);
             }
         } catch (FileNotFoundException fne) {
             Log.e("ProjectFiles", "no inputs to load!");
+        } catch (EOFException eof) {
+            return inputs;
         } catch (Exception e) {
             Log.e("Projectfiles", "exception: " + e.toString());
         }
@@ -221,5 +258,16 @@ public class ProjectFiles implements Serializable {
 
         // TODO put the following on its own super fucking low prio thread
         ultimatePixelArray.update(next);
+    }
+
+    public void clearPicture() {
+        ultimatePixelArray.clearPicture();
+    }
+
+    public void applyInputs() {
+        List<Input> inputs = loadInputs();
+        for (Input i : inputs) {
+            ultimatePixelArray.update(i);
+        }
     }
 }

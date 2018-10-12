@@ -246,9 +246,18 @@ public class ProjectActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_save:
+            case R.id.action_clear:
                 // todo implement a flush method or something
                 // currProject.saveInputs();
+
+                // clear picture
+                currProject.clearPicture();
+                projectPicture.updatePaintingImage();
+                break;
+            case R.id.action_inputs:
+                // apply inputs
+                currProject.applyInputs();
+                projectPicture.updatePaintingImage();
                 break;
             case android.R.id.home:
                 onBackPressed();
