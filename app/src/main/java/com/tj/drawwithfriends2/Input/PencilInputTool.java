@@ -17,8 +17,6 @@ import com.tj.drawwithfriends2.Zoom;
 public class PencilInputTool extends InputTool {
     // note last touch is in terms of ultimatecoords
     Point lastTouch;
-    int color;
-    int thickness;
 
     Zoom currZoom;
 
@@ -140,13 +138,5 @@ public class PencilInputTool extends InputTool {
                 plotLineHigh(x0, y0, x1, y1);
             }
         }
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public void setThickness(int thickness) {
-        this.thickness = thickness;
     }
 }

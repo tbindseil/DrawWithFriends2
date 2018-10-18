@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import com.tj.drawwithfriends2.Input.CircleInputTool;
 import com.tj.drawwithfriends2.Input.Input;
 import com.tj.drawwithfriends2.Input.PencilInputTool;
 
@@ -159,9 +160,19 @@ public class ProjectActivity extends AppCompatActivity {
         currFocus = colorSeekBars;
     }
 
+    public void handlePencilClick(View view) {
+        projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom()));
+        projectPicture.notifyOfWidthAndHeight();
+    }
+
     public void handleThicknessClick(View view) {
         thicknessBar.setVisibility(View.VISIBLE);
         currFocus = thicknessBar;
+    }
+
+    public void handleShapeClick(View view) {
+        projectPicture.setInputTool(new CircleInputTool(currProject.getCurrZoom()));
+        projectPicture.notifyOfWidthAndHeight();
     }
 
     public void handleZoomClick(View view) {

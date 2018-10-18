@@ -18,13 +18,17 @@ public abstract class InputTool {
     private double pixelsWide, pixelsTall;
     private Zoom currZoom;
 
+    protected int color;
+    protected int thickness;
+
     public InputTool(Zoom currZoom) {
         this.currZoom = currZoom;
     }
 
     public abstract void handleTouch(MotionEvent event);
-    public abstract void setColor(int color);
-    public abstract void setThickness(int thickness);
+
+    public void setColor(int color) { this.color = color; }
+    public void setThickness(int thickness) { this.thickness = thickness; }
 
     public void setPixelsWide(double pixelsWide) { this.pixelsWide = pixelsWide; }
     public void setPixelsTall(double pixelsTall) { this.pixelsTall = pixelsTall; }
