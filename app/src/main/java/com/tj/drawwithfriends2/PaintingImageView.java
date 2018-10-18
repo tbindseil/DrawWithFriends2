@@ -68,6 +68,11 @@ public class PaintingImageView extends AppCompatImageView {
     public void setColor(int color) {
         currTool.setColor(color);
     }
+    public void setThickness(int thickness) {
+        if (currTool != null) {
+            currTool.setThickness(thickness);
+        }
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
