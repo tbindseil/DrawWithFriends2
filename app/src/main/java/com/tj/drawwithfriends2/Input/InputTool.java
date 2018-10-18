@@ -1,7 +1,5 @@
 package com.tj.drawwithfriends2.Input;
 
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -46,5 +44,4 @@ public abstract class InputTool {
         }
         return (int) ((currZoom.getCurrHeight() / pixelsTall) * y);
     }
-
 }

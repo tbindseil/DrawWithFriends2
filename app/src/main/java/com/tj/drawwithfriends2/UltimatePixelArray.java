@@ -33,8 +33,6 @@ public class UltimatePixelArray {
         this.height = height;
 
         this.file = new File(absolutePath);
-        Log.e("constructor", "absolute path is: " + absolutePath);
-        Log.e("constructor", "file.absolutePath is: " + file.getAbsolutePath());
         try {
             file.createNewFile();
             file.setWritable(true);
@@ -83,9 +81,5 @@ public class UltimatePixelArray {
         mostRecent = next.imprintOnto(mostRecent);
 
         write();
-    }
-
-    void clearPicture() {
-        create();
     }
 }

@@ -12,11 +12,8 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 
 import com.tj.drawwithfriends2.Input.InputTool;
-
-import java.nio.MappedByteBuffer;
 
 /**
  * Created by TJ on 9/29/2018.
@@ -84,7 +81,7 @@ public class PaintingImageView extends AppCompatImageView {
         // got a weird exception saying that toDraw was null when scaling
         // got it again....
         try {
-            toDraw = InputTransporter.getInstance().produceBitmapToDraw(toDraw);
+            toDraw = InputTransporter.getInstance().drawQueuedInputs(toDraw);
         } catch (Exception e) {
             Log.e("updatePaintingImage", "exception: " + e.toString());
             Log.e("updatePaintingImage", "stacktrace:");

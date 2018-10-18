@@ -213,33 +213,19 @@ public class ProjectFiles implements Serializable {
     public List<Input> loadInputs() {
         List<Input> inputs = new ArrayList<>();
 
-        long pictureLen = inputsFile.length();
-
-        if (pictureLen == 0) {
-            Log.e("loadInputs", "no inputs to load");
-            return inputs;
-        }
-
-        if (pictureLen > Integer.MAX_VALUE) {
-            Log.e("loadInputs", "file too big");
-        }
-
         try {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(inputsFile));
             DataInputStream workingStream = new DataInputStream(bufferedInputStream);
 
-            int totalBytes = 0;
-            // just reading till eof now while (totalBytes < pictureLen) {
             while (true) {
-                // totalBytes += workingStream.readInt();
                 Input pi = new Input();
                 pi.fromInputStream(workingStream);
                 inputs.add(pi);
             }
-        } catch (FileNotFoundException fne) {
-            Log.e("ProjectFiles", "no inputs to load!");
         } catch (EOFException eof) {
             return inputs;
+        } catch (FileNotFoundException fne) {
+            Log.e("ProjectFiles", "no file found!");
         } catch (Exception e) {
             Log.e("Projectfiles", "exception: " + e.toString());
         }
@@ -258,16 +244,5 @@ public class ProjectFiles implements Serializable {
 
         // TODO put the following on its own super fucking low prio thread
         ultimatePixelArray.update(next);
-    }
-
-    public void clearPicture() {
-        ultimatePixelArray.clearPicture();
-    }
-
-    public void applyInputs() {
-        List<Input> inputs = loadInputs();
-        for (Input i : inputs) {
-            ultimatePixelArray.update(i);
-        }
     }
 }

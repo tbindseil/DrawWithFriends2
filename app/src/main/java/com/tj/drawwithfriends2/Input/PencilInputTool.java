@@ -14,7 +14,6 @@ import com.tj.drawwithfriends2.Zoom;
  * Created by TJ on 8/9/2018.
  */
 
-@TargetApi(23)
 public class PencilInputTool extends InputTool {
     // note last touch is in terms of ultimatecoords
     Point lastTouch;

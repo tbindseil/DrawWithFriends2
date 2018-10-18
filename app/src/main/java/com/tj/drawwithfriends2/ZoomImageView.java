@@ -42,7 +42,7 @@ public class ZoomImageView extends AppCompatImageView {
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(Zoom startZoom, Context context, Bitmap toDraw) {
+    public void launch(Zoom startZoom, Context context, Bitmap toDraw) {
         currZoom = startZoom;
         saveZoom = startZoom.deepCopy();
         mContext = context;

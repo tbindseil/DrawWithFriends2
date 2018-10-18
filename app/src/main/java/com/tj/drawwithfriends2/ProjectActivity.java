@@ -1,29 +1,21 @@
 package com.tj.drawwithfriends2;
 
-import android.annotation.TargetApi;
-import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import com.tj.drawwithfriends2.Input.Input;
-import com.tj.drawwithfriends2.Input.InputTool;
 import com.tj.drawwithfriends2.Input.PencilInputTool;
 
 import java.io.File;
@@ -31,7 +23,6 @@ import java.io.Serializable;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-@TargetApi(23)
 public class ProjectActivity extends AppCompatActivity {
     private ProjectFiles currProject;
 
@@ -129,7 +120,7 @@ public class ProjectActivity extends AppCompatActivity {
         zoomSeekBar.setOnSeekBarChangeListener(new SeekBarInterface() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progress = progress + 1; // see zoomSeekBar.setMax
+                progress = progress + 1; // see zoomSeekBar.setMax()
                 currProject.setCurrWidth(currProject.getWidth() / progress);
                 currProject.setCurrHeight(currProject.getHeight() / progress);
 
@@ -141,6 +132,7 @@ public class ProjectActivity extends AppCompatActivity {
 
         projectPicture.setContext(this.getApplicationContext());
         projectPicture.setProjectFiles(currProject);
+        // TODO read this value from files
         projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom()));
 
         // start input transporter
@@ -176,8 +168,8 @@ public class ProjectActivity extends AppCompatActivity {
         zoomLayout.setVisibility(View.VISIBLE);
         currFocus = zoomLayout;
 
-        zoomImage.init(currProject.getCurrZoom(), this, currProject.getBitmap());
-        zoomSeekBar.setProgress((currProject.getWidth() / currProject.getCurrWidth()) - 1);
+        zoomImage.launch(currProject.getCurrZoom(), this, currProject.getBitmap());
+        zoomSeekBar.setProgress((currProject.getWidth() / currProject.getCurrWidth()));
     }
 
     public void handleZoomOkClick(View view) {
@@ -246,18 +238,9 @@ public class ProjectActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_clear:
+            case R.id.action_save:
                 // todo implement a flush method or something
                 // currProject.saveInputs();
-
-                // clear picture
-                currProject.clearPicture();
-                projectPicture.updatePaintingImage();
-                break;
-            case R.id.action_inputs:
-                // apply inputs
-                currProject.applyInputs();
-                projectPicture.updatePaintingImage();
                 break;
             case android.R.id.home:
                 onBackPressed();

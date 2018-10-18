@@ -61,8 +61,6 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
         for (File projectFile: appRoot) {
             try {
                 ProjectListButton next = new ProjectListButton(this, projectFile);
-                Log.e("ChooseOrCreateActivity", "new project opened found with title" + next.getProjectFile().getTitle());
-                Log.e("ChooseOrCreateActivity", "found @ " + projectFile.getAbsolutePath());
                 next.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -83,8 +81,6 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
     }
 
     private void launchPaintingActivity(ProjectFiles toLaunch) {
-        Log.e("ChooseOrCreateActivity", "launching " + toLaunch.getTitle());
-
         Intent i = new Intent(ChooseOrCreateActivity.this, ProjectActivity.class);
         i.putExtra("ProjectFilesDirName", toLaunch.getDir());
         startActivity(i);

@@ -1,17 +1,7 @@
 package com.tj.drawwithfriends2.Input;
 
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.DataInputStream;
@@ -26,7 +16,6 @@ import java.util.Map;
  * Created by TJ on 8/14/2018.
  */
 
-@TargetApi(26)
 public class Input implements InputSaver {
     // Note: these will always represents UltimateCoordinates
     Map<HashPoint, Integer> pointToColorMap;
@@ -80,17 +69,12 @@ public class Input implements InputSaver {
         // pack data
         try {
             out.writeInt(colorsEncountered.size());
-            Log.e("debug", "writing colorsEncountered.size(): " + colorsEncountered.size());
             for (int index = 0; index < colorsEncountered.size(); index++) {
                 out.writeInt(colorsEncountered.get(index));
-                Log.e("debug", "writing color " + index + " : " + colorsEncountered.get(index));
                 out.writeInt(pointsOfColor.get(index).size());
-                Log.e("debug", "writing numcolors of " + index + " : " + pointsOfColor.get(index).size());
                 for (Point p: pointsOfColor.get(index)) {
                     out.writeInt(p.x);
-                    Log.e("debug", "writing p.x: " + p.x);
                     out.writeInt(p.y);
-                    Log.e("debug", "writing p.y " + p.y);
                 }
             }
         } catch (Exception e) {
@@ -103,17 +87,12 @@ public class Input implements InputSaver {
         pointToColorMap = new HashMap<>();
         try {
             int numColors = in.readInt();
-            Log.e("debug", "reading numColors: " + numColors);
             for (int i = 0; i < numColors; i++) {
                 int currColor = in.readInt();
-                Log.e("debug", "reading currColor: " + currColor);
                 int numOfCurrColor = in.readInt();
-                Log.e("debug", "reading numOfCurrColor: " + numOfCurrColor);
                 for (int j = 0; j < numOfCurrColor; j++) {
                     int x = in.readInt();
                     int y = in.readInt();
-                    Log.e("debug", "reading p.x: " + x);
-                    Log.e("debug", "reading p.y: " + y);
                     pointToColorMap.put(new HashPoint(x, y), currColor);
                 }
             }
