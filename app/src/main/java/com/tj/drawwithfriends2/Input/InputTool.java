@@ -1,9 +1,12 @@
 package com.tj.drawwithfriends2.Input;
 
+import android.graphics.Point;
 import android.util.Log;
 import android.view.MotionEvent;
 
 import com.tj.drawwithfriends2.Zoom;
+
+import java.util.List;
 
 /**
  * Created by TJ on 8/9/2018.

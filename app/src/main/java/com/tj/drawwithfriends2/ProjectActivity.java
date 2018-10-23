@@ -76,6 +76,7 @@ public class ProjectActivity extends AppCompatActivity {
         thicknessBar.setOnSeekBarChangeListener(new SeekBarInterface() {
             @Override
             public void onProgressChanged(android.widget.SeekBar seekBar, int progress, boolean fromUser) {
+                // todo, why do i need this check?
                 if (projectPicture != null) {
                     projectPicture.setThickness(progress + 1);
                 }
