@@ -67,7 +67,6 @@ public class PencilInputTool extends InputTool {
         if (lastTouch == null) {
             InputTransporter.getInstance().fillCircle(currTouch.x, currTouch.y, thickness, color);
         } else {
-            // NEXT, add thickness parameter to draw Line
             InputTransporter.getInstance().drawLine(currTouch, lastTouch, color, thickness);
         }
 

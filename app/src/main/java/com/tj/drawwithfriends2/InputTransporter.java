@@ -2,6 +2,7 @@ package com.tj.drawwithfriends2;
 
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.tj.drawwithfriends2.Input.HashPoint;
 import com.tj.drawwithfriends2.Input.Input;
@@ -117,7 +118,7 @@ public class InputTransporter {
 
         Map<HashPoint, Integer> points = extra.getPointToColorMap();
         for (Point p: points.keySet()) {
-            drawLine(new Point(x0, y0), p, color, 1);
+            drawLine(new Point(x0, y0), p, color);
         }
     }
 
@@ -126,6 +127,26 @@ public class InputTransporter {
     }
 
     public void drawLine(Point currPoint, Point lastPoint, int color, int thickness, Input addTo) {
+        Input start = new Input();
+
+        drawCircle(currPoint.x, currPoint.y, thickness, color, start);
+
+        int rise = lastPoint.y - currPoint.y;
+        int run = lastPoint.x - currPoint.x;
+
+        Map<HashPoint, Integer> startPoints = start.getPointToColorMap();
+
+        for (Point p: startPoints.keySet()) {
+            Point endPoint = new Point(p.x + run, p.y + rise);
+            drawLine(p, endPoint, color, addTo);
+        }
+    }
+
+    public void drawLine(Point currPoint, Point lastPoint, int color) {
+        drawLine(currPoint, lastPoint, color, nextInput);
+    }
+
+    public void drawLine(Point currPoint, Point lastPoint, int color, Input addTo) {
         int x0 = lastPoint.x;
         int y0 = lastPoint.y;
         int x1 = currPoint.x;
