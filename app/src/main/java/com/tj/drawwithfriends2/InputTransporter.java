@@ -113,29 +113,14 @@ public class InputTransporter {
     public void fillCircle(int x0, int y0, int radius, int color) {
         fillCircle(x0, y0, radius, color, nextInput);
     }
-/*
-    public void fillCircle(int x0, int y0, int radius, int color, Input addTo) {
-        /*Input extra = new Input();
-        drawCircle(x0, y0, radius, color, extra);
 
-        Point center = new Point(x0, y0);
-
-        Map<HashPoint, Integer> points = extra.getPointToColorMap();
-        Log.e("fillCircle", "radius is " + radius);
-        Log.e("fillCircle", "x0 is " + x0 + " and y0 is " + y0);
-        for (Point p: points.keySet()) {
-            Log.e("fillCircle", "drawing to, x " + p.x + " y " + p.y);
-            drawLine(center, p, color);
-        }
-        addPoint(center.x, center.y, Color.BLUE);
-
+    public void coolPattern(int x0, int y0, int radius, int color, Input addTo) {
         drawCircle(x0, y0, radius, color, addTo);
 
         if (radius > 0) {
             fillCircle(x0, y0, radius - 1, color, addTo);
         }
     }
-*/
 
     public  void fillCircle(int x0, int y0, int radius, int color, Input addTo) {
         int radiusSqrd = radius * radius;
@@ -179,7 +164,6 @@ public class InputTransporter {
             Point lowPoint = new Point(p.x + 0 - (int)deltaY, p.y + (int)deltaX);
             Point endPoint = new Point(p.x + (int)deltaY, p.y + 0 - (int)deltaX);
             drawLine(lowPoint, endPoint, color, addTo);
-            //addPoint(p.x, p.y, color);
         }
     }
 
@@ -188,12 +172,6 @@ public class InputTransporter {
     }
 
     public void drawLine(Point currPoint, Point lastPoint, int color, Input addTo) {
-        Log.e("drawLine##", "drawing line btw " + currPoint.x + ", " + currPoint.y + " and " + lastPoint.x + ", " + lastPoint.y);
-
-        // the algo doesn't do the end point for some reason
-        //addTo.addPoint(currPoint.x, currPoint.y, Color.GREEN);
-        //addTo.addPoint(lastPoint.x, lastPoint.y, Color.GREEN);
-
         int x0 = lastPoint.x;
         int y0 = lastPoint.y;
         int x1 = currPoint.x;
@@ -227,7 +205,6 @@ public class InputTransporter {
         int y = y0;
 
         for (int x = x0; x < x1; x++) {
-            Log.e("drawLine#####", "adding point " + x + ", " + y);
             addTo.addPoint(x, y, color);
             if (D > 0) {
                 y = y + yi;
@@ -249,7 +226,6 @@ public class InputTransporter {
         int x = x0;
 
         for (int y = y0; y < y1; y++) {
-            Log.e("drawLine#####", "adding point " + x + ", " + y);
             addTo.addPoint(x, y, color);
             if (D > 0)
                 x = x + xi;
@@ -277,5 +253,10 @@ public class InputTransporter {
         drawTo = nextInput.imprintOnto(drawTo);
 
         return drawTo;
+    }
+
+    public void clearInputs() {
+        inputs.clear();
+        nextInput = new Input();
     }
 }

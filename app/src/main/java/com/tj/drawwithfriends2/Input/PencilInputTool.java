@@ -65,18 +65,11 @@ public class PencilInputTool extends InputTool {
         Point currTouch = new Point(ultimateX, ultimateY);
 
         if (lastTouch == null) {
-        //  if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                InputTransporter.getInstance().fillCircle(currTouch.x, currTouch.y, thickness, color);
-          //  }
+            InputTransporter.getInstance().fillCircle(currTouch.x, currTouch.y, thickness, color);
         } else {
-        //if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             InputTransporter.getInstance().drawLine(currTouch, lastTouch, color, thickness);
         }
-        // }
-
-        //if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            lastTouch = currTouch;
-        //}
+        lastTouch = currTouch;
 
         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             InputTransporter.getInstance().finishInput();

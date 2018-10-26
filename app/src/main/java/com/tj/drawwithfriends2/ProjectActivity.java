@@ -78,6 +78,7 @@ public class ProjectActivity extends AppCompatActivity {
             public void onProgressChanged(android.widget.SeekBar seekBar, int progress, boolean fromUser) {
                 // todo, why do i need this check?
                 if (projectPicture != null) {
+                    thickness = progress + 1;
                     Log.e("thickness", "thickness is " + (progress + 1));
                     projectPicture.setThickness(progress + 1);
                 }
@@ -257,8 +258,8 @@ public class ProjectActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
-
-                currProject.printBitmap();
+                currProject.erase();
+                projectPicture.updatePaintingImage();
                 // todo implement a flush method or something
                 // currProject.saveInputs();
                 break;

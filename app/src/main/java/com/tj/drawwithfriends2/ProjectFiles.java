@@ -256,4 +256,9 @@ public class ProjectFiles implements Serializable {
             }
         }
     }
+
+    public void erase() {
+        ultimatePixelArray.erase();
+        InputTransporter.getInstance().clearInputs();
+    }
 }

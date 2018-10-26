@@ -53,6 +53,15 @@ public class UltimatePixelArray {
         }
     }
 
+    public void erase() {
+        int[] pixelArray = new int[width * height];
+        for (int i = 0; i < pixelArray.length; i++) {
+            pixelArray[i] = 0x00ffffff;
+        }
+
+        mostRecent = Bitmap.createBitmap(pixelArray, width, height, Bitmap.Config.ARGB_8888);
+    }
+
     private void create() {
         int[] pixelArray = new int[width * height];
         for (int i = 0; i < pixelArray.length; i++) {
