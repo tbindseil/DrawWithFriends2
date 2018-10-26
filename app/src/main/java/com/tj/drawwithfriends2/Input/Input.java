@@ -34,6 +34,7 @@ public class Input implements InputSaver {
         Bitmap mutable = underlying.copy(Bitmap.Config.ARGB_8888, true);
         for (Point p: pointToColorMap.keySet()) {
             try {
+                Log.e("Input", "drawing to " + p.x + ", " + p.y);
                 mutable.setPixel(p.x, p.y, pointToColorMap.get(p));
             } catch (Exception e) {
                 Log.e("imprintOnto", "exception: " + e.toString());

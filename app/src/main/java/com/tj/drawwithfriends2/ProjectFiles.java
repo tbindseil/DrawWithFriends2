@@ -245,4 +245,15 @@ public class ProjectFiles implements Serializable {
         // TODO put the following on its own super fucking low prio thread
         ultimatePixelArray.update(next);
     }
+
+    public void printBitmap() {
+        Bitmap b = ultimatePixelArray.getBitmap();
+        for (int i = 0; i < b.getWidth(); i++) {
+            for (int j = 0; j < b.getHeight(); j++) {
+                if (b.getPixel(i, j) != 0) {
+                    Log.e("", "bitmap at " + i + ", " + j + " is " + b.getPixel(i, j));
+                }
+            }
+        }
+    }
 }

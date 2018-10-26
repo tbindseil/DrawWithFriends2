@@ -1,6 +1,7 @@
 package com.tj.drawwithfriends2;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.util.Log;
 
@@ -106,19 +107,44 @@ public class InputTransporter {
                 err += dx - (radius << 1);
             }
         }
+        addPoint(x0, y0, color);
     }
 
     public void fillCircle(int x0, int y0, int radius, int color) {
         fillCircle(x0, y0, radius, color, nextInput);
     }
-
+/*
     public void fillCircle(int x0, int y0, int radius, int color, Input addTo) {
-        Input extra = new Input();
+        /*Input extra = new Input();
         drawCircle(x0, y0, radius, color, extra);
 
+        Point center = new Point(x0, y0);
+
         Map<HashPoint, Integer> points = extra.getPointToColorMap();
+        Log.e("fillCircle", "radius is " + radius);
+        Log.e("fillCircle", "x0 is " + x0 + " and y0 is " + y0);
         for (Point p: points.keySet()) {
-            drawLine(new Point(x0, y0), p, color);
+            Log.e("fillCircle", "drawing to, x " + p.x + " y " + p.y);
+            drawLine(center, p, color);
+        }
+        addPoint(center.x, center.y, Color.BLUE);
+
+        drawCircle(x0, y0, radius, color, addTo);
+
+        if (radius > 0) {
+            fillCircle(x0, y0, radius - 1, color, addTo);
+        }
+    }
+*/
+
+    public  void fillCircle(int x0, int y0, int radius, int color, Input addTo) {
+        int radiusSqrd = radius * radius;
+        for (int x = x0 - radius, deltaX = 0 - radius; x < x0 + radius; x++, deltaX++) {
+            for (int y = y0 - radius, deltaY = 0 - radius; y < y0 + radius; y++, deltaY++) {
+                if (deltaY * deltaY + deltaX * deltaX < radiusSqrd) {
+                    addTo.addPoint(x, y, color);
+                }
+            }
         }
     }
 
@@ -129,16 +155,31 @@ public class InputTransporter {
     public void drawLine(Point currPoint, Point lastPoint, int color, int thickness, Input addTo) {
         Input start = new Input();
 
-        drawCircle(currPoint.x, currPoint.y, thickness, color, start);
+        fillCircle(currPoint.x, currPoint.y, thickness, color, addTo);
+        fillCircle(lastPoint.x, lastPoint.y, thickness, color, addTo);
+
+        drawLine(currPoint, lastPoint, color, start);
 
         int rise = lastPoint.y - currPoint.y;
         int run = lastPoint.x - currPoint.x;
 
         Map<HashPoint, Integer> startPoints = start.getPointToColorMap();
 
+        // scale for thickness
+        double deltaY, deltaX;
+        if (run == 0) {
+            deltaX = 0;
+            deltaY = thickness;
+        } else {
+            deltaY = thickness * Math.sin(Math.atan(rise / run));
+            deltaX = thickness * Math.cos(Math.atan(rise / run));
+        }
+
         for (Point p: startPoints.keySet()) {
-            Point endPoint = new Point(p.x + run, p.y + rise);
-            drawLine(p, endPoint, color, addTo);
+            Point lowPoint = new Point(p.x + 0 - (int)deltaY, p.y + (int)deltaX);
+            Point endPoint = new Point(p.x + (int)deltaY, p.y + 0 - (int)deltaX);
+            drawLine(lowPoint, endPoint, color, addTo);
+            //addPoint(p.x, p.y, color);
         }
     }
 
@@ -147,6 +188,12 @@ public class InputTransporter {
     }
 
     public void drawLine(Point currPoint, Point lastPoint, int color, Input addTo) {
+        Log.e("drawLine##", "drawing line btw " + currPoint.x + ", " + currPoint.y + " and " + lastPoint.x + ", " + lastPoint.y);
+
+        // the algo doesn't do the end point for some reason
+        //addTo.addPoint(currPoint.x, currPoint.y, Color.GREEN);
+        //addTo.addPoint(lastPoint.x, lastPoint.y, Color.GREEN);
+
         int x0 = lastPoint.x;
         int y0 = lastPoint.y;
         int x1 = currPoint.x;
@@ -180,6 +227,7 @@ public class InputTransporter {
         int y = y0;
 
         for (int x = x0; x < x1; x++) {
+            Log.e("drawLine#####", "adding point " + x + ", " + y);
             addTo.addPoint(x, y, color);
             if (D > 0) {
                 y = y + yi;
@@ -201,6 +249,7 @@ public class InputTransporter {
         int x = x0;
 
         for (int y = y0; y < y1; y++) {
+            Log.e("drawLine#####", "adding point " + x + ", " + y);
             addTo.addPoint(x, y, color);
             if (D > 0)
                 x = x + xi;

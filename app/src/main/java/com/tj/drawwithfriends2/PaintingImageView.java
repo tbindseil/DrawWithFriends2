@@ -72,6 +72,9 @@ public class PaintingImageView extends AppCompatImageView {
         if (currTool != null) {
             currTool.setThickness(thickness);
         }
+        else {
+            Log.e("setThickness", "null");
+        }
     }
 
     @Override

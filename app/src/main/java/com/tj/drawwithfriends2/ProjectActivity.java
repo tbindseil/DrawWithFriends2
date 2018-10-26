@@ -78,6 +78,7 @@ public class ProjectActivity extends AppCompatActivity {
             public void onProgressChanged(android.widget.SeekBar seekBar, int progress, boolean fromUser) {
                 // todo, why do i need this check?
                 if (projectPicture != null) {
+                    Log.e("thickness", "thickness is " + (progress + 1));
                     projectPicture.setThickness(progress + 1);
                 }
             }
@@ -167,6 +168,7 @@ public class ProjectActivity extends AppCompatActivity {
     public void handlePencilClick(View view) {
         projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom()));
         projectPicture.notifyOfWidthAndHeight();
+        projectPicture.setThickness(thickness);
     }
 
     public void handleThicknessClick(View view) {
@@ -177,6 +179,7 @@ public class ProjectActivity extends AppCompatActivity {
     public void handleShapeClick(View view) {
         projectPicture.setInputTool(new CircleInputTool(currProject.getCurrZoom()));
         projectPicture.notifyOfWidthAndHeight();
+        projectPicture.setThickness(thickness);
     }
 
     public void handleZoomClick(View view) {
@@ -254,6 +257,8 @@ public class ProjectActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
+
+                currProject.printBitmap();
                 // todo implement a flush method or something
                 // currProject.saveInputs();
                 break;
