@@ -61,8 +61,9 @@ public class PaintingImageView extends AppCompatImageView {
     }
 
     public void notifyOfWidthAndHeight() {
-        currTool.setPixelsWide(getWidth());
-        currTool.setPixelsTall(getHeight());
+        //mProjectFiles.setPixelsWide(getWidth());
+        //mProjectFiles.setPixelsTall(getHeight());
+        mProjectFiles.handleWidthAndHeightChange(getWidth(), getHeight());
     }
 
     public void setColor(int color) {
@@ -107,8 +108,8 @@ public class PaintingImageView extends AppCompatImageView {
         DrawFilter oldDrawFilter = canvas.getDrawFilter();
         canvas.setDrawFilter(DRAW_FILTER);
 
-        float xScale = getWidth() / mProjectFiles.getWidth();
-        float yScale = getHeight() / mProjectFiles.getHeight();
+        float xScale = (float)getWidth() / (float)mProjectFiles.getWidth();
+        float yScale = (float)getHeight() / (float)mProjectFiles.getHeight();
         xScale *= mProjectFiles.getWidth() / mProjectFiles.getCurrWidth();
         yScale *= mProjectFiles.getHeight() / mProjectFiles.getCurrHeight();
         xScale *= -1;
@@ -116,7 +117,8 @@ public class PaintingImageView extends AppCompatImageView {
 
         canvas.save();
 
-        canvas.translate(mProjectFiles.getXOffset() * xScale, mProjectFiles.getYOffset() * yScale);
+        canvas.translate(mProjectFiles.getXOffset() * xScale,
+                mProjectFiles.getYOffset() * yScale);
         canvas.scale(mProjectFiles.getWidth() / mProjectFiles.getCurrWidth(),
                 mProjectFiles.getHeight() / mProjectFiles.getCurrHeight());
 

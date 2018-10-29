@@ -5,4 +5,12 @@
         android:id="@+id/action_save"
         app:showAsAction="always"
         android:title="clear" />
+    <item
+        android:id="@+id/action_tp"
+        app:showAsAction="always"
+        android:title="tp" />
+    <item
+        android:id="@+id/action_cp"
+        app:showAsAction="always"
+        android:title="cp" />
 </menu>

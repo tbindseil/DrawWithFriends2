@@ -66,7 +66,7 @@ public class ProjectFiles implements Serializable {
         int yOffset = DEFAULT_YOFFSET;
         int width = DEFAULT_WIDTH;
         int height = DEFAULT_HEIGHT;
-        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height);
+        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height, -1, -1);
 
         // create file object instances
         this.config = new File(dir, CONFIG_FILE_NAME);
@@ -94,7 +94,7 @@ public class ProjectFiles implements Serializable {
         int yOffset = DEFAULT_YOFFSET;
         int width = DEFAULT_WIDTH;
         int height = DEFAULT_HEIGHT;
-        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height);
+        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height, -1, -1);
 
         setTitle(title);
         inputsFile.createNewFile();
@@ -157,6 +157,13 @@ public class ProjectFiles implements Serializable {
 
     public void setYOffset(int yOffset) {
         currZoom.setyOffset(yOffset);
+    }
+
+    public void handleWidthAndHeightChange(double pixelsWide, double pixelsTall) {
+        currZoom.setPixelsWide(pixelsWide);
+        currZoom.setPixelsTall(pixelsTall);
+
+        // need to scale according to the dimensions of our picture
     }
 
     public void setCurrZoom(Zoom newZoom) {

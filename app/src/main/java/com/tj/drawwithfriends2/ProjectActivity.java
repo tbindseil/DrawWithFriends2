@@ -1,19 +1,25 @@
 package com.tj.drawwithfriends2;
 
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.tj.drawwithfriends2.Input.CircleInputTool;
 import com.tj.drawwithfriends2.Input.Input;
@@ -262,6 +268,72 @@ public class ProjectActivity extends AppCompatActivity {
                 projectPicture.updatePaintingImage();
                 // todo implement a flush method or something
                 // currProject.saveInputs();
+                break;
+            case R.id.action_cp: {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("currPoint x,y:");
+
+                // Set up the input
+                final EditText input = new EditText(this);
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        String str = input.getText().toString();
+                        String[] tokens = str.split(",");
+
+                        if (tokens.length != 2) {
+                            return;
+                        }
+
+                        int currX = Integer.parseInt(tokens[0]);
+                        int currY = Integer.parseInt(tokens[1]);
+
+                        InputTransporter.getInstance().addPoint(currX, currY, Color.BLUE);
+                        projectPicture.updatePaintingImage();
+                    }
+                });
+
+                builder.show();
+            }
+                break;
+            case R.id.action_tp: {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("TouchPoint x,y:");
+
+                // Set up the input
+                final EditText input = new EditText(this);
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        String str = input.getText().toString();
+                        String[] tokens = str.split(",");
+
+                        if (tokens.length != 2) {
+                            return;
+                        }
+
+                        float touchX = Float.parseFloat(tokens[0]);
+                        float touchY = Float.parseFloat(tokens[1]);
+
+                        MotionEvent e = MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, touchX, touchY, 0);
+                        projectPicture.onTouchEvent(e);
+                    }
+                });
+
+                builder.show();
+            }
                 break;
             case android.R.id.home:
                 onBackPressed();

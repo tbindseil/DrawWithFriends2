@@ -19,14 +19,18 @@ public class Zoom {
     private int ultimateWidth;
     private int ultimateHeight;
 
-    public Zoom(int xOffset, int yOffset, int currWidth, int currHeight, int ultimateWidth, int ultimateHeight) {
+    private double pixelsWide;
+    private double pixelsTall;
+
+    public Zoom(int xOffset, int yOffset, int currWidth, int currHeight, int ultimateWidth, int ultimateHeight, double pixelsWide, double pixelsTall) {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.currWidth = currWidth;
         this.currHeight = currHeight;
         this.ultimateWidth = ultimateWidth;
         this.ultimateHeight = ultimateHeight;
-
+        this.pixelsWide = pixelsWide;
+        this.pixelsTall = pixelsTall;
     }
 
     public int getxOffset() {
@@ -63,6 +67,22 @@ public class Zoom {
     public void setCurrHeight(int currHeight) {
         this.currHeight = currHeight;
         boundChanges();
+    }
+
+    public void setPixelsWide(double pixelsWide) {
+        this.pixelsWide = pixelsWide;
+    }
+
+    public double getPixelsWide() {
+        return pixelsWide;
+    }
+
+    public void setPixelsTall(double pixelsTall) {
+        this.pixelsTall = pixelsTall;
+    }
+
+    public double getPixelsTall() {
+        return pixelsTall;
     }
 
     public int getUltimateWidth() {
@@ -107,7 +127,7 @@ public class Zoom {
     }
 
     public Zoom deepCopy() {
-        Zoom ret = new Zoom(xOffset, yOffset, currWidth, currHeight, ultimateWidth, ultimateHeight);
+        Zoom ret = new Zoom(xOffset, yOffset, currWidth, currHeight, ultimateWidth, ultimateHeight, pixelsWide, pixelsTall);
         return ret;
     }
 }

@@ -16,15 +16,12 @@ import com.tj.drawwithfriends2.Zoom;
 
 public class PencilInputTool extends InputTool {
     // note last touch is in terms of ultimatecoords
-    Point lastTouch;
-
-    Zoom currZoom;
+    private Point lastTouch;
 
     public PencilInputTool(Zoom currZoom) {
         super(currZoom);
         this.color = Color.RED;
-        this.thickness = 2;
-        this.currZoom = currZoom;
+        this.thickness = 1;
     }
 
     @Override
@@ -44,6 +41,12 @@ public class PencilInputTool extends InputTool {
         // TODO i think my scaling is off for some reason
         int currX = pixelXToCurrX(event.getX());
         int currY = pixelYToCurrY(event.getY());
+
+        Log.e("debug", "xoff, yoff is " + currZoom.getxOffset() + ", " + currZoom.getyOffset());
+        Log.e("debug", "width, height is " + currZoom.getCurrWidth() + ", " + currZoom.getCurrHeight());
+        Log.e("debug", "touchx, y is " + event.getX() + ", " + event.getY());
+        Log.e("debug", "currX, currY is " + currX + ", " + currY);
+        Log.e("debug", "pixels wide, tall is " + currZoom.getPixelsWide() + ", " + currZoom.getPixelsTall());
 
         // check bounds, don't mark stuff thats not in the currently zoomed version of the painting
         if (currX < 0) {
