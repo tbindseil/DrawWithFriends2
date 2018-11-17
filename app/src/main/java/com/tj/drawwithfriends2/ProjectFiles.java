@@ -120,7 +120,7 @@ public class ProjectFiles implements Serializable {
     }
 
     public int getZoomLevel() {
-        return currZoom.getUltimateWidth() / currZoom.getCurrWidth();
+        return currZoom.getUltimateWidth() / currZoom.getCurrWidth() - 1;
     }
 
     public void setZoomLevel(int level) {
