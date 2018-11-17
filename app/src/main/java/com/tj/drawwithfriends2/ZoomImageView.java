@@ -118,11 +118,11 @@ public class ZoomImageView extends AppCompatImageView {
         return true;
     }
 
-    public Zoom getCurrZoom() {
-        return currZoom;
+    public void save() {
+        // do nothing
     }
 
-    public Zoom getSaveZoom() {
-        return saveZoom;
+    public void cancel() {
+        currZoom.deepCopy(saveZoom);
     }
 }

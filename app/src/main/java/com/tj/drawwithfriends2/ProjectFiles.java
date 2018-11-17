@@ -53,7 +53,7 @@ public class ProjectFiles implements Serializable {
 
     private String title;
     // TODO add these to config file
-    private Zoom currZoom;
+    private final Zoom currZoom;
 
     // open existing
     public ProjectFiles(File dir) throws Exception {
@@ -119,55 +119,13 @@ public class ProjectFiles implements Serializable {
         writeConfigChanges();
     }
 
-    public int getWidth() {
-        return currZoom.getUltimateWidth();
+    public int getZoomLevel() {
+        return currZoom.getUltimateWidth() / currZoom.getCurrWidth();
     }
 
-    public int getHeight() {
-        return currZoom.getUltimateHeight();
-    }
-
-    public int getCurrWidth() {
-        return currZoom.getCurrWidth();
-    }
-
-    public int getCurrHeight() {
-        return currZoom.getCurrHeight();
-    }
-
-    public int getXOffset() {
-        return currZoom.getxOffset();
-    }
-
-    public int getYOffset() {
-        return currZoom.getyOffset();
-    }
-
-    public void setCurrWidth(int currWidth) {
-        currZoom.setCurrWidth(currWidth);
-    }
-
-    public void setCurrHeight(int currHeight) {
-        currZoom.setCurrHeight(currHeight);
-    }
-
-    public void setXOffset(int xOffset) {
-        currZoom.setxOffset(xOffset);
-    }
-
-    public void setYOffset(int yOffset) {
-        currZoom.setyOffset(yOffset);
-    }
-
-    public void handleWidthAndHeightChange(double pixelsWide, double pixelsTall) {
-        currZoom.setPixelsWide(pixelsWide);
-        currZoom.setPixelsTall(pixelsTall);
-
-        // need to scale according to the dimensions of our picture
-    }
-
-    public void setCurrZoom(Zoom newZoom) {
-        currZoom = newZoom;
+    public void setZoomLevel(int level) {
+        currZoom.setCurrWidth(currZoom.getUltimateWidth() / level);
+        currZoom.setCurrHeight(currZoom.getUltimateHeight() / level);
     }
 
     private void writeConfigChanges() {
@@ -251,17 +209,6 @@ public class ProjectFiles implements Serializable {
 
         // TODO put the following on its own super fucking low prio thread
         ultimatePixelArray.update(next);
-    }
-
-    public void printBitmap() {
-        Bitmap b = ultimatePixelArray.getBitmap();
-        for (int i = 0; i < b.getWidth(); i++) {
-            for (int j = 0; j < b.getHeight(); j++) {
-                if (b.getPixel(i, j) != 0) {
-                    Log.e("", "bitmap at " + i + ", " + j + " is " + b.getPixel(i, j));
-                }
-            }
-        }
     }
 
     public void erase() {

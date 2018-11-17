@@ -134,8 +134,7 @@ public class ProjectActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progress = progress + 1; // see zoomSeekBar.setMax()
-                currProject.setCurrWidth(currProject.getWidth() / progress);
-                currProject.setCurrHeight(currProject.getHeight() / progress);
+                currProject.setZoomLevel(progress);
 
                 zoomImage.invalidate();
             }
@@ -144,7 +143,7 @@ public class ProjectActivity extends AppCompatActivity {
         projectPicture = findViewById(R.id.mainCanvas);
 
         projectPicture.setContext(this.getApplicationContext());
-        projectPicture.setProjectFiles(currProject);
+        projectPicture.setCurrZoom(currProject.getCurrZoom());
         // TODO read this value from files
         projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom()));
 
@@ -194,16 +193,16 @@ public class ProjectActivity extends AppCompatActivity {
         currFocus = zoomLayout;
 
         zoomImage.launch(currProject.getCurrZoom(), this, currProject.getBitmap());
-        zoomSeekBar.setProgress((currProject.getWidth() / currProject.getCurrWidth()));
+        zoomSeekBar.setProgress(currProject.getZoomLevel());
     }
 
     public void handleZoomOkClick(View view) {
-        currProject.setCurrZoom(zoomImage.getCurrZoom());
+        zoomImage.save();
         resetCurrFocus();
     }
 
     public void handleZoomCancelClick(View view) {
-        currProject.setCurrZoom(zoomImage.getSaveZoom());
+        zoomImage.cancel();
         resetCurrFocus();
     }
 

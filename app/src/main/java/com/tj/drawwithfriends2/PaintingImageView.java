@@ -25,7 +25,9 @@ public class PaintingImageView extends AppCompatImageView {
 
     private Context mContext;
 
-    private ProjectFiles mProjectFiles;
+    // todo make this private, that would involve
+    // launching the image from java
+    private Zoom currZoom;
 
     private InputTool currTool;
 
@@ -48,8 +50,8 @@ public class PaintingImageView extends AppCompatImageView {
         mContext = context;
     }
 
-    public void setProjectFiles(ProjectFiles files) {
-        mProjectFiles = files;
+    public void setCurrZoom(Zoom newZoom) {
+        currZoom = newZoom;
     }
 
     public void setInputTool(InputTool tool) {
@@ -61,9 +63,8 @@ public class PaintingImageView extends AppCompatImageView {
     }
 
     public void notifyOfWidthAndHeight() {
-        //mProjectFiles.setPixelsWide(getWidth());
-        //mProjectFiles.setPixelsTall(getHeight());
-        mProjectFiles.handleWidthAndHeightChange(getWidth(), getHeight());
+        currZoom.setPixelsWide(getWidth());
+        currZoom.setPixelsTall(getHeight());
     }
 
     public void setColor(int color) {
@@ -86,18 +87,18 @@ public class PaintingImageView extends AppCompatImageView {
     }
 
     public void updatePaintingImage() {
-        Bitmap toDraw = mProjectFiles.getBitmap();
         // got a weird exception saying that toDraw was null when scaling
         // got it again....
+        Bitmap toDraw;
         try {
-            toDraw = InputTransporter.getInstance().drawQueuedInputs(toDraw);
+            toDraw = InputTransporter.getInstance().drawQueuedInputs();
         } catch (Exception e) {
             Log.e("updatePaintingImage", "exception: " + e.toString());
             Log.e("updatePaintingImage", "stacktrace:");
             e.printStackTrace();
             return;
         }
-        Drawable result = new BitmapDrawable(mContext.getResources(), toDraw);
+        BitmapDrawable result = new BitmapDrawable(mContext.getResources(), toDraw);
         setImageDrawable(result);
         invalidate();
     }
@@ -108,19 +109,19 @@ public class PaintingImageView extends AppCompatImageView {
         DrawFilter oldDrawFilter = canvas.getDrawFilter();
         canvas.setDrawFilter(DRAW_FILTER);
 
-        float xScale = (float)getWidth() / (float)mProjectFiles.getWidth();
-        float yScale = (float)getHeight() / (float)mProjectFiles.getHeight();
-        xScale *= mProjectFiles.getWidth() / mProjectFiles.getCurrWidth();
-        yScale *= mProjectFiles.getHeight() / mProjectFiles.getCurrHeight();
+        float xScale = (float)getWidth() / (float)currZoom.getUltimateWidth();
+        float yScale = (float)getHeight() / (float)currZoom.getUltimateHeight();
+        xScale *= currZoom.getUltimateWidth() / currZoom.getCurrWidth();
+        yScale *= currZoom.getUltimateHeight() / currZoom.getCurrHeight();
         xScale *= -1;
         yScale *= -1;
 
         canvas.save();
 
-        canvas.translate(mProjectFiles.getXOffset() * xScale,
-                mProjectFiles.getYOffset() * yScale);
-        canvas.scale(mProjectFiles.getWidth() / mProjectFiles.getCurrWidth(),
-                mProjectFiles.getHeight() / mProjectFiles.getCurrHeight());
+        canvas.translate(currZoom.getxOffset() * xScale,
+                currZoom.getyOffset() * yScale);
+        canvas.scale(currZoom.getUltimateWidth() / currZoom.getCurrWidth(),
+                currZoom.getUltimateHeight() / currZoom.getCurrHeight());
 
         super.onDraw(canvas);
 

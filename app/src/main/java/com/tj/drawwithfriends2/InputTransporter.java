@@ -243,7 +243,8 @@ public class InputTransporter {
         // TODO
     }
 
-    public Bitmap drawQueuedInputs(Bitmap drawTo) {
+    public Bitmap drawQueuedInputs() {
+        Bitmap drawTo = projectFiles.getBitmap();
         Input[] toIt = new Input[toSave.size()];
         toSave.toArray(toIt);
         for (int i = 0; i < toIt.length; i++) {

@@ -106,18 +106,6 @@ public class Zoom {
         yOffset = yOff;
     }
 
-    public int getXScale() {
-        // this should result in a no remainder division... I think...
-        return ultimateWidth / currWidth;
-        // i don't think thats the case anymore...
-    }
-
-    public int getYScale() {
-        // this should result in a no remainder division... I think...
-        return ultimateHeight / currHeight;
-        // i don't think thats the case anymore...
-    }
-
     public int currXToUltimateX(int currX) {
         return currX + xOffset;
     }
@@ -129,5 +117,16 @@ public class Zoom {
     public Zoom deepCopy() {
         Zoom ret = new Zoom(xOffset, yOffset, currWidth, currHeight, ultimateWidth, ultimateHeight, pixelsWide, pixelsTall);
         return ret;
+    }
+
+    public void deepCopy(Zoom toCopy) {
+        xOffset = toCopy.getxOffset();
+        yOffset = toCopy.getyOffset();
+        currWidth = toCopy.getCurrWidth();
+        currHeight = toCopy.getCurrHeight();
+        ultimateWidth = toCopy.getUltimateWidth();
+        ultimateHeight = toCopy.getUltimateHeight();
+        pixelsWide = toCopy.getPixelsWide();
+        pixelsTall = toCopy.getPixelsTall();
     }
 }
