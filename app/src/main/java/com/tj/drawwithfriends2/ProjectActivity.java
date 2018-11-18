@@ -32,7 +32,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ProjectActivity extends AppCompatActivity {
     private ProjectFiles currProject;
-
     private ConstraintLayout normalLayout;
     private PaintingImageView projectPicture;
 
@@ -83,6 +82,7 @@ public class ProjectActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(android.widget.SeekBar seekBar, int progress, boolean fromUser) {
                 // todo, why do i need this check?
+                // todo make curr project, this is with project setting stuff
                 if (projectPicture != null) {
                     thickness = progress + 1;
                     Log.e("thickness", "thickness is " + (progress + 1));
@@ -162,8 +162,10 @@ public class ProjectActivity extends AppCompatActivity {
 
 
     public void onWindowFocusChanged(boolean hasFocus) {
+        // propogate new dimensions to currZoom
         projectPicture.notifyOfWidthAndHeight();
-        //zoomImage
+
+        adjustPaintingViewDimensions();
     }
 
     public void handleColorClick(View view) {
@@ -173,6 +175,7 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void handlePencilClick(View view) {
         projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom()));
+        // why is the below needed? is it needed?
         projectPicture.notifyOfWidthAndHeight();
         projectPicture.setThickness(thickness);
     }
@@ -184,6 +187,7 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void handleShapeClick(View view) {
         projectPicture.setInputTool(new CircleInputTool(currProject.getCurrZoom()));
+        // why is the below needed? is it needed?
         projectPicture.notifyOfWidthAndHeight();
         projectPicture.setThickness(thickness);
     }
@@ -198,12 +202,23 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void handleZoomOkClick(View view) {
         zoomImage.save();
+        adjustPaintingViewDimensions();
+
         resetCurrFocus();
     }
 
     public void handleZoomCancelClick(View view) {
         zoomImage.cancel();
+        adjustPaintingViewDimensions();
+
         resetCurrFocus();
+    }
+
+    private void adjustPaintingViewDimensions() {
+        Zoom currZoom = currProject.getCurrZoom();
+
+        // set width and height st the rect is
+        // congruent to the bitmap
     }
 
     private abstract class SeekBarInterface implements SeekBar.OnSeekBarChangeListener {
@@ -241,6 +256,7 @@ public class ProjectActivity extends AppCompatActivity {
         int color = ((int) (0xff << 24)) | ((int) (red << 16)) | ((int) (green << 8)) | ((int) (blue));
         colorButton.setBackgroundColor(color);
 
+        // todo move with settings stuff
         projectPicture.setColor(color);
 
         color = ~color;
