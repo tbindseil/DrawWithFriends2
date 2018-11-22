@@ -10,10 +10,12 @@ import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -28,7 +30,9 @@ public class ZoomImageView extends AppCompatImageView {
     private Zoom currZoom, saveZoom;
     private Context mContext;
     private boolean holdingZoomBox;
-    private Point lastTouch;
+
+    private Point initialTouch;
+    private int initialXOff, initialYOff;
 
     public ZoomImageView(Context context) {
         super(context);
@@ -67,7 +71,11 @@ public class ZoomImageView extends AppCompatImageView {
 
         // draw rect over zoomed portion
         Paint p = new Paint();
-        p.setColor(holdingZoomBox ? Color.BLACK : Color.GREEN);
+        if (holdingZoomBox) {
+            p.setARGB(64, 0, 0, 0);
+        } else {
+            p.setARGB(64, 0, 255, 0);
+        }
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(5);
 
@@ -142,7 +150,9 @@ public class ZoomImageView extends AppCompatImageView {
                     ev.getY() > currZoom.getyOffset() * scaleFactorY &&
                     ev.getY() < currZoom.getyOffset() * scaleFactorX + currZoom.getCurrHeight() * scaleFactorY) {
                 holdingZoomBox = true;
-                lastTouch = new Point((int)ev.getX(), (int)ev.getY());
+                initialTouch = new Point((int)ev.getX(), (int)ev.getY());
+                initialXOff = currZoom.getxOffset();
+                initialYOff = currZoom.getyOffset();
             }
         }
 
@@ -150,15 +160,12 @@ public class ZoomImageView extends AppCompatImageView {
             if (holdingZoomBox) {
                 scaleFactorX = (float)currZoom.getUltimateWidth() / (float)getWidth();
                 scaleFactorY = (float)currZoom.getUltimateHeight() / (float)getHeight();
-                int xOff = currZoom.getxOffset();
-                int yOff = currZoom.getyOffset();
-                xOff = xOff + (int)((ev.getX() - lastTouch.x) * scaleFactorX);
-                yOff = yOff + (int)((ev.getY() - lastTouch.y) * scaleFactorY);
+                int xOff = initialXOff + (int)((ev.getX() - initialTouch.x) * scaleFactorX);
+                int yOff = initialYOff + (int)((ev.getY() - initialTouch.y) * scaleFactorY);
 
                 currZoom.setxOffset(xOff);
                 currZoom.setyOffset(yOff);
 
-                lastTouch = new Point((int)ev.getX(), (int)ev.getY());
                 invalidate();
             }
         }
