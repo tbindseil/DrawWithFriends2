@@ -71,7 +71,6 @@ public class ZoomImageView extends AppCompatImageView {
         DrawFilter oldDrawFilter = canvas.getDrawFilter();
         canvas.setDrawFilter(DRAW_FILTER);
 
-        Log.e("zoomBoost", "zoomBoost is " + zoomBoost);
         canvas.scale(zoomBoost, zoomBoost);
 
         canvas.drawBitmap(bitmap, 0, 0, new Paint());

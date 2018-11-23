@@ -129,8 +129,16 @@ public class PaintingImageView extends AppCompatImageView {
 
         canvas.save();
 
-        canvas.scale(currZoom.getZoomLevel() + zoomBoost,
-                currZoom.getZoomLevel() + zoomBoost);
+        canvas.scale(currZoom.getZoomLevel() + zoomBoost - 1,
+                currZoom.getZoomLevel() + zoomBoost - 1);
+
+        if (currZoom.getZoomLevel() == 1) {
+            // center zoomed out picture
+
+        } else {
+            // deal with offsets
+        }
+
         canvas.drawBitmap(bitmap, 0, 0, new Paint());
 
         // restore state

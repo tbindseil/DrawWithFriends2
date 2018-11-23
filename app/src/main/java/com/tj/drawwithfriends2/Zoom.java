@@ -93,8 +93,16 @@ public class Zoom {
         return ultimateWidth;
     }
 
+    public void setUltimateWidth(int newUltimateWidth) {
+        ultimateWidth = newUltimateWidth;
+    }
+
     public int getUltimateHeight() {
         return ultimateHeight;
+    }
+
+    public void setUltimateHeight(int newUltimateHeight) {
+        ultimateHeight = newUltimateHeight;
     }
 
     private void boundChanges() {

@@ -207,10 +207,9 @@ public class ProjectFiles implements Serializable {
         ultimatePixelArray = new UltimatePixelArray(currZoom.getUltimateWidth(), currZoom.getUltimateHeight(), ultimatePixelsFile.getAbsolutePath());
         ultimatePixelArray.init();
 
-        // configure default zoom level.
-        // the process will have to be st zoom level 1 corresponds to whole picture shown
-
-        // crux: when can i detect the size of the screen
+        // this is whack yo
+        currZoom.setUltimateWidth(ultimatePixelArray.getWidth());
+        currZoom.setUltimateHeight(ultimatePixelArray.getHeight());
     }
 
     public void processInput(Input next) {

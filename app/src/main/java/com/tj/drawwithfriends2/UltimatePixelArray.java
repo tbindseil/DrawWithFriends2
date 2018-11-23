@@ -22,13 +22,15 @@ import java.util.List;
  */
 
 // owned by project files
-@TargetApi(26)
+
 public class UltimatePixelArray {
     private int width, height;
     private File file;
     private Bitmap mostRecent;
 
     public UltimatePixelArray(int width, int height, String absolutePath) throws Exception {
+        // TODO this is horrible, and will changge it it turns out
+        // the file exists
         this.width = width;
         this.height = height;
 
@@ -73,6 +75,8 @@ public class UltimatePixelArray {
 
     private void load() {
         mostRecent = BitmapFactory.decodeFile(file.getAbsolutePath());
+        width = mostRecent.getWidth();
+        height = mostRecent.getHeight();
     }
 
     private void write() {
@@ -90,5 +94,13 @@ public class UltimatePixelArray {
         mostRecent = next.imprintOnto(mostRecent);
 
         write();
+    }
+
+    int getWidth() {
+        return width;
+    }
+
+    int getHeight() {
+        return height;
     }
 }

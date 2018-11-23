@@ -62,6 +62,7 @@ public class ProjectActivity extends AppCompatActivity {
             File dirName = (File) ser;
             currProject = new ProjectFiles(dirName);
             myToolbar.setTitle(currProject.getTitle());
+            Log.e("debug", "initting");
             currProject.init();
         } catch (Exception e) {
             myToolbar.setTitle("error");
