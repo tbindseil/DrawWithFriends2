@@ -10,15 +10,10 @@ import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
-
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 /**
  * Created by TJ on 10/6/2018.
@@ -56,11 +51,12 @@ public class ZoomImageView extends AppCompatImageView {
 
         bitmap = toDraw;
 
+        setBackgroundColor(Color.BLACK);
+
         Drawable result = new BitmapDrawable(mContext.getResources(), toDraw);
         setImageDrawable(result);
         invalidate();
     }
-
 
     // in the below method, we always draw the full
     // picture with the zoom rectangle in black
@@ -70,10 +66,19 @@ public class ZoomImageView extends AppCompatImageView {
         // no anti aliasing
         DrawFilter oldDrawFilter = canvas.getDrawFilter();
         canvas.setDrawFilter(DRAW_FILTER);
+        // scale then shift? or shift then scale
+        int xShift = (getWidth() - (currZoom.getUltimateWidth() * zoomBoost)) / 2;
+        int yShift = (getHeight() - (currZoom.getUltimateHeight() * zoomBoost)) / 2;
+        xShift = xShift / zoomBoost;
+        yShift = yShift / zoomBoost;
 
         canvas.scale(zoomBoost, zoomBoost);
 
-        canvas.drawBitmap(bitmap, 0, 0, new Paint());
+        Paint p = new Paint();
+        p.setColor(Color.WHITE);
+        canvas.drawRect(xShift, yShift, bitmap.getWidth(), bitmap.getHeight(), p);
+
+        canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
 
         if (currZoom.getZoomLevel() == 1) {
             // fully zoomed out
@@ -81,7 +86,7 @@ public class ZoomImageView extends AppCompatImageView {
         }
 
         // draw rect over zoomed portion
-        Paint p = new Paint();
+        p = new Paint();
         if (holdingZoomBox) {
             p.setARGB(64, 0, 0, 0);
         } else {
