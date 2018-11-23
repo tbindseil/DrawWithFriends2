@@ -28,6 +28,8 @@ public class PaintingImageView extends AppCompatImageView {
     // todo make this private, that would involve
     // launching the image from java
     private Zoom currZoom;
+    private int zoomBoost;
+    private Bitmap bitmap;
 
     private InputTool currTool;
 
@@ -54,6 +56,10 @@ public class PaintingImageView extends AppCompatImageView {
         currZoom = newZoom;
     }
 
+    public void setBitmap(Bitmap ongoingBitmap) {
+        bitmap = ongoingBitmap;
+    }
+
     public void setInputTool(InputTool tool) {
         currTool = tool;
     }
@@ -65,6 +71,18 @@ public class PaintingImageView extends AppCompatImageView {
     public void notifyOfWidthAndHeight() {
         currZoom.setPixelsWide(getWidth());
         currZoom.setPixelsTall(getHeight());
+
+        // on setting of width and height, we need
+        // to know what level of scaling we need to reach
+        // the base
+        if (getWidth() < currZoom.getUltimateWidth() ||
+                getHeight() < currZoom.getUltimateHeight()) {
+            // todo handle this better
+            Log.e("PaintingImageView", "picture too big for screen!");
+            assert(false);
+        }
+        zoomBoost = Math.min(getWidth() / currZoom.getUltimateWidth(),
+                getHeight() / currZoom.getUltimateHeight());
     }
 
     public void setColor(int color) {
@@ -109,21 +127,11 @@ public class PaintingImageView extends AppCompatImageView {
         DrawFilter oldDrawFilter = canvas.getDrawFilter();
         canvas.setDrawFilter(DRAW_FILTER);
 
-        float xScale = (float)getWidth() / (float)currZoom.getUltimateWidth();
-        float yScale = (float)getHeight() / (float)currZoom.getUltimateHeight();
-        xScale *= currZoom.getUltimateWidth() / currZoom.getCurrWidth();
-        yScale *= currZoom.getUltimateHeight() / currZoom.getCurrHeight();
-        xScale *= -1;
-        yScale *= -1;
-
         canvas.save();
 
-        canvas.translate(currZoom.getxOffset() * xScale,
-                currZoom.getyOffset() * yScale);
-        canvas.scale(currZoom.getUltimateWidth() / currZoom.getCurrWidth(),
-                currZoom.getUltimateHeight() / currZoom.getCurrHeight());
-
-        super.onDraw(canvas);
+        canvas.scale(currZoom.getZoomLevel() + zoomBoost,
+                currZoom.getZoomLevel() + zoomBoost);
+        canvas.drawBitmap(bitmap, 0, 0, new Paint());
 
         // restore state
         canvas.restore();

@@ -30,6 +30,9 @@ import java.io.Serializable;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+// cool idea, quick tap toggles top row, so we could
+// have more space
+
 public class ProjectActivity extends AppCompatActivity {
     private ProjectFiles currProject;
     private ConstraintLayout normalLayout;
@@ -144,6 +147,8 @@ public class ProjectActivity extends AppCompatActivity {
 
         projectPicture.setContext(this.getApplicationContext());
         projectPicture.setCurrZoom(currProject.getCurrZoom());
+        zoomImage.setCurrZoom(currProject.getCurrZoom());
+        projectPicture.setBitmap(currProject.getBitmap());
         // TODO read this value from files
         projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom()));
 
@@ -163,9 +168,9 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void onWindowFocusChanged(boolean hasFocus) {
         // propogate new dimensions to currZoom
+        // this is where we learn of the dimensions of projectPicture
         projectPicture.notifyOfWidthAndHeight();
-
-        adjustPaintingViewDimensions();
+        zoomImage.notifyOfWidthAndHeight();
     }
 
     public void handleColorClick(View view) {
@@ -202,23 +207,14 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void handleZoomOkClick(View view) {
         zoomImage.save();
-        adjustPaintingViewDimensions();
 
         resetCurrFocus();
     }
 
     public void handleZoomCancelClick(View view) {
         zoomImage.cancel();
-        adjustPaintingViewDimensions();
 
         resetCurrFocus();
-    }
-
-    private void adjustPaintingViewDimensions() {
-        Zoom currZoom = currProject.getCurrZoom();
-
-        // set width and height st the rect is
-        // congruent to the bitmap
     }
 
     private abstract class SeekBarInterface implements SeekBar.OnSeekBarChangeListener {
@@ -316,7 +312,7 @@ public class ProjectActivity extends AppCompatActivity {
 
                 builder.show();
             }
-                break;
+            break;
             case R.id.action_tp: {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("TouchPoint x,y:");
@@ -349,7 +345,8 @@ public class ProjectActivity extends AppCompatActivity {
 
                 builder.show();
             }
-                break;
+            break;
+
             case android.R.id.home:
                 onBackPressed();
                 return true;

@@ -40,12 +40,13 @@ public class ProjectFiles implements Serializable {
     private static final String CONFIG_FILE_NAME = "config";
     private static final String INPUTS_FILE_NAME = "inputsFile";
     private static final String ULTIMATE_FILE_NAME = "UltimatePixels";
-    private static final int DEFAULT_WIDTH = 196;
-    private static final int DEFAULT_HEIGHT = 256;
+    private static final int DEFAULT_WIDTH = 784;
+    private static final int DEFAULT_HEIGHT = 1024;
     private static final int DEFAULT_ZOOM_WIDTH = DEFAULT_WIDTH;
     private static final int DEFAULT_ZOOM_HEIGHT = DEFAULT_HEIGHT;
     private static final int DEFAULT_XOFFSET = 0;
     private static final int DEFAULT_YOFFSET = 0;
+    private static final int DEFAULT_ZOOM_LEVEL = 1;
     public static final int MAX_SHRINKAGE = 4;
 
     public static final int MIN_WIDTH = DEFAULT_WIDTH / MAX_SHRINKAGE;
@@ -66,7 +67,7 @@ public class ProjectFiles implements Serializable {
         int yOffset = DEFAULT_YOFFSET;
         int width = DEFAULT_WIDTH;
         int height = DEFAULT_HEIGHT;
-        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height, -1, -1);
+        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
 
         // create file object instances
         this.config = new File(dir, CONFIG_FILE_NAME);
@@ -94,7 +95,7 @@ public class ProjectFiles implements Serializable {
         int yOffset = DEFAULT_YOFFSET;
         int width = DEFAULT_WIDTH;
         int height = DEFAULT_HEIGHT;
-        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height, -1, -1);
+        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
 
         setTitle(title);
         inputsFile.createNewFile();
@@ -126,6 +127,8 @@ public class ProjectFiles implements Serializable {
     public void setZoomLevel(int level) {
         currZoom.setCurrWidth(currZoom.getUltimateWidth() / level);
         currZoom.setCurrHeight(currZoom.getUltimateHeight() / level);
+
+        currZoom.setZoomLevel(level);
     }
 
     private void writeConfigChanges() {
@@ -199,9 +202,15 @@ public class ProjectFiles implements Serializable {
     }
 
     public void init() throws Exception {
+        // create file
         File ultimatePixelsFile = new File(this.dir, ULTIMATE_FILE_NAME);
         ultimatePixelArray = new UltimatePixelArray(currZoom.getUltimateWidth(), currZoom.getUltimateHeight(), ultimatePixelsFile.getAbsolutePath());
         ultimatePixelArray.init();
+
+        // configure default zoom level.
+        // the process will have to be st zoom level 1 corresponds to whole picture shown
+
+        // crux: when can i detect the size of the screen
     }
 
     public void processInput(Input next) {

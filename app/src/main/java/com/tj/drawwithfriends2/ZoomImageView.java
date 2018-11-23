@@ -28,6 +28,8 @@ public class ZoomImageView extends AppCompatImageView {
     private static final DrawFilter DRAW_FILTER =
             new PaintFlagsDrawFilter(Paint.FILTER_BITMAP_FLAG, 0);
     private Zoom currZoom, saveZoom;
+    private int zoomBoost;
+    Bitmap bitmap;
     private Context mContext;
     private boolean holdingZoomBox;
 
@@ -52,6 +54,8 @@ public class ZoomImageView extends AppCompatImageView {
         mContext = context;
         holdingZoomBox = false;
 
+        bitmap = toDraw;
+
         Drawable result = new BitmapDrawable(mContext.getResources(), toDraw);
         setImageDrawable(result);
         invalidate();
@@ -67,7 +71,15 @@ public class ZoomImageView extends AppCompatImageView {
         DrawFilter oldDrawFilter = canvas.getDrawFilter();
         canvas.setDrawFilter(DRAW_FILTER);
 
-        super.onDraw(canvas);
+        Log.e("zoomBoost", "zoomBoost is " + zoomBoost);
+        canvas.scale(zoomBoost, zoomBoost);
+
+        canvas.drawBitmap(bitmap, 0, 0, new Paint());
+
+        if (currZoom.getZoomLevel() == 1) {
+            // fully zoomed out
+            return;
+        }
 
         // draw rect over zoomed portion
         Paint p = new Paint();
@@ -79,14 +91,9 @@ public class ZoomImageView extends AppCompatImageView {
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(5);
 
-        float scaleFactorX = getWidth() / currZoom.getUltimateWidth();
-        float scaleFactorY = getHeight() / currZoom.getUltimateHeight();
-        float scaledXOff = currZoom.getxOffset() * scaleFactorX;
-        float scaledYOff = currZoom.getyOffset() * scaleFactorY;
-        canvas.drawRect(scaledXOff,
-                scaledYOff,
-                scaledXOff + currZoom.getCurrWidth() * scaleFactorX,
-                scaledYOff + currZoom.getCurrHeight() * scaleFactorY, p);
+        float rectW = getWidth() / currZoom.getZoomLevel();
+        float rectH = getHeight() / currZoom.getZoomLevel();
+        canvas.drawRect(0, 0, rectW, rectH, p);
 
         // restore state
         canvas.setDrawFilter(oldDrawFilter);
@@ -138,6 +145,27 @@ public class ZoomImageView extends AppCompatImageView {
          */
         // ps, if these pixels wide/tall are in dp and are constant among all devices
         // or something, then this could be a bit easier
+    }
+
+    public void setCurrZoom(Zoom initialZoom) {
+        currZoom = initialZoom;
+    }
+
+    public void notifyOfWidthAndHeight() {
+        currZoom.setPixelsWide(getWidth());
+        currZoom.setPixelsTall(getHeight());
+
+        // on setting of width and height, we need
+        // to know what level of scaling we need to reach
+        // the base
+        if (getWidth() < currZoom.getUltimateWidth() ||
+                getHeight() < currZoom.getUltimateHeight()) {
+            // todo handle this better
+            Log.e("ZoomImageView", "picture too big for screen!");
+            assert(false);
+        }
+        zoomBoost = Math.min(getWidth() / currZoom.getUltimateWidth(),
+                getHeight() / currZoom.getUltimateHeight());
     }
 
     @Override
