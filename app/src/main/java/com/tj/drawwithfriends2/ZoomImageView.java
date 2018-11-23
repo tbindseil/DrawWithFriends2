@@ -76,7 +76,7 @@ public class ZoomImageView extends AppCompatImageView {
 
         Paint p = new Paint();
         p.setColor(Color.WHITE);
-        canvas.drawRect(xShift, yShift, bitmap.getWidth(), bitmap.getHeight(), p);
+        canvas.drawRect(xShift, yShift, xShift + bitmap.getWidth(), yShift + bitmap.getHeight(), p);
 
         canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
 
@@ -95,9 +95,9 @@ public class ZoomImageView extends AppCompatImageView {
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(5);
 
-        float rectW = getWidth() / currZoom.getZoomLevel();
-        float rectH = getHeight() / currZoom.getZoomLevel();
-        canvas.drawRect(0, 0, rectW, rectH, p);
+        float rectW = (getWidth() / currZoom.getZoomLevel()) / zoomBoost;
+        float rectH = (getHeight() / currZoom.getZoomLevel()) / zoomBoost;
+        canvas.drawRect(xShift, yShift, xShift + rectW, yShift + rectH, p);
 
         // restore state
         canvas.setDrawFilter(oldDrawFilter);
