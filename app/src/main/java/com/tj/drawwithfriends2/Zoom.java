@@ -12,7 +12,7 @@ import static java.lang.Math.min;
 public class Zoom {
     // random thought, scale could basically be an enum
     // TODO move scale calculations all to in here
-    private int xOffset;
+    private int xOffset; // these are in terms of bitmap pixels
     private int yOffset;
     private int currWidth;
     private int currHeight;
@@ -106,14 +106,19 @@ public class Zoom {
     }
 
     private void boundChanges() {
+        // TODO AHHHHHHHH so fucking ugly
+        int zoomBoost = Math.min((int)(pixelsWide / ultimateWidth),
+                (int)(pixelsTall / ultimateHeight));
         // xOff = current x offset + distance moved bounded by 0 and width - currWidth
         // same for y
         int xOff = xOffset;
         int yOff = yOffset;
         xOff = max(xOff, 0);
         yOff = max(yOff, 0);
-        xOff = min(xOff, ultimateWidth - currWidth);
-        yOff = min(yOff, ultimateHeight - currHeight);
+        // next, i think xoff is being shown incorrectly, it said 8, but i was clearly > 8 / 192 right
+        int val1 = (int)((float)ultimateWidth * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost)));
+        xOff = min(xOff, ultimateWidth - (int)((float)ultimateWidth * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost))));
+        yOff = min(yOff, ultimateHeight - (int)((float)ultimateHeight * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost))));
         xOffset = xOff;
         yOffset = yOff;
     }

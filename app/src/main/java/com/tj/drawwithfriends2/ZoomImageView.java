@@ -88,18 +88,21 @@ public class ZoomImageView extends AppCompatImageView {
         // draw rect over zoomed portion
         Paint p = new Paint();
         if (holdingZoomBox) {
-            p.setARGB(64, 0, 0, 0);
+            p.setARGB(64, 0, 0, 255);
         } else {
             p.setARGB(64, 0, 255, 0);
         }
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(5);
 
-        // next, not divide by zoomboost,
-        // multiple by like zoomboost / zoomboost + zoomlevel
+        // trust it
         float rectW = getWidth() / (currZoom.getZoomLevel() + zoomBoost - 1);
         float rectH = getHeight() / (currZoom.getZoomLevel() + zoomBoost - 1);
-        canvas.drawRect(xShift, yShift, xShift + rectW, yShift + rectH, p);
+
+        float rectX = xShift + (currZoom.getxOffset() * zoomBoost);
+        float rectY = yShift + (currZoom.getyOffset() * zoomBoost);
+
+        canvas.drawRect(rectX, rectY, rectX + rectW, rectY + rectH, p);
 
         // restore state
         canvas.setDrawFilter(oldDrawFilter);
@@ -176,6 +179,37 @@ public class ZoomImageView extends AppCompatImageView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        int xShift = (getWidth() - (currZoom.getUltimateWidth() * zoomBoost)) / 2;
+        int yShift = (getHeight() - (currZoom.getUltimateHeight() * zoomBoost)) / 2;
+
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            int screenXOffset = xShift + (zoomBoost * currZoom.getxOffset());
+            int screenYOffset = yShift + (zoomBoost * currZoom.getyOffset());
+            if (ev.getX() > screenXOffset &&
+                    ev.getX() < screenXOffset + ((float)getWidth() * ((float)zoomBoost / (float)(zoomBoost + currZoom.getZoomLevel()))) &&
+                    ev.getY() > screenYOffset &&
+                    ev.getY() < screenYOffset + ((float)getHeight() * ((float)zoomBoost / (float)(zoomBoost + currZoom.getZoomLevel())))) {
+                holdingZoomBox = true;
+                initialTouch = new Point((int)ev.getX(), (int)ev.getY());
+                initialXOff = currZoom.getxOffset();
+                initialYOff = currZoom.getyOffset();
+            }
+        }
+        if (ev.getActionMasked() == MotionEvent.ACTION_MOVE) {
+            if (holdingZoomBox) {
+                int newXOffset = (int) (initialXOff + ((ev.getX() - initialTouch.x) / zoomBoost));
+                int newYOffset = (int) (initialYOff + ((ev.getY() - initialTouch.y) / zoomBoost));
+                currZoom.setxOffset(newXOffset);
+                currZoom.setyOffset(newYOffset);
+            }
+        }
+        if (ev.getActionMasked() == MotionEvent.ACTION_UP) {
+            holdingZoomBox = false;
+        }
+        invalidate();
+        return true;
+    }
+/*
         float scaleFactorX = getWidth() / currZoom.getUltimateWidth();
         float scaleFactorY = getHeight() / currZoom.getUltimateHeight();
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
@@ -211,6 +245,7 @@ public class ZoomImageView extends AppCompatImageView {
 
         return true;
     }
+    */
 
     public void save() {
         // do nothing
