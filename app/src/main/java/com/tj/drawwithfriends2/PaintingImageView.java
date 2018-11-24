@@ -138,15 +138,18 @@ public class PaintingImageView extends AppCompatImageView {
             // center zoomed out picture
             xShift = (getWidth() - (currZoom.getUltimateWidth() * zoomBoost)) / 2;
             yShift = (getHeight() - (currZoom.getUltimateHeight() * zoomBoost)) / 2;
-            if (zoomBoost == 0 ) {
+            if (zoomBoost == 0 ) { // TODO
                 return;
             }
             xShift = xShift / zoomBoost;
             yShift = yShift / zoomBoost;
         } else {
-            // deal with offsets
+            //xShift = currZoom.getxOffset() * (currZoom.getZoomLevel() - 1 + zoomBoost);
+            //yShift = currZoom.getyOffset() * (currZoom.getZoomLevel() - 1 + zoomBoost);
             xShift = currZoom.getxOffset();
             yShift = currZoom.getyOffset();
+            xShift *= -1;
+            yShift *= -1;
         }
 
         canvas.drawBitmap(bitmap, xShift, yShift, new Paint());

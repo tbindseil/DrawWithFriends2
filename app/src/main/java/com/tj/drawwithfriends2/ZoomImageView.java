@@ -102,6 +102,8 @@ public class ZoomImageView extends AppCompatImageView {
         float rectX = xShift + currZoom.getxOffset();
         float rectY = yShift + currZoom.getyOffset();
 
+        // Note, middle of rect perimeter seems to be cutoff for shown
+        // zooom area, i want it to be inner edge
         canvas.drawRect(rectX, rectY, rectX + rectW, rectY + rectH, p);
 
         // restore state
