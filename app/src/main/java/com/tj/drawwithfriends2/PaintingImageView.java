@@ -3,6 +3,7 @@ package com.tj.drawwithfriends2;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.DrawFilter;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
@@ -66,6 +67,7 @@ public class PaintingImageView extends AppCompatImageView {
 
     private void construct() {
         mContext = null;
+        setBackgroundColor(Color.YELLOW);
     }
 
     public void notifyOfWidthAndHeight() {
@@ -116,8 +118,7 @@ public class PaintingImageView extends AppCompatImageView {
             e.printStackTrace();
             return;
         }
-        BitmapDrawable result = new BitmapDrawable(mContext.getResources(), toDraw);
-        setImageDrawable(result);
+        bitmap = toDraw;
         invalidate();
     }
 
@@ -132,14 +133,23 @@ public class PaintingImageView extends AppCompatImageView {
         canvas.scale(currZoom.getZoomLevel() + zoomBoost - 1,
                 currZoom.getZoomLevel() + zoomBoost - 1);
 
+        int xShift, yShift;
         if (currZoom.getZoomLevel() == 1) {
             // center zoomed out picture
-
+            xShift = (getWidth() - (currZoom.getUltimateWidth() * zoomBoost)) / 2;
+            yShift = (getHeight() - (currZoom.getUltimateHeight() * zoomBoost)) / 2;
+            if (zoomBoost == 0 ) {
+                return;
+            }
+            xShift = xShift / zoomBoost;
+            yShift = yShift / zoomBoost;
         } else {
             // deal with offsets
+            xShift = currZoom.getxOffset();
+            yShift = currZoom.getyOffset();
         }
 
-        canvas.drawBitmap(bitmap, 0, 0, new Paint());
+        canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
 
         // restore state
         canvas.restore();

@@ -51,7 +51,7 @@ public class ZoomImageView extends AppCompatImageView {
 
         bitmap = toDraw;
 
-        setBackgroundColor(Color.BLACK);
+        setBackgroundColor(Color.YELLOW);
 
         Drawable result = new BitmapDrawable(mContext.getResources(), toDraw);
         setImageDrawable(result);
@@ -74,9 +74,9 @@ public class ZoomImageView extends AppCompatImageView {
 
         canvas.scale(zoomBoost, zoomBoost);
 
-        Paint p = new Paint();
-        p.setColor(Color.WHITE);
-        canvas.drawRect(xShift, yShift, xShift + bitmap.getWidth(), yShift + bitmap.getHeight(), p);
+        //Paint p = new Paint();
+        //p.setColor(Color.WHITE);
+        //canvas.drawRect(xShift, yShift, xShift + bitmap.getWidth(), yShift + bitmap.getHeight(), p);
 
         canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
 
@@ -86,7 +86,7 @@ public class ZoomImageView extends AppCompatImageView {
         }
 
         // draw rect over zoomed portion
-        p = new Paint();
+        Paint p = new Paint();
         if (holdingZoomBox) {
             p.setARGB(64, 0, 0, 0);
         } else {
@@ -95,8 +95,10 @@ public class ZoomImageView extends AppCompatImageView {
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(5);
 
-        float rectW = (getWidth() / currZoom.getZoomLevel()) / zoomBoost;
-        float rectH = (getHeight() / currZoom.getZoomLevel()) / zoomBoost;
+        // next, not divide by zoomboost,
+        // multiple by like zoomboost / zoomboost + zoomlevel
+        float rectW = getWidth() / (currZoom.getZoomLevel() + zoomBoost - 1);
+        float rectH = getHeight() / (currZoom.getZoomLevel() + zoomBoost - 1);
         canvas.drawRect(xShift, yShift, xShift + rectW, yShift + rectH, p);
 
         // restore state

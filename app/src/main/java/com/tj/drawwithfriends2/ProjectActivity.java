@@ -67,6 +67,7 @@ public class ProjectActivity extends AppCompatActivity {
         } catch (Exception e) {
             myToolbar.setTitle("error");
             Log.e("ProjectActivity", "exception loading edits or getting title");
+            Log.e("ProjectActivity", e.toString());
             e.printStackTrace();
         }
 
@@ -245,7 +246,8 @@ public class ProjectActivity extends AppCompatActivity {
     private void resetCurrFocus() {
         currFocus.setVisibility(View.INVISIBLE);
         currFocus = normalLayout;
-        projectPicture.invalidate();
+        //projectPicture.invalidate();
+        projectPicture.updatePaintingImage();
         currFocus.setVisibility(View.VISIBLE);
     }
 

@@ -210,6 +210,7 @@ public class ProjectFiles implements Serializable {
         // this is whack yo
         currZoom.setUltimateWidth(ultimatePixelArray.getWidth());
         currZoom.setUltimateHeight(ultimatePixelArray.getHeight());
+        ultimatePixelArray.setAlpha();
     }
 
     public void processInput(Input next) {

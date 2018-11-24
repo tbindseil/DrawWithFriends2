@@ -67,7 +67,7 @@ public class UltimatePixelArray {
     private void create() {
         int[] pixelArray = new int[width * height];
         for (int i = 0; i < pixelArray.length; i++) {
-            pixelArray[i] = 0x00ffffff;
+            pixelArray[i] = 0xffffffff;
         }
 
         mostRecent = Bitmap.createBitmap(pixelArray, width, height, Bitmap.Config.ARGB_8888);
@@ -94,6 +94,17 @@ public class UltimatePixelArray {
         mostRecent = next.imprintOnto(mostRecent);
 
         write();
+    }
+
+    void setAlpha() {
+        mostRecent = mostRecent.copy(Bitmap.Config.ARGB_8888, true);
+        for (int x = 0; x < mostRecent.getWidth(); x++) {
+            for (int y = 0; y < mostRecent.getHeight(); y++) {
+                int currPixel = mostRecent.getPixel(x, y);
+                currPixel |= 0xff000000;
+                mostRecent.setPixel(x, y, currPixel);
+            }
+        }
     }
 
     int getWidth() {
