@@ -116,7 +116,9 @@ public class Zoom {
         xOff = max(xOff, 0);
         yOff = max(yOff, 0);
         // next, i think xoff is being shown incorrectly, it said 8, but i was clearly > 8 / 192 right
-        int val1 = (int)((float)ultimateWidth * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost)));
+        // maybe not?
+        int val1 = ultimateWidth -
+                (int)((float)ultimateWidth * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost)));
         xOff = min(xOff, ultimateWidth - (int)((float)ultimateWidth * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost))));
         yOff = min(yOff, ultimateHeight - (int)((float)ultimateHeight * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost))));
         xOffset = xOff;

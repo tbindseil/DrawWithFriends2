@@ -99,8 +99,8 @@ public class ZoomImageView extends AppCompatImageView {
         float rectW = getWidth() / (currZoom.getZoomLevel() + zoomBoost - 1);
         float rectH = getHeight() / (currZoom.getZoomLevel() + zoomBoost - 1);
 
-        float rectX = xShift + (currZoom.getxOffset() * zoomBoost);
-        float rectY = yShift + (currZoom.getyOffset() * zoomBoost);
+        float rectX = xShift + currZoom.getxOffset();
+        float rectY = yShift + currZoom.getyOffset();
 
         canvas.drawRect(rectX, rectY, rectX + rectW, rectY + rectH, p);
 
