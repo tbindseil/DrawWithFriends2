@@ -93,17 +93,19 @@ public class ZoomImageView extends AppCompatImageView {
             p.setARGB(64, 0, 255, 0);
         }
         p.setStyle(Paint.Style.STROKE);
-        p.setStrokeWidth(5);
+        p.setStrokeWidth(4);
 
         // trust it
-        float rectW = getWidth() / (currZoom.getZoomLevel() + zoomBoost - 1);
-        float rectH = getHeight() / (currZoom.getZoomLevel() + zoomBoost - 1);
+        float rectW = getWidth() / (currZoom.getZoomLevel() + zoomBoost - 1) + (2 * 2);
+        float rectH = getHeight() / (currZoom.getZoomLevel() + zoomBoost - 1) + (2 * 2);
 
-        float rectX = xShift + currZoom.getxOffset();
-        float rectY = yShift + currZoom.getyOffset();
+        float rectX = xShift + currZoom.getxOffset() - 2;
+        float rectY = yShift + currZoom.getyOffset() - 2;
 
         // Note, middle of rect perimeter seems to be cutoff for shown
-        // zooom area, i want it to be inner edge
+        // zooom area, i want it to be inner edge,
+        // to fix this, shifted the x,y start by half of stroke width and enlarged
+        // width and height by half of stroke length over two
         canvas.drawRect(rectX, rectY, rectX + rectW, rectY + rectH, p);
 
         // restore state
