@@ -33,18 +33,18 @@ public abstract class InputTool {
     public void setThickness(int thickness) { this.thickness = thickness; }
 
     public int pixelXToCurrX(double x) {
-        if (currZoom.getPixelsWide() < 0) {
-            Log.e("filterX", "pixelsWide not set yet");
+        if (currZoom.getZoomBoost() < 0) {
+            Log.e("filterX", "zoomBoost not set yet");
             return 0;
         }
-        return (int) ((currZoom.getCurrWidth() / currZoom.getPixelsWide()) * x);
+        return (int) (x / (double)(currZoom.getZoomBoost() + currZoom.getZoomLevel() - 1));
     }
 
     public int pixelYToCurrY(double y) {
-        if (currZoom.getPixelsTall() < 0) {
-            Log.e("filterY", "pixelsTall not set yet");
+        if (currZoom.getZoomBoost() < 0) {
+            Log.e("filterY", "zoomBoost not set yet");
             return 0;
         }
-        return (int) ((currZoom.getCurrHeight() / currZoom.getPixelsTall()) * y);
+        return (int) (y / (double)(currZoom.getZoomBoost() + currZoom.getZoomLevel() - 1));
     }
 }

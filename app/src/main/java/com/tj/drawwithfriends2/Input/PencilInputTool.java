@@ -52,14 +52,8 @@ public class PencilInputTool extends InputTool {
         if (currX < 0) {
             currX = 0;
         }
-        if (currX >= currZoom.getCurrWidth()) {
-            currX = currZoom.getCurrWidth();
-        }
         if (currY < 0) {
             currY = 0;
-        }
-        if (currY >= currZoom.getCurrHeight()) {
-            currY = currZoom.getCurrHeight();
         }
 
         // convert from currCoord to ultimateCoord

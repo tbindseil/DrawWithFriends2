@@ -18,7 +18,7 @@ public class Zoom {
     private int currHeight;
     private int ultimateWidth;
     private int ultimateHeight;
-
+    private int zoomBoost;
     // level = side lenth of one pixel from bitmap
     private int zoomLevel;
 
@@ -35,6 +35,7 @@ public class Zoom {
         this.pixelsWide = pixelsWide;
         this.pixelsTall = pixelsTall;
         this.zoomLevel = zoomLevel;
+        zoomBoost = -1;
     }
 
     public int getxOffset() {
@@ -107,7 +108,7 @@ public class Zoom {
 
     private void boundChanges() {
         // TODO AHHHHHHHH so fucking ugly
-        int zoomBoost = Math.min((int)(pixelsWide / ultimateWidth),
+        zoomBoost = Math.min((int)(pixelsWide / ultimateWidth),
                 (int)(pixelsTall / ultimateHeight));
         // xOff = current x offset + distance moved bounded by 0 and width - currWidth
         // same for y
@@ -115,10 +116,6 @@ public class Zoom {
         int yOff = yOffset;
         xOff = max(xOff, 0);
         yOff = max(yOff, 0);
-        // next, i think xoff is being shown incorrectly, it said 8, but i was clearly > 8 / 192 right
-        // maybe not?
-        int val1 = ultimateWidth -
-                (int)((float)ultimateWidth * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost)));
         xOff = min(xOff, ultimateWidth - (int)((float)ultimateWidth * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost))));
         yOff = min(yOff, ultimateHeight - (int)((float)ultimateHeight * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost))));
         xOffset = xOff;
@@ -137,9 +134,12 @@ public class Zoom {
         return zoomLevel;
     }
 
+    // TODO stay centered when zooming
     public void setZoomLevel(int level) {
         zoomLevel = level;
     }
+
+    public int getZoomBoost() { return zoomBoost; }
 
     public Zoom deepCopy() {
         Zoom ret = new Zoom(xOffset, yOffset, currWidth, currHeight, ultimateWidth, ultimateHeight, pixelsWide, pixelsTall, zoomLevel);

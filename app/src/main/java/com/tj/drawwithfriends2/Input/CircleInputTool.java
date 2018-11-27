@@ -24,7 +24,9 @@ public class CircleInputTool extends InputTool {
             // draw circle
             int currX = pixelXToCurrX(event.getX());
             int currY = pixelYToCurrY(event.getY());
-            InputTransporter.getInstance().drawCircle(currX, currY, thickness, color);
+            int ultimateX = currZoom.currXToUltimateX(currX);
+            int ultimateY = currZoom.currYToUltimateY(currY);
+            InputTransporter.getInstance().drawCircle(ultimateX, ultimateY, thickness, color);
             InputTransporter.getInstance().addPoint(currX, currY, color);
             InputTransporter.getInstance().finishInput();
         }
