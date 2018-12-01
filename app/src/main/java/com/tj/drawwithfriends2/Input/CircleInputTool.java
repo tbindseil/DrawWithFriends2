@@ -12,12 +12,12 @@ import com.tj.drawwithfriends2.Zoom;
  */
 
 public class CircleInputTool extends InputTool {
-    public CircleInputTool(Zoom currZoom) {
-        super(currZoom);
-        this.color = Color.RED;
-        this.thickness = 10;
+    public CircleInputTool(Zoom currZoom, int color, int thickness) {
+        super(currZoom, color, thickness);
     }
 
+    // todo thickness is the outline of the circle and other_thickness is radius?
+    // also dragging will increase circle radius
     @Override
     public void handleTouch(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {

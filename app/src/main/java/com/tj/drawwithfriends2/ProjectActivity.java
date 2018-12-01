@@ -42,6 +42,7 @@ public class ProjectActivity extends AppCompatActivity {
 
     private LinearLayout colorSeekBars;
     private Button colorButton;
+    private int color;
     private int red, green, blue;
 
     private LinearLayout zoomLayout;
@@ -148,8 +149,8 @@ public class ProjectActivity extends AppCompatActivity {
         projectPicture.setCurrZoom(currProject.getCurrZoom());
         zoomImage.setCurrZoom(currProject.getCurrZoom());
         projectPicture.setBitmap(currProject.getBitmap());
-        // TODO read this value from files
-        projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom()));
+        // TODO read these value from files
+        projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom(), Color.RED, 1));
 
         // start input transporter
         InputTransporter.getInstance().setProjectFiles(currProject);
@@ -170,8 +171,7 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     public void handlePencilClick(View view) {
-        projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom()));
-        projectPicture.setThickness(thickness);
+        projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom(), color, thickness));
     }
 
     public void handleThicknessClick(View view) {
@@ -180,8 +180,7 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     public void handleShapeClick(View view) {
-        projectPicture.setInputTool(new CircleInputTool(currProject.getCurrZoom()));
-        projectPicture.setThickness(thickness);
+        projectPicture.setInputTool(new CircleInputTool(currProject.getCurrZoom(), color, thickness));
     }
 
     public void handleZoomClick(View view) {
@@ -189,7 +188,7 @@ public class ProjectActivity extends AppCompatActivity {
         currFocus = zoomLayout;
 
         zoomImage.launch(currProject.getCurrZoom(), this, currProject.getBitmap());
-        zoomSeekBar.setProgress(currProject.getZoomLevel());
+        zoomSeekBar.setProgress(currProject.getZoomLevel() - 1);
     }
 
     public void handleZoomOkClick(View view) {
@@ -231,21 +230,20 @@ public class ProjectActivity extends AppCompatActivity {
     private void resetCurrFocus() {
         currFocus.setVisibility(View.INVISIBLE);
         currFocus = normalLayout;
-        //projectPicture.invalidate();
         projectPicture.updatePaintingImage();
         currFocus.setVisibility(View.VISIBLE);
     }
 
     private void updateColorSample() {
-        int color = ((int) (0xff << 24)) | ((int) (red << 16)) | ((int) (green << 8)) | ((int) (blue));
+        color = ((int) (0xff << 24)) | ((int) (red << 16)) | ((int) (green << 8)) | ((int) (blue));
         colorButton.setBackgroundColor(color);
 
         // todo move with settings stuff
         projectPicture.setColor(color);
 
-        color = ~color;
-        color |= (0xff000000);
-        colorButton.setTextColor(color);
+        int oppositeColor = ~color;
+        oppositeColor |= (0xff000000);
+        colorButton.setTextColor(oppositeColor);
 
         colorButton.invalidate();
     }

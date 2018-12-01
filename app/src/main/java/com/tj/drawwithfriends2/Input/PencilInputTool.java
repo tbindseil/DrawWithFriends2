@@ -18,10 +18,8 @@ public class PencilInputTool extends InputTool {
     // note last touch is in terms of ultimatecoords
     private Point lastTouch;
 
-    public PencilInputTool(Zoom currZoom) {
-        super(currZoom);
-        this.color = Color.RED;
-        this.thickness = 1;
+    public PencilInputTool(Zoom currZoom, int color, int thickness) {
+        super(currZoom, color, thickness);
     }
 
     @Override

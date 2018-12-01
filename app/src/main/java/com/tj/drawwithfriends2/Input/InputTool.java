@@ -23,8 +23,10 @@ public abstract class InputTool {
     protected int color;
     protected int thickness;
 
-    public InputTool(Zoom currZoom) {
+    public InputTool(Zoom currZoom, int color, int thickness) {
         this.currZoom = currZoom;
+        this.color = color;
+        this.thickness = thickness;
     }
 
     public abstract void handleTouch(MotionEvent event);

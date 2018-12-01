@@ -10,15 +10,13 @@ import static java.lang.Math.min;
  */
 
 public class Zoom {
-    // random thought, scale could basically be an enum
     // TODO move scale calculations all to in here
-    private int xOffset; // these are in terms of bitmap pixels
+    private int xOffset; // these are always in terms of bitmap pixels
     private int yOffset;
-    private int ultimateWidth;
+    private int ultimateWidth; // dimensions of bitmap
     private int ultimateHeight;
-    private int zoomBoost;
-    // level = side lenth of one pixel from bitmap
-    private int zoomLevel;
+    private int zoomBoost; // todo keep cleaning up this concept
+    private int zoomLevel; // level = side lenth of one pixel from bitmap
 
     private double pixelsWide;
     private double pixelsTall;
