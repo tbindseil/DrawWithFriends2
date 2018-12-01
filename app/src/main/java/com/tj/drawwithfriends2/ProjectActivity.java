@@ -147,7 +147,6 @@ public class ProjectActivity extends AppCompatActivity {
 
         projectPicture = findViewById(R.id.mainCanvas);
 
-        projectPicture.setContext(this.getApplicationContext());
         projectPicture.setCurrZoom(currProject.getCurrZoom());
         zoomImage.setCurrZoom(currProject.getCurrZoom());
         projectPicture.setBitmap(currProject.getBitmap());

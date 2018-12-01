@@ -14,8 +14,6 @@ public class Zoom {
     // TODO move scale calculations all to in here
     private int xOffset; // these are in terms of bitmap pixels
     private int yOffset;
-    private int currWidth;
-    private int currHeight;
     private int ultimateWidth;
     private int ultimateHeight;
     private int zoomBoost;
@@ -25,11 +23,9 @@ public class Zoom {
     private double pixelsWide;
     private double pixelsTall;
 
-    public Zoom(int xOffset, int yOffset, int currWidth, int currHeight, int ultimateWidth, int ultimateHeight, double pixelsWide, double pixelsTall, int zoomLevel) {
+    public Zoom(int xOffset, int yOffset, int ultimateWidth, int ultimateHeight, double pixelsWide, double pixelsTall, int zoomLevel) {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
-        this.currWidth = currWidth;
-        this.currHeight = currHeight;
         this.ultimateWidth = ultimateWidth;
         this.ultimateHeight = ultimateHeight;
         this.pixelsWide = pixelsWide;
@@ -53,24 +49,6 @@ public class Zoom {
 
     public void setyOffset(int yOffset) {
         this.yOffset = yOffset;
-        boundChanges();
-    }
-
-    public int getCurrWidth() {
-        return currWidth;
-    }
-
-    public void setCurrWidth(int currWidth) {
-        this.currWidth = currWidth;
-        boundChanges();
-    }
-
-    public int getCurrHeight() {
-        return currHeight;
-    }
-
-    public void setCurrHeight(int currHeight) {
-        this.currHeight = currHeight;
         boundChanges();
     }
 
@@ -142,15 +120,13 @@ public class Zoom {
     public int getZoomBoost() { return zoomBoost; }
 
     public Zoom deepCopy() {
-        Zoom ret = new Zoom(xOffset, yOffset, currWidth, currHeight, ultimateWidth, ultimateHeight, pixelsWide, pixelsTall, zoomLevel);
+        Zoom ret = new Zoom(xOffset, yOffset, ultimateWidth, ultimateHeight, pixelsWide, pixelsTall, zoomLevel);
         return ret;
     }
 
     public void deepCopy(Zoom toCopy) {
         xOffset = toCopy.getxOffset();
         yOffset = toCopy.getyOffset();
-        currWidth = toCopy.getCurrWidth();
-        currHeight = toCopy.getCurrHeight();
         ultimateWidth = toCopy.getUltimateWidth();
         ultimateHeight = toCopy.getUltimateHeight();
         pixelsWide = toCopy.getPixelsWide();
@@ -158,14 +134,3 @@ public class Zoom {
         zoomLevel = toCopy.getZoomLevel();
     }
 }
-
-/**
- *
- * new api,
- *  set zoom level
- *  set x,y offset
- *
- *  scaled st zoom level one shows whole picture while minimizing unused screen
- *
- * challenges: setting zoom level requires adjusted x,y offset
- */

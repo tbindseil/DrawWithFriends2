@@ -42,8 +42,6 @@ public class ProjectFiles implements Serializable {
     private static final String ULTIMATE_FILE_NAME = "UltimatePixels";
     private static final int DEFAULT_WIDTH = 784;
     private static final int DEFAULT_HEIGHT = 1024;
-    private static final int DEFAULT_ZOOM_WIDTH = DEFAULT_WIDTH;
-    private static final int DEFAULT_ZOOM_HEIGHT = DEFAULT_HEIGHT;
     private static final int DEFAULT_XOFFSET = 0;
     private static final int DEFAULT_YOFFSET = 0;
     private static final int DEFAULT_ZOOM_LEVEL = 1;
@@ -58,13 +56,11 @@ public class ProjectFiles implements Serializable {
         // save project root
         this.dir = dir;
 
-        int zoomWidth = DEFAULT_ZOOM_WIDTH;
-        int zoomHeight = DEFAULT_ZOOM_HEIGHT;
         int xOffset = DEFAULT_XOFFSET;
         int yOffset = DEFAULT_YOFFSET;
         int width = DEFAULT_WIDTH;
         int height = DEFAULT_HEIGHT;
-        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
+        currZoom = new Zoom(xOffset, yOffset, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
 
         // create file object instances
         this.config = new File(dir, CONFIG_FILE_NAME);
@@ -86,13 +82,11 @@ public class ProjectFiles implements Serializable {
         this.config = new File(this.dir, CONFIG_FILE_NAME);
         this.inputsFile = new File(this.dir, INPUTS_FILE_NAME);
 
-        int zoomWidth = DEFAULT_ZOOM_WIDTH;
-        int zoomHeight = DEFAULT_ZOOM_HEIGHT;
         int xOffset = DEFAULT_XOFFSET;
         int yOffset = DEFAULT_YOFFSET;
         int width = DEFAULT_WIDTH;
         int height = DEFAULT_HEIGHT;
-        currZoom = new Zoom(xOffset, yOffset, zoomWidth, zoomHeight, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
+        currZoom = new Zoom(xOffset, yOffset, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
 
         setTitle(title);
         inputsFile.createNewFile();
@@ -118,13 +112,10 @@ public class ProjectFiles implements Serializable {
     }
 
     public int getZoomLevel() {
-        return currZoom.getUltimateWidth() / currZoom.getCurrWidth() - 1;
+        return currZoom.getZoomLevel();
     }
 
     public void setZoomLevel(int level) {
-        currZoom.setCurrWidth(currZoom.getUltimateWidth() / level);
-        currZoom.setCurrHeight(currZoom.getUltimateHeight() / level);
-
         currZoom.setZoomLevel(level);
     }
 

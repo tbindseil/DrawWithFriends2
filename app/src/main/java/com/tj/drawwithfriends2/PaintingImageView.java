@@ -23,9 +23,6 @@ import com.tj.drawwithfriends2.Input.InputTool;
 public class PaintingImageView extends AppCompatImageView {
     private static final DrawFilter DRAW_FILTER =
             new PaintFlagsDrawFilter(Paint.FILTER_BITMAP_FLAG, 0);
-
-    private Context mContext;
-
     // todo make this private, that would involve
     // launching the image from java
     private Zoom currZoom;
@@ -49,10 +46,6 @@ public class PaintingImageView extends AppCompatImageView {
         construct();
     }
 
-    public void setContext(Context context) {
-        mContext = context;
-    }
-
     public void setCurrZoom(Zoom newZoom) {
         currZoom = newZoom;
     }
@@ -66,8 +59,7 @@ public class PaintingImageView extends AppCompatImageView {
     }
 
     private void construct() {
-        mContext = null;
-        setBackgroundColor(Color.YELLOW);
+        setBackgroundColor(Color.BLACK);
     }
 
     public void notifyOfWidthAndHeight() {
@@ -90,6 +82,7 @@ public class PaintingImageView extends AppCompatImageView {
     public void setColor(int color) {
         currTool.setColor(color);
     }
+
     public void setThickness(int thickness) {
         if (currTool != null) {
             currTool.setThickness(thickness);

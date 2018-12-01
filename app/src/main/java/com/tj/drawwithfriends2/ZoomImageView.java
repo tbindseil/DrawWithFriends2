@@ -112,54 +112,6 @@ public class ZoomImageView extends AppCompatImageView {
         canvas.setDrawFilter(oldDrawFilter);
     }
 
-    void function() {
-        float scaleFactorX = getWidth() / currZoom.getUltimateWidth();
-        float scaleFactorY = getHeight() / currZoom.getUltimateHeight();
-        int idealWidth = (int)(currZoom.getCurrWidth() * scaleFactorX);
-        int idealHeight = (int)(currZoom.getCurrHeight() * scaleFactorY);
-
-        // width increment = pixels wide / gcd(pixels wide, pixels tall)
-        // height increment = pixels tall / gcd (pixels wide, pixels tall)
-
-        // increment curr width and curr height by the above increments until
-        // both are greater than pixels wide and pixels tall respectively
-
-        // these values should be saved each time the dimensions of painting image view
-        // changed, they should be saved as new members of Zoom, maxCurrWidth/maxCurrHeight,
-        // and zoom level shall eventually be two values, big and little, where big is always bigger than little,
-        // fuck, dividing the bitmap by , say 3, will certainly fuck up some shit
-
-        // well at least zoom levels are here to stay,
-        // two taps increments zoom level,
-        // three taps decrements
-
-        // i bet cleverly defined zoom levels would help get me out of the above mess
-
-        // no, this is out of my hands entirely,
-        // the zoom levels are the common divisors, of maxCurrWidth and maxCurrHeight
-        // or, after further thought, the levels could just need to
-
-
-        // here it is,
-        /*
-
-        zoom level 1: each pixel in bitmap is represented by 1 pixel on the screen
-        zoom level 2: each pixel in bitmap is represented by 4 pixels on the screen
-        zoom level n: each pixel in bitmap is represented by n squared pixels on the screen
-
-        note, this leaves me to determine maxCurrWidth and maxCurrHeight upon screen
-        size changes only, but as far as zoom levels are concerned, we zoom
-
-        may need to clip bitmap, NO! just draw partials when zoomed any more than least zoom
-        and shifted at least in a bit in two directions
-
-
-
-         */
-        // ps, if these pixels wide/tall are in dp and are constant among all devices
-        // or something, then this could be a bit easier
-    }
-
     public void setCurrZoom(Zoom initialZoom) {
         currZoom = initialZoom;
     }
