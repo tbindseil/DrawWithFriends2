@@ -1,10 +1,6 @@
 package com.tj.drawwithfriends2.Input;
 
-import android.annotation.TargetApi;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.tj.drawwithfriends2.InputTransporter;

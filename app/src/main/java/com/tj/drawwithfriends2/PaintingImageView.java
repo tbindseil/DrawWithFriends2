@@ -122,8 +122,7 @@ public class PaintingImageView extends AppCompatImageView {
 
         canvas.save();
 
-        canvas.scale(currZoom.getZoomLevel() + currZoom.getZoomBoost() - 1,
-                currZoom.getZoomLevel() + currZoom.getZoomBoost() - 1);
+        canvas.scale(currZoom.getPixelWidth(), currZoom.getPixelWidth());
 
         int xShift, yShift;
         if (currZoom.getZoomLevel() == 1) {

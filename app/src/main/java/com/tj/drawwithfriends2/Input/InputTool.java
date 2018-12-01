@@ -39,7 +39,7 @@ public abstract class InputTool {
             Log.e("filterX", "zoomBoost not set yet");
             return 0;
         }
-        return (int) (x / (double)(currZoom.getZoomBoost() + currZoom.getZoomLevel() - 1));
+        return (int) (x / (double)currZoom.getPixelWidth());
     }
 
     public int pixelYToCurrY(double y) {
@@ -47,6 +47,6 @@ public abstract class InputTool {
             Log.e("filterY", "zoomBoost not set yet");
             return 0;
         }
-        return (int) (y / (double)(currZoom.getZoomBoost() + currZoom.getZoomLevel() - 1));
+        return (int) (y / (double)currZoom.getPixelWidth());
     }
 }

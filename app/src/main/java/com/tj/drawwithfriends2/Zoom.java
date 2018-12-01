@@ -121,6 +121,10 @@ public class Zoom {
 
     public int getZoomBoost() { return zoomBoost; }
 
+    public int getPixelWidth() {
+        return zoomLevel + zoomBoost - 1;
+    }
+
     public Zoom deepCopy() {
         Zoom ret = new Zoom(xOffset, yOffset, ultimateWidth, ultimateHeight, pixelsWide, pixelsTall, zoomLevel);
         return ret;

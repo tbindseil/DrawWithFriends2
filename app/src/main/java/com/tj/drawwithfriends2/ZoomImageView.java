@@ -73,10 +73,6 @@ public class ZoomImageView extends AppCompatImageView {
 
         canvas.scale(currZoom.getZoomBoost(), currZoom.getZoomBoost());
 
-        //Paint p = new Paint();
-        //p.setColor(Color.WHITE);
-        //canvas.drawRect(xShift, yShift, xShift + bitmap.getWidth(), yShift + bitmap.getHeight(), p);
-
         canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
 
         if (currZoom.getZoomLevel() == 1) {
@@ -95,14 +91,14 @@ public class ZoomImageView extends AppCompatImageView {
         p.setStrokeWidth(4);
 
         // trust it
-        float rectW = getWidth() / (currZoom.getZoomLevel() + currZoom.getZoomBoost() - 1) + (2 * 2);
-        float rectH = getHeight() / (currZoom.getZoomLevel() + currZoom.getZoomBoost() - 1) + (2 * 2);
+        float rectW = getWidth() / currZoom.getPixelWidth() + (2 * 2);
+        float rectH = getHeight() / currZoom.getPixelWidth() + (2 * 2);
 
         float rectX = xShift + currZoom.getxOffset() - 2;
         float rectY = yShift + currZoom.getyOffset() - 2;
 
         // Note, middle of rect perimeter seems to be cutoff for shown
-        // zooom area, i want it to be inner edge,
+        // zoom area, i want it to be inner edge,
         // to fix this, shifted the x,y start by half of stroke width and enlarged
         // width and height by half of stroke length over two
         canvas.drawRect(rectX, rectY, rectX + rectW, rectY + rectH, p);
@@ -164,43 +160,6 @@ public class ZoomImageView extends AppCompatImageView {
         invalidate();
         return true;
     }
-/*
-        float scaleFactorX = getWidth() / currZoom.getUltimateWidth();
-        float scaleFactorY = getHeight() / currZoom.getUltimateHeight();
-        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            if (ev.getX() > currZoom.getxOffset() * scaleFactorX &&
-                    ev.getX() < currZoom.getxOffset() * scaleFactorX + currZoom.getCurrWidth() * scaleFactorX &&
-                    ev.getY() > currZoom.getyOffset() * scaleFactorY &&
-                    ev.getY() < currZoom.getyOffset() * scaleFactorX + currZoom.getCurrHeight() * scaleFactorY) {
-                holdingZoomBox = true;
-                initialTouch = new Point((int)ev.getX(), (int)ev.getY());
-                initialXOff = currZoom.getxOffset();
-                initialYOff = currZoom.getyOffset();
-            }
-        }
-
-        if (ev.getActionMasked() == MotionEvent.ACTION_MOVE) {
-            if (holdingZoomBox) {
-                scaleFactorX = (float)currZoom.getUltimateWidth() / (float)getWidth();
-                scaleFactorY = (float)currZoom.getUltimateHeight() / (float)getHeight();
-                int xOff = initialXOff + (int)((ev.getX() - initialTouch.x) * scaleFactorX);
-                int yOff = initialYOff + (int)((ev.getY() - initialTouch.y) * scaleFactorY);
-
-                currZoom.setxOffset(xOff);
-                currZoom.setyOffset(yOff);
-
-                invalidate();
-            }
-        }
-
-        if (ev.getActionMasked() == MotionEvent.ACTION_UP) {
-            holdingZoomBox = false;
-            invalidate();
-        }
-
-        return true;
-    }
-    */
 
     public void save() {
         // do nothing
