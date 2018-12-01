@@ -75,7 +75,7 @@ public class ZoomImageView extends AppCompatImageView {
 
         canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
 
-        if (currZoom.getZoomLevel() == 1) {
+        if (currZoom.getZoomLevel() == 0) {
             // fully zoomed out
             return;
         }
@@ -137,9 +137,9 @@ public class ZoomImageView extends AppCompatImageView {
             int screenXOffset = xShift + (currZoom.getZoomBoost() * currZoom.getxOffset());
             int screenYOffset = yShift + (currZoom.getZoomBoost() * currZoom.getyOffset());
             if (ev.getX() > screenXOffset &&
-                    ev.getX() < screenXOffset + ((float)getWidth() * ((float)currZoom.getZoomBoost() / (float)(currZoom.getZoomBoost() + currZoom.getZoomLevel()))) &&
+                    ev.getX() < screenXOffset + ((float)getWidth() * ((float)currZoom.getZoomBoost() / (float)(currZoom.getZoomBoost() + currZoom.getZoomLevel() + 1))) &&
                     ev.getY() > screenYOffset &&
-                    ev.getY() < screenYOffset + ((float)getHeight() * ((float)currZoom.getZoomBoost() / (float)(currZoom.getZoomBoost() + currZoom.getZoomLevel())))) {
+                    ev.getY() < screenYOffset + ((float)getHeight() * ((float)currZoom.getZoomBoost() / (float)(currZoom.getZoomBoost() + currZoom.getZoomLevel() + 1)))) {
                 holdingZoomBox = true;
                 initialTouch = new Point((int)ev.getX(), (int)ev.getY());
                 initialXOff = currZoom.getxOffset();

@@ -15,8 +15,8 @@ public class Zoom {
     private int yOffset;
     private int ultimateWidth; // dimensions of bitmap
     private int ultimateHeight;
-    private int zoomBoost; // todo keep cleaning up this concept
-    private int zoomLevel; // level = side lenth of one pixel from bitmap
+    private int zoomBoost; // width of pixel that is maximum without missing part of the picture, with zoom level of 0
+    private int zoomLevel; // level 0 is zoomed out
 
     private double pixelsWide;
     private double pixelsTall;
@@ -96,8 +96,8 @@ public class Zoom {
         int yOff = yOffset;
         xOff = max(xOff, 0);
         yOff = max(yOff, 0);
-        xOff = min(xOff, ultimateWidth - (int)((float)ultimateWidth * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost))));
-        yOff = min(yOff, ultimateHeight - (int)((float)ultimateHeight * ((float)zoomBoost / (float)(zoomLevel - 1 + zoomBoost))));
+        xOff = min(xOff, ultimateWidth - (int)((float)ultimateWidth * ((float)zoomBoost / (float)getPixelWidth())));
+        yOff = min(yOff, ultimateHeight - (int)((float)ultimateHeight * ((float)zoomBoost / (float)getPixelWidth())));
         xOffset = xOff;
         yOffset = yOff;
     }
@@ -122,7 +122,7 @@ public class Zoom {
     public int getZoomBoost() { return zoomBoost; }
 
     public int getPixelWidth() {
-        return zoomLevel + zoomBoost - 1;
+        return zoomLevel + zoomBoost;
     }
 
     public Zoom deepCopy() {

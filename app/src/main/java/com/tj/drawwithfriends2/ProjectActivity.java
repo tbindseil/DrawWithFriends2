@@ -137,7 +137,6 @@ public class ProjectActivity extends AppCompatActivity {
         zoomSeekBar.setOnSeekBarChangeListener(new SeekBarInterface() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progress = progress + 1; // see zoomSeekBar.setMax()
                 currProject.setZoomLevel(progress);
 
                 zoomImage.invalidate();
@@ -188,7 +187,7 @@ public class ProjectActivity extends AppCompatActivity {
         currFocus = zoomLayout;
 
         zoomImage.launch(currProject.getCurrZoom(), this, currProject.getBitmap());
-        zoomSeekBar.setProgress(currProject.getZoomLevel() - 1);
+        zoomSeekBar.setProgress(currProject.getZoomLevel());
     }
 
     public void handleZoomOkClick(View view) {

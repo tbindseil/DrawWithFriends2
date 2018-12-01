@@ -7,8 +7,6 @@ import android.graphics.Color;
 import android.graphics.DrawFilter;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -125,7 +123,7 @@ public class PaintingImageView extends AppCompatImageView {
         canvas.scale(currZoom.getPixelWidth(), currZoom.getPixelWidth());
 
         int xShift, yShift;
-        if (currZoom.getZoomLevel() == 1) {
+        if (currZoom.getZoomLevel() == 0) {
             // center zoomed out picture
             xShift = (getWidth() - (currZoom.getUltimateWidth() * currZoom.getZoomBoost())) / 2;
             yShift = (getHeight() - (currZoom.getUltimateHeight() * currZoom.getZoomBoost())) / 2;

@@ -44,7 +44,7 @@ public class ProjectFiles implements Serializable {
     private static final int DEFAULT_HEIGHT = 256;//1024;
     private static final int DEFAULT_XOFFSET = 0;
     private static final int DEFAULT_YOFFSET = 0;
-    private static final int DEFAULT_ZOOM_LEVEL = 1;
+    private static final int DEFAULT_ZOOM_LEVEL = 0;
     public static final int MAX_SHRINKAGE = 16;
 
     private String title;
