@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.tj.drawwithfriends2.Input.CircleInputTool;
 import com.tj.drawwithfriends2.Input.Input;
@@ -90,7 +89,6 @@ public class ProjectActivity extends AppCompatActivity {
                 // todo make curr project, this is with project setting stuff
                 if (projectPicture != null) {
                     thickness = progress + 1;
-                    Log.e("thickness", "thickness is " + (progress + 1));
                     projectPicture.setThickness(progress + 1);
                 }
             }
@@ -166,14 +164,6 @@ public class ProjectActivity extends AppCompatActivity {
         // see processInput TODO currProject.saveInputs();
     }
 
-
-    public void onWindowFocusChanged(boolean hasFocus) {
-        // propogate new dimensions to currZoom
-        // this is where we learn of the dimensions of projectPicture
-        projectPicture.notifyOfWidthAndHeight();
-        zoomImage.notifyOfWidthAndHeight();
-    }
-
     public void handleColorClick(View view) {
         colorSeekBars.setVisibility(View.VISIBLE);
         currFocus = colorSeekBars;
@@ -181,8 +171,6 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void handlePencilClick(View view) {
         projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom()));
-        // why is the below needed? is it needed?
-        projectPicture.notifyOfWidthAndHeight();
         projectPicture.setThickness(thickness);
     }
 
@@ -193,8 +181,6 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void handleShapeClick(View view) {
         projectPicture.setInputTool(new CircleInputTool(currProject.getCurrZoom()));
-        // why is the below needed? is it needed?
-        projectPicture.notifyOfWidthAndHeight();
         projectPicture.setThickness(thickness);
     }
 

@@ -52,6 +52,13 @@ public class Zoom {
         boundChanges();
     }
 
+    public void setWindowWidthAndHeight(int pixelsWide, int pixelsTall) {
+        this.pixelsWide = pixelsWide;
+        this.pixelsTall = pixelsTall;
+        zoomBoost = Math.min((int)(this.pixelsWide / ultimateWidth),
+                (int)(this.pixelsTall / ultimateHeight));
+    }
+
     public void setPixelsWide(double pixelsWide) {
         this.pixelsWide = pixelsWide;
     }
@@ -85,9 +92,6 @@ public class Zoom {
     }
 
     private void boundChanges() {
-        // TODO AHHHHHHHH so fucking ugly
-        zoomBoost = Math.min((int)(pixelsWide / ultimateWidth),
-                (int)(pixelsTall / ultimateHeight));
         // xOff = current x offset + distance moved bounded by 0 and width - currWidth
         // same for y
         int xOff = xOffset;

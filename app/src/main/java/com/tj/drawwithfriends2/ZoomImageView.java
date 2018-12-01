@@ -23,7 +23,6 @@ public class ZoomImageView extends AppCompatImageView {
     private static final DrawFilter DRAW_FILTER =
             new PaintFlagsDrawFilter(Paint.FILTER_BITMAP_FLAG, 0);
     private Zoom currZoom, saveZoom;
-    private int zoomBoost;
     Bitmap bitmap;
     private Context mContext;
     private boolean holdingZoomBox;
@@ -51,7 +50,7 @@ public class ZoomImageView extends AppCompatImageView {
 
         bitmap = toDraw;
 
-        setBackgroundColor(Color.YELLOW);
+        setBackgroundColor(Color.BLACK);
 
         Drawable result = new BitmapDrawable(mContext.getResources(), toDraw);
         setImageDrawable(result);
@@ -67,12 +66,12 @@ public class ZoomImageView extends AppCompatImageView {
         DrawFilter oldDrawFilter = canvas.getDrawFilter();
         canvas.setDrawFilter(DRAW_FILTER);
         // scale then shift? or shift then scale
-        int xShift = (getWidth() - (currZoom.getUltimateWidth() * zoomBoost)) / 2;
-        int yShift = (getHeight() - (currZoom.getUltimateHeight() * zoomBoost)) / 2;
-        xShift = xShift / zoomBoost;
-        yShift = yShift / zoomBoost;
+        int xShift = (getWidth() - (currZoom.getUltimateWidth() * currZoom.getZoomBoost())) / 2;
+        int yShift = (getHeight() - (currZoom.getUltimateHeight() * currZoom.getZoomBoost())) / 2;
+        xShift = xShift / currZoom.getZoomBoost();
+        yShift = yShift / currZoom.getZoomBoost();
 
-        canvas.scale(zoomBoost, zoomBoost);
+        canvas.scale(currZoom.getZoomBoost(), currZoom.getZoomBoost());
 
         //Paint p = new Paint();
         //p.setColor(Color.WHITE);
@@ -96,8 +95,8 @@ public class ZoomImageView extends AppCompatImageView {
         p.setStrokeWidth(4);
 
         // trust it
-        float rectW = getWidth() / (currZoom.getZoomLevel() + zoomBoost - 1) + (2 * 2);
-        float rectH = getHeight() / (currZoom.getZoomLevel() + zoomBoost - 1) + (2 * 2);
+        float rectW = getWidth() / (currZoom.getZoomLevel() + currZoom.getZoomBoost() - 1) + (2 * 2);
+        float rectH = getHeight() / (currZoom.getZoomLevel() + currZoom.getZoomBoost() - 1) + (2 * 2);
 
         float rectX = xShift + currZoom.getxOffset() - 2;
         float rectY = yShift + currZoom.getyOffset() - 2;
@@ -116,9 +115,9 @@ public class ZoomImageView extends AppCompatImageView {
         currZoom = initialZoom;
     }
 
-    public void notifyOfWidthAndHeight() {
-        currZoom.setPixelsWide(getWidth());
-        currZoom.setPixelsTall(getHeight());
+    @Override
+    protected void onSizeChanged(int w, int h, int oldW, int oldH) {
+        currZoom.setWindowWidthAndHeight(w, h);
 
         // on setting of width and height, we need
         // to know what level of scaling we need to reach
@@ -129,22 +128,22 @@ public class ZoomImageView extends AppCompatImageView {
             Log.e("ZoomImageView", "picture too big for screen!");
             assert(false);
         }
-        zoomBoost = Math.min(getWidth() / currZoom.getUltimateWidth(),
-                getHeight() / currZoom.getUltimateHeight());
+
+        invalidate();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        int xShift = (getWidth() - (currZoom.getUltimateWidth() * zoomBoost)) / 2;
-        int yShift = (getHeight() - (currZoom.getUltimateHeight() * zoomBoost)) / 2;
+        int xShift = (getWidth() - (currZoom.getUltimateWidth() * currZoom.getZoomBoost())) / 2;
+        int yShift = (getHeight() - (currZoom.getUltimateHeight() * currZoom.getZoomBoost())) / 2;
 
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            int screenXOffset = xShift + (zoomBoost * currZoom.getxOffset());
-            int screenYOffset = yShift + (zoomBoost * currZoom.getyOffset());
+            int screenXOffset = xShift + (currZoom.getZoomBoost() * currZoom.getxOffset());
+            int screenYOffset = yShift + (currZoom.getZoomBoost() * currZoom.getyOffset());
             if (ev.getX() > screenXOffset &&
-                    ev.getX() < screenXOffset + ((float)getWidth() * ((float)zoomBoost / (float)(zoomBoost + currZoom.getZoomLevel()))) &&
+                    ev.getX() < screenXOffset + ((float)getWidth() * ((float)currZoom.getZoomBoost() / (float)(currZoom.getZoomBoost() + currZoom.getZoomLevel()))) &&
                     ev.getY() > screenYOffset &&
-                    ev.getY() < screenYOffset + ((float)getHeight() * ((float)zoomBoost / (float)(zoomBoost + currZoom.getZoomLevel())))) {
+                    ev.getY() < screenYOffset + ((float)getHeight() * ((float)currZoom.getZoomBoost() / (float)(currZoom.getZoomBoost() + currZoom.getZoomLevel())))) {
                 holdingZoomBox = true;
                 initialTouch = new Point((int)ev.getX(), (int)ev.getY());
                 initialXOff = currZoom.getxOffset();
@@ -153,8 +152,8 @@ public class ZoomImageView extends AppCompatImageView {
         }
         if (ev.getActionMasked() == MotionEvent.ACTION_MOVE) {
             if (holdingZoomBox) {
-                int newXOffset = (int) (initialXOff + ((ev.getX() - initialTouch.x) / zoomBoost));
-                int newYOffset = (int) (initialYOff + ((ev.getY() - initialTouch.y) / zoomBoost));
+                int newXOffset = (int) (initialXOff + ((ev.getX() - initialTouch.x) / currZoom.getZoomBoost()));
+                int newYOffset = (int) (initialYOff + ((ev.getY() - initialTouch.y) / currZoom.getZoomBoost()));
                 currZoom.setxOffset(newXOffset);
                 currZoom.setyOffset(newYOffset);
             }

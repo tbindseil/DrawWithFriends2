@@ -26,7 +26,6 @@ public class PaintingImageView extends AppCompatImageView {
     // todo make this private, that would involve
     // launching the image from java
     private Zoom currZoom;
-    private int zoomBoost;
     private Bitmap bitmap;
 
     private InputTool currTool;
@@ -62,9 +61,9 @@ public class PaintingImageView extends AppCompatImageView {
         setBackgroundColor(Color.BLACK);
     }
 
-    public void notifyOfWidthAndHeight() {
-        currZoom.setPixelsWide(getWidth());
-        currZoom.setPixelsTall(getHeight());
+    @Override
+    protected void onSizeChanged(int w, int h, int oldW, int oldH) {
+        currZoom.setWindowWidthAndHeight(w, h);
 
         // on setting of width and height, we need
         // to know what level of scaling we need to reach
@@ -72,11 +71,11 @@ public class PaintingImageView extends AppCompatImageView {
         if (getWidth() < currZoom.getUltimateWidth() ||
                 getHeight() < currZoom.getUltimateHeight()) {
             // todo handle this better
-            Log.e("PaintingImageView", "picture too big for screen!");
+            Log.e("ZoomImageView", "picture too big for screen!");
             assert(false);
         }
-        zoomBoost = Math.min(getWidth() / currZoom.getUltimateWidth(),
-                getHeight() / currZoom.getUltimateHeight());
+
+        invalidate();
     }
 
     public void setColor(int color) {
@@ -106,9 +105,9 @@ public class PaintingImageView extends AppCompatImageView {
         try {
             toDraw = InputTransporter.getInstance().drawQueuedInputs();
         } catch (Exception e) {
-            Log.e("updatePaintingImage", "exception: " + e.toString());
-            Log.e("updatePaintingImage", "stacktrace:");
-            e.printStackTrace();
+            //Log.e("updatePaintingImage", "exception: " + e.toString());
+            //Log.e("updatePaintingImage", "stacktrace:");
+            //e.printStackTrace();
             return;
         }
         bitmap = toDraw;
@@ -123,22 +122,20 @@ public class PaintingImageView extends AppCompatImageView {
 
         canvas.save();
 
-        canvas.scale(currZoom.getZoomLevel() + zoomBoost - 1,
-                currZoom.getZoomLevel() + zoomBoost - 1);
+        canvas.scale(currZoom.getZoomLevel() + currZoom.getZoomBoost() - 1,
+                currZoom.getZoomLevel() + currZoom.getZoomBoost() - 1);
 
         int xShift, yShift;
         if (currZoom.getZoomLevel() == 1) {
             // center zoomed out picture
-            xShift = (getWidth() - (currZoom.getUltimateWidth() * zoomBoost)) / 2;
-            yShift = (getHeight() - (currZoom.getUltimateHeight() * zoomBoost)) / 2;
-            if (zoomBoost == 0 ) { // TODO
+            xShift = (getWidth() - (currZoom.getUltimateWidth() * currZoom.getZoomBoost())) / 2;
+            yShift = (getHeight() - (currZoom.getUltimateHeight() * currZoom.getZoomBoost())) / 2;
+            if (currZoom.getZoomBoost() == -1 ) { // TODO
                 return;
             }
-            xShift = xShift / zoomBoost;
-            yShift = yShift / zoomBoost;
+            xShift = xShift / currZoom.getZoomBoost();
+            yShift = yShift / currZoom.getZoomBoost();
         } else {
-            //xShift = currZoom.getxOffset() * (currZoom.getZoomLevel() - 1 + zoomBoost);
-            //yShift = currZoom.getyOffset() * (currZoom.getZoomLevel() - 1 + zoomBoost);
             xShift = currZoom.getxOffset();
             yShift = currZoom.getyOffset();
             xShift *= -1;
