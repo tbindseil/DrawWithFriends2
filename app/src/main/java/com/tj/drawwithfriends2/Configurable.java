@@ -14,13 +14,17 @@ import java.util.Map;
 
 // being an abstract class could screw me... guess I'll find out as I go
 public abstract class Configurable {
-    // todo, dirty flag
+    static String lineSeperator = "\n";
+    // todo, dirty flag and background saving task
     // also todo, probably could use package encapsulation and java style protected
     private String tag;
-    private Map<String, Configuration> settings;
+    protected Map<String, Configuration> settings;
 
-    public Configurable(String tag) {
+    public Configurable(String tag) throws Exception {
         this.tag = tag;
+        if (tag.isEmpty() || tag.charAt(tag.length() - 1) == ':') {
+            throw new Exception("invalid tag");
+        }
         settings = new HashMap<>();
         // extending classes need to populate the map,
         // upon constucting configurables, they will be
@@ -31,17 +35,20 @@ public abstract class Configurable {
     }
 
     public void write(OutputStream fileOutputStream) throws Exception {
-        Iterator it = settings.keySet().iterator();
+        String tagStr = tag + "::";
+        fileOutputStream.write(tagStr.getBytes());
+        fileOutputStream.write(lineSeperator.getBytes());
+        // why doesn't this work?fileOutputStream.write(System.getProperty("line.seperator").getBytes());
+        Iterator it = settings.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, Configuration> currSetting = (Map.Entry<String, Configuration>)it.next();
-            currSetting.getValue().write(fileOutputStream);
+            currSetting.getValue().write(currSetting.getKey(), fileOutputStream);
         }
     }
 
     // return the line read if we read a line with two consecutive colons, or
     // return empty string if we reach end of file
-    public String init(InputStream fileInputStream) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream));
+    public String init(BufferedReader br) throws Exception {
         String nextLine;
         while ((nextLine = br.readLine()) != null) {
             if (nextLine.contains("::")) {
@@ -49,16 +56,16 @@ public abstract class Configurable {
             }
 
             String[] tokens = nextLine.split(":");
-            Map.Entry<String, Configuration> curr = (Map.Entry<String, Configuration>)settings.get(tokens[0]);
-            curr.getValue().setVal(tokens[1]);
-            settings.put(tokens[0], new Configuration(tokens[0], tokens[1]));
+            Configuration curr = settings.get(tokens[0]);
+            curr.setVal(tokens[1]);
+            settings.put(tokens[0], new Configuration(tokens[1]));
         }
 
         return "";
     }
 
     public void returnToDefault() {
-        Iterator it = settings.keySet().iterator();
+        Iterator it = settings.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, Configuration> currSetting = (Map.Entry<String, Configuration>) it.next();
             currSetting.getValue().returnToDefault();

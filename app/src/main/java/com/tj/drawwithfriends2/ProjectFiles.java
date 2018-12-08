@@ -50,6 +50,8 @@ public class ProjectFiles implements Serializable {
     public static final int MAX_SHRINKAGE = 16;
 
     private String title;
+    private BasicSettings basicSettings;
+    private static final String BASIC_SETTINGS_TAG = "basicSettings";
     // TODO add these to config file
     private final Zoom currZoom;
 
@@ -70,7 +72,8 @@ public class ProjectFiles implements Serializable {
         this.config = new File(dir, CONFIG_FILE_NAME);
         this.inputsFile = new File(dir, INPUTS_FILE_NAME);
 
-        ReadConfigFile();
+        basicSettings = new BasicSettings(BASIC_SETTINGS_TAG);
+        loadSettings();
     }
 
     // create new
@@ -92,26 +95,53 @@ public class ProjectFiles implements Serializable {
         int height = DEFAULT_HEIGHT;
         currZoom = new Zoom(xOffset, yOffset, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
 
+        basicSettings = new BasicSettings(BASIC_SETTINGS_TAG);
         setTitle(title);
         inputsFile.createNewFile();
         inputsFile.setWritable(true);
     }
 
     private void defaultSettings() {
-        /*settings = new HashMap<>();
-
-        settings.put("width", new Configuration<Integer>("width", 192));
-        settings.put("height", new Configuration<Integer>("height", 256));
-        settings.put("title", new Configuration<String>("title", title));
-        settings.put("color", new Configuration<Integer>("color", DEFAULT_COLOR));
-        settings.put("thickness", new Configuration<Integer>("thickness", DEFAULT_THICKNESS));*/
-
-
+        basicSettings.returnToDefault();
     }
 
     private void loadSettings() {
-        //settings = new HashMap<>();
+        try {
+            BufferedReader fr = new BufferedReader(new FileReader(config));
+            String nextConfigurableTag = fr.readLine();
+            // TODO maybe a map of tags to configurables
+            basicSettings.init(fr);
+        } catch (Exception e) {
+            Log.e("readConfigFile", e.toString());
+            e.printStackTrace();
+        }
+    }
 
+    /**
+     * config layout
+     *
+     * ConfigurableTag::
+     * ConfigurationTag:ConfigurationValue
+     * ...
+     * ConfigurableTag::
+     * ConfigurationTag:ConfigurationValue
+     * ...
+     * ...
+     */
+    private void saveSettings() {
+        config.delete();
+        try {
+            config.createNewFile();
+            config.setWritable(true);
+            FileOutputStream fileOutputStream = new FileOutputStream(config);
+            basicSettings.write(fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (Exception e) {
+            Log.e("ProjectFiles", "failed to writeChanges!");
+            Log.e("ProjectFiles", e.toString());
+            e.printStackTrace();
+        }
     }
 
     public File getDir() {
@@ -119,7 +149,7 @@ public class ProjectFiles implements Serializable {
     }
 
     public String getTitle() {
-        return title;
+        return basicSettings.getTitle();
     }
 
     public Zoom getCurrZoom() {
@@ -127,9 +157,9 @@ public class ProjectFiles implements Serializable {
     }
 
     public void setTitle(String newTitle) {
-        title = newTitle;
+        basicSettings.setTitle(newTitle);
 
-        writeConfigChanges();
+        saveSettings();
     }
 
     public int getZoomLevel() {
@@ -140,47 +170,7 @@ public class ProjectFiles implements Serializable {
         currZoom.setZoomLevel(level);
     }
 
-    /**
-     *
-     * config layout
-     *
-     * title:title
-     * width:width
-     * height:height
-     * xoff:xoff
-     * yoff:yoff
-     * zoomlevel:zoomlevel
-     *
-     */
-    private void writeConfigChanges() {
-        config.delete();
-        try {
-            config.createNewFile();
-            FileOutputStream fileOutputStream = new FileOutputStream(config);
-            String toWrite = "title:" + title;
-            config.setWritable(true);
-            fileOutputStream.write(toWrite.getBytes());
-            fileOutputStream.flush();
-            fileOutputStream.close();
-        } catch (Exception e) {
-            Log.e("ProjectFiles", "failed to writeChanges!");
-        }
-    }
 
-    private void ReadConfigFile() {
-        try {
-            BufferedReader fr = new BufferedReader(new FileReader(config));
-            String line = fr.readLine();
-            String[] arr = line.split(":");
-            if (arr.length > 1) {
-                title = arr[1];
-            } else {
-                Log.e("readConfigFile", "invalid format, couldn't find title");
-            }
-        } catch (Exception e) {
-            Log.e("readConfigFile", e.toString());
-        }
-    }
 
     public Bitmap getBitmap() {
         return ultimatePixelArray.getBitmap();
