@@ -1,11 +1,7 @@
 package com.tj.drawwithfriends2;
 
-import android.annotation.TargetApi;
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.LayerDrawable;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.tj.drawwithfriends2.Input.Input;
@@ -21,16 +17,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TJ on 7/28/2018.
  */
 
-@TargetApi(26)
 public class ProjectFiles implements Serializable {
     private File dir;
     private File config; // TODO lock config file... and probably others... in fact, let this TODO represent all synchronization
@@ -45,11 +43,17 @@ public class ProjectFiles implements Serializable {
     private static final int DEFAULT_XOFFSET = 0;
     private static final int DEFAULT_YOFFSET = 0;
     private static final int DEFAULT_ZOOM_LEVEL = 0;
+
+    private static final int DEFAULT_COLOR = Color.RED;
+    private static final int DEFAULT_THICKNESS = 1;
+
     public static final int MAX_SHRINKAGE = 16;
 
     private String title;
     // TODO add these to config file
     private final Zoom currZoom;
+
+    //private Map<String, ConfigurableI> settings;
 
     // open existing
     public ProjectFiles(File dir) throws Exception {
@@ -93,6 +97,23 @@ public class ProjectFiles implements Serializable {
         inputsFile.setWritable(true);
     }
 
+    private void defaultSettings() {
+        /*settings = new HashMap<>();
+
+        settings.put("width", new Configuration<Integer>("width", 192));
+        settings.put("height", new Configuration<Integer>("height", 256));
+        settings.put("title", new Configuration<String>("title", title));
+        settings.put("color", new Configuration<Integer>("color", DEFAULT_COLOR));
+        settings.put("thickness", new Configuration<Integer>("thickness", DEFAULT_THICKNESS));*/
+
+
+    }
+
+    private void loadSettings() {
+        //settings = new HashMap<>();
+
+    }
+
     public File getDir() {
         return dir;
     }
@@ -119,6 +140,18 @@ public class ProjectFiles implements Serializable {
         currZoom.setZoomLevel(level);
     }
 
+    /**
+     *
+     * config layout
+     *
+     * title:title
+     * width:width
+     * height:height
+     * xoff:xoff
+     * yoff:yoff
+     * zoomlevel:zoomlevel
+     *
+     */
     private void writeConfigChanges() {
         config.delete();
         try {
