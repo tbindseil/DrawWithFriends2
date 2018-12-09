@@ -5,8 +5,8 @@ package com.tj.drawwithfriends2;
  */
 
 public class BasicSettings extends Configurable {
-    public BasicSettings(String tag) throws Exception {
-        super(tag);
+    public BasicSettings() throws Exception {
+        super();
         settings.put("title", new Configuration("Masterpiece"));
     }
 

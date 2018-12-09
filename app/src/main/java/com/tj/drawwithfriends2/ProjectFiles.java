@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,37 +31,40 @@ import java.util.Map;
  */
 
 public class ProjectFiles implements Serializable {
+    // top level directory
     private File dir;
-    private File config; // TODO lock config file... and probably others... in fact, let this TODO represent all synchronization
-    private File inputsFile;
-    private UltimatePixelArray ultimatePixelArray;
 
-    private static final String CONFIG_FILE_NAME = "config";
-    private static final String INPUTS_FILE_NAME = "inputsFile";
+    // data files
     private static final String ULTIMATE_FILE_NAME = "UltimatePixels";
+    private UltimatePixelArray ultimatePixelArray;
+    private static final String INPUTS_FILE_NAME = "inputsFile";
+    private File inputsFile;
+
+    // project defaults
     private static final int DEFAULT_WIDTH = 192;//784;
     private static final int DEFAULT_HEIGHT = 256;//1024;
     private static final int DEFAULT_XOFFSET = 0;
     private static final int DEFAULT_YOFFSET = 0;
     private static final int DEFAULT_ZOOM_LEVEL = 0;
-
     private static final int DEFAULT_COLOR = Color.RED;
     private static final int DEFAULT_THICKNESS = 1;
-
     public static final int MAX_SHRINKAGE = 16;
 
-    private String title;
-    private BasicSettings basicSettings;
+    // settings stuff
+    private static final String CONFIG_FILE_NAME = "config";
+    private Map<String, Configurable> configurablesMap;
+    private File config; // TODO lock config file... and probably others... in fact, let this TODO represent all synchronization
     private static final String BASIC_SETTINGS_TAG = "basicSettings";
+    private BasicSettings basicSettings;
     // TODO add these to config file
     private final Zoom currZoom;
-
-    //private Map<String, ConfigurableI> settings;
 
     // open existing
     public ProjectFiles(File dir) throws Exception {
         // save project root
         this.dir = dir;
+
+        initFiles();
 
         int xOffset = DEFAULT_XOFFSET;
         int yOffset = DEFAULT_YOFFSET;
@@ -68,11 +72,8 @@ public class ProjectFiles implements Serializable {
         int height = DEFAULT_HEIGHT;
         currZoom = new Zoom(xOffset, yOffset, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
 
-        // create file object instances
-        this.config = new File(dir, CONFIG_FILE_NAME);
-        this.inputsFile = new File(dir, INPUTS_FILE_NAME);
+        initConfigurablesMap();
 
-        basicSettings = new BasicSettings(BASIC_SETTINGS_TAG);
         loadSettings();
     }
 
@@ -86,8 +87,9 @@ public class ProjectFiles implements Serializable {
         this.dir.mkdir();
         dir.setWritable(true);
 
-        this.config = new File(this.dir, CONFIG_FILE_NAME);
-        this.inputsFile = new File(this.dir, INPUTS_FILE_NAME);
+        initFiles();
+        inputsFile.createNewFile();
+        inputsFile.setWritable(true);
 
         int xOffset = DEFAULT_XOFFSET;
         int yOffset = DEFAULT_YOFFSET;
@@ -95,13 +97,27 @@ public class ProjectFiles implements Serializable {
         int height = DEFAULT_HEIGHT;
         currZoom = new Zoom(xOffset, yOffset, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
 
-        basicSettings = new BasicSettings(BASIC_SETTINGS_TAG);
+        initConfigurablesMap();
+
         setTitle(title);
-        inputsFile.createNewFile();
-        inputsFile.setWritable(true);
+    }
+
+    private void initFiles() {
+        // create file object instances
+        this.config = new File(dir, CONFIG_FILE_NAME);
+        this.inputsFile = new File(dir, INPUTS_FILE_NAME);
+    }
+
+    private void initConfigurablesMap() throws Exception {
+        basicSettings = new BasicSettings();
+
+        configurablesMap = new HashMap<>();
+
+        configurablesMap.put(BASIC_SETTINGS_TAG, basicSettings);
     }
 
     private void defaultSettings() {
+        // todo
         basicSettings.returnToDefault();
     }
 
@@ -134,7 +150,11 @@ public class ProjectFiles implements Serializable {
             config.createNewFile();
             config.setWritable(true);
             FileOutputStream fileOutputStream = new FileOutputStream(config);
-            basicSettings.write(fileOutputStream);
+            Iterator it = configurablesMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Configurable> curr = (Map.Entry<String, Configurable>)it.next();
+                curr.getValue().write(curr.getKey(), fileOutputStream);
+            }
             fileOutputStream.flush();
             fileOutputStream.close();
         } catch (Exception e) {

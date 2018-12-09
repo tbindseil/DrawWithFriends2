@@ -17,14 +17,9 @@ public abstract class Configurable {
     static String lineSeperator = "\n";
     // todo, dirty flag and background saving task
     // also todo, probably could use package encapsulation and java style protected
-    private String tag;
     protected Map<String, Configuration> settings;
 
-    public Configurable(String tag) throws Exception {
-        this.tag = tag;
-        if (tag.isEmpty() || tag.charAt(tag.length() - 1) == ':') {
-            throw new Exception("invalid tag");
-        }
+    public Configurable() throws Exception {
         settings = new HashMap<>();
         // extending classes need to populate the map,
         // upon constucting configurables, they will be
@@ -34,7 +29,10 @@ public abstract class Configurable {
         // its default value will remain
     }
 
-    public void write(OutputStream fileOutputStream) throws Exception {
+    public void write(String tag, OutputStream fileOutputStream) throws Exception {
+        if (tag.isEmpty() || tag.charAt(tag.length() - 1) == ':') {
+            throw new Exception("invalid tag");
+        }
         String tagStr = tag + "::";
         fileOutputStream.write(tagStr.getBytes());
         fileOutputStream.write(lineSeperator.getBytes());
