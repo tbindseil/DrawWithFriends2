@@ -43,9 +43,7 @@ public class ProjectFiles implements Serializable {
     // project defaults
     private static final int DEFAULT_WIDTH = 192;//784;
     private static final int DEFAULT_HEIGHT = 256;//1024;
-    private static final int DEFAULT_XOFFSET = 0;
-    private static final int DEFAULT_YOFFSET = 0;
-    private static final int DEFAULT_ZOOM_LEVEL = 0;
+
     private static final int DEFAULT_COLOR = Color.RED;
     private static final int DEFAULT_THICKNESS = 1;
     public static final int MAX_SHRINKAGE = 16;
@@ -57,7 +55,7 @@ public class ProjectFiles implements Serializable {
     private static final String BASIC_SETTINGS_TAG = "basicSettings";
     private BasicSettings basicSettings;
     // TODO add these to config file
-    private final Zoom currZoom;
+    private Zoom currZoom;
 
     // open existing
     public ProjectFiles(File dir) throws Exception {
@@ -66,15 +64,9 @@ public class ProjectFiles implements Serializable {
 
         initFiles();
 
-        int xOffset = DEFAULT_XOFFSET;
-        int yOffset = DEFAULT_YOFFSET;
-        int width = DEFAULT_WIDTH;
-        int height = DEFAULT_HEIGHT;
-        currZoom = new Zoom(xOffset, yOffset, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
-
         initConfigurablesMap();
 
-        loadSettings();
+        loadBasicSettings();
     }
 
     // create new
@@ -90,12 +82,6 @@ public class ProjectFiles implements Serializable {
         initFiles();
         inputsFile.createNewFile();
         inputsFile.setWritable(true);
-
-        int xOffset = DEFAULT_XOFFSET;
-        int yOffset = DEFAULT_YOFFSET;
-        int width = DEFAULT_WIDTH;
-        int height = DEFAULT_HEIGHT;
-        currZoom = new Zoom(xOffset, yOffset, width, height, -1, -1, DEFAULT_ZOOM_LEVEL);
 
         initConfigurablesMap();
 
@@ -118,7 +104,26 @@ public class ProjectFiles implements Serializable {
 
     private void defaultSettings() {
         // todo
-        basicSettings.returnToDefault();
+        //basicSettings.returnToDefault();
+    }
+
+    // there is a weird dependency issue,
+    // the ultimate pixel array is too big to create a bunch of them
+    // when listing projects, so just load basic settings until one
+    // project is chosen
+    private void loadBasicSettings() {
+        try {
+            BufferedReader fr = new BufferedReader(new FileReader(config));
+            String nextConfigurableTag = fr.readLine();
+            do {
+                // start here next time, read until "::"
+                // TODO maybe a map of tags to configurables
+            } while (!nextConfigurableTag.equals(BASIC_SETTINGS_TAG));
+            basicSettings.init(fr);
+        } catch(Exception e){
+            Log.e("readConfigFile", e.toString());
+            e.printStackTrace();
+        }
     }
 
     private void loadSettings() {
@@ -190,8 +195,6 @@ public class ProjectFiles implements Serializable {
         currZoom.setZoomLevel(level);
     }
 
-
-
     public Bitmap getBitmap() {
         return ultimatePixelArray.getBitmap();
     }
@@ -232,16 +235,19 @@ public class ProjectFiles implements Serializable {
         return inputs; // no inputs to load
     }
 
-    public void init() throws Exception {
+    public void fullStart() throws Exception {
         // create file
         File ultimatePixelsFile = new File(this.dir, ULTIMATE_FILE_NAME);
-        ultimatePixelArray = new UltimatePixelArray(currZoom.getUltimateWidth(), currZoom.getUltimateHeight(), ultimatePixelsFile.getAbsolutePath());
-        ultimatePixelArray.init();
 
-        // this is whack yo
-        currZoom.setUltimateWidth(ultimatePixelArray.getWidth());
-        currZoom.setUltimateHeight(ultimatePixelArray.getHeight());
-        ultimatePixelArray.setAlpha();
+        if (ultimatePixelsFile.length() == 0) {
+            ultimatePixelArray = new UltimatePixelArray(DEFAULT_WIDTH, DEFAULT_HEIGHT, ultimatePixelsFile);
+        } else {
+            ultimatePixelArray = new UltimatePixelArray(ultimatePixelsFile);
+
+        }
+
+        loadSettings();
+        currZoom = new Zoom(ultimatePixelArray.getWidth(), ultimatePixelArray.getHeight());
     }
 
     public void processInput(Input next) {

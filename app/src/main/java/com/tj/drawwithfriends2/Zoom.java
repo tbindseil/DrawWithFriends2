@@ -4,32 +4,40 @@ import android.util.Log;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.lang.Math.subtractExact;
 
 /**
  * Created by TJ on 9/29/2018.
  */
 
-public class Zoom {
-    // TODO move scale calculations all to in here
+public class Zoom extends Configurable {
+    private static final int DEFAULT_XOFFSET = 0;
+    private static final int DEFAULT_YOFFSET = 0;
+    private static final int DEFAULT_ZOOM_LEVEL = 0;
+
     private int xOffset; // these are always in terms of bitmap pixels
     private int yOffset;
-    private int ultimateWidth; // dimensions of bitmap
-    private int ultimateHeight;
+    private final int ultimateWidth; // dimensions of bitmap
+    private final int ultimateHeight;
     private int zoomBoost; // width of pixel that is maximum without missing part of the picture, with zoom level of 0
     private int zoomLevel; // level 0 is zoomed out
 
     private double pixelsWide;
     private double pixelsTall;
 
-    public Zoom(int xOffset, int yOffset, int ultimateWidth, int ultimateHeight, double pixelsWide, double pixelsTall, int zoomLevel) {
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
+    public Zoom(int ultimateWidth, int ultimateHeight) throws Exception {
+        super();
+        settings.put("xoff", new Configuration(Integer.toString(DEFAULT_XOFFSET)));
+        settings.put("yoff", new Configuration(Integer.toString(DEFAULT_YOFFSET)));
+        settings.put("zoomlevel", new Configuration(Integer.toString(DEFAULT_ZOOM_LEVEL)));
+
         this.ultimateWidth = ultimateWidth;
         this.ultimateHeight = ultimateHeight;
-        this.pixelsWide = pixelsWide;
-        this.pixelsTall = pixelsTall;
-        this.zoomLevel = zoomLevel;
-        zoomBoost = -1;
+
+        // these are determined by the view using this
+        // probably could use polymorphism to switch between painting and zoom view
+        this.pixelsWide = -1;
+        this.pixelsTall = -1;
     }
 
     public int getxOffset() {
@@ -57,36 +65,12 @@ public class Zoom {
                 (int)(this.pixelsTall / ultimateHeight));
     }
 
-    public void setPixelsWide(double pixelsWide) {
-        this.pixelsWide = pixelsWide;
-    }
-
-    public double getPixelsWide() {
-        return pixelsWide;
-    }
-
-    public void setPixelsTall(double pixelsTall) {
-        this.pixelsTall = pixelsTall;
-    }
-
-    public double getPixelsTall() {
-        return pixelsTall;
-    }
-
     public int getUltimateWidth() {
         return ultimateWidth;
     }
 
-    public void setUltimateWidth(int newUltimateWidth) {
-        ultimateWidth = newUltimateWidth;
-    }
-
     public int getUltimateHeight() {
         return ultimateHeight;
-    }
-
-    public void setUltimateHeight(int newUltimateHeight) {
-        ultimateHeight = newUltimateHeight;
     }
 
     private void boundChanges() {
@@ -125,18 +109,10 @@ public class Zoom {
         return zoomLevel + zoomBoost;
     }
 
-    public Zoom deepCopy() {
-        Zoom ret = new Zoom(xOffset, yOffset, ultimateWidth, ultimateHeight, pixelsWide, pixelsTall, zoomLevel);
-        return ret;
+    public void restore(int savedXOffset, int savedYOffset, int savedZoomLevel) {
+        this.xOffset = savedXOffset;
+        this.yOffset = savedYOffset;
+        this.zoomLevel = savedZoomLevel;
     }
 
-    public void deepCopy(Zoom toCopy) {
-        xOffset = toCopy.getxOffset();
-        yOffset = toCopy.getyOffset();
-        ultimateWidth = toCopy.getUltimateWidth();
-        ultimateHeight = toCopy.getUltimateHeight();
-        pixelsWide = toCopy.getPixelsWide();
-        pixelsTall = toCopy.getPixelsTall();
-        zoomLevel = toCopy.getZoomLevel();
-    }
 }

@@ -22,7 +22,8 @@ import android.view.MotionEvent;
 public class ZoomImageView extends AppCompatImageView {
     private static final DrawFilter DRAW_FILTER =
             new PaintFlagsDrawFilter(Paint.FILTER_BITMAP_FLAG, 0);
-    private Zoom currZoom, saveZoom;
+    private Zoom currZoom;
+    private int savedXOffset, savedYOffset, savedZoomLevel;
     Bitmap bitmap;
     private Context mContext;
     private boolean holdingZoomBox;
@@ -44,7 +45,11 @@ public class ZoomImageView extends AppCompatImageView {
 
     public void launch(Zoom startZoom, Context context, Bitmap toDraw) {
         currZoom = startZoom;
-        saveZoom = startZoom.deepCopy();
+
+        savedXOffset = currZoom.getxOffset();
+        savedYOffset = currZoom.getyOffset();
+        savedZoomLevel = currZoom.getZoomLevel();
+
         mContext = context;
         holdingZoomBox = false;
 
@@ -166,6 +171,6 @@ public class ZoomImageView extends AppCompatImageView {
     }
 
     public void cancel() {
-        currZoom.deepCopy(saveZoom);
+        currZoom.restore(savedXOffset, savedYOffset, savedZoomLevel);
     }
 }
