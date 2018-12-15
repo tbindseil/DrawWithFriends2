@@ -1,6 +1,4 @@
-package com.tj.drawwithfriends2;
-
-import android.util.Log;
+package com.tj.drawwithfriends2.Settings;
 
 import java.io.OutputStream;
 

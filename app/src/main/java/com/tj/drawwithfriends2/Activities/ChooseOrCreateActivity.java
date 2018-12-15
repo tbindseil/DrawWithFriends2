@@ -1,4 +1,4 @@
-package com.tj.drawwithfriends2;
+package com.tj.drawwithfriends2.Activities;
 
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
@@ -12,6 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.tj.drawwithfriends2.R;
+import com.tj.drawwithfriends2.Settings.ProjectFiles;
 
 import java.io.File;
 

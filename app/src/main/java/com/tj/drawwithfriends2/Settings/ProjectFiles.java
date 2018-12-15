@@ -1,10 +1,11 @@
-package com.tj.drawwithfriends2;
+package com.tj.drawwithfriends2.Settings;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 
 import com.tj.drawwithfriends2.Input.Input;
+import com.tj.drawwithfriends2.Input.InputTransporter;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -17,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;

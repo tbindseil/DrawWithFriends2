@@ -1,4 +1,4 @@
-package com.tj.drawwithfriends2;
+package com.tj.drawwithfriends2.Settings;
 
 /**
  * Created by TJ on 12/8/2018.

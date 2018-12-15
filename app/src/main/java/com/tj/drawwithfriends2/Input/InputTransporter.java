@@ -1,12 +1,9 @@
-package com.tj.drawwithfriends2;
+package com.tj.drawwithfriends2.Input;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.util.Log;
 
-import com.tj.drawwithfriends2.Input.HashPoint;
-import com.tj.drawwithfriends2.Input.Input;
+import com.tj.drawwithfriends2.Settings.ProjectFiles;
 
 import java.util.ArrayList;
 import java.util.List;

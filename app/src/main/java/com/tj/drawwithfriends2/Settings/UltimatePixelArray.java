@@ -1,21 +1,13 @@
-package com.tj.drawwithfriends2;
+package com.tj.drawwithfriends2.Settings;
 
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.tj.drawwithfriends2.Input.Input;
 
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.IntBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.StandardOpenOption;
-import java.util.List;
 
 /**
  * Created by TJ on 8/26/2018.
@@ -43,9 +35,6 @@ public class UltimatePixelArray {
         load();
 
         SetDimensions();
-
-        // this is whack yo
-        // setAlpha();
     }
 
     private void SetDimensions() {
@@ -96,29 +85,18 @@ public class UltimatePixelArray {
         }
     }
 
-    void update(Input next) {
+    public void update(Input next) {
         // apply the edit
         mostRecent = next.imprintOnto(mostRecent);
 
         write();
     }
 
-    /*void setAlpha() {
-        mostRecent = mostRecent.copy(Bitmap.Config.ARGB_8888, true);
-        for (int x = 0; x < mostRecent.getWidth(); x++) {
-            for (int y = 0; y < mostRecent.getHeight(); y++) {
-                int currPixel = mostRecent.getPixel(x, y);
-                currPixel |= 0xff000000;
-                mostRecent.setPixel(x, y, currPixel);
-            }
-        }
-    }*/
-
-    int getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    int getHeight() {
+    public int getHeight() {
         return height;
     }
 }

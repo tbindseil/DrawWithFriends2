@@ -1,21 +1,25 @@
-package com.tj.drawwithfriends2;
+package com.tj.drawwithfriends2.Settings;
 
 /**
  * Created by TJ on 12/15/2018.
  */
 
-public class ConfigurationString extends Configuration {
-    private String val;
-    private final String defalutVal;
+public class ConfigurationInt extends Configuration {
+    private int val;
+    private final int defalutVal;
 
-    public ConfigurationString(String val) throws Exception {
+    public ConfigurationInt(int val) throws Exception {
         super();
 
         this.defalutVal = val;
         this.val = val;
     }
 
-    public void setString(String newVal) {
+    public int getInt() {
+        return val;
+    }
+
+    public void setInt(int newVal) {
         val = newVal;
     }
 
@@ -26,13 +30,13 @@ public class ConfigurationString extends Configuration {
 
     @Override
     public String getString() {
-        return val;
+        return Integer.toString(val);
     }
 
     @Override
     public void fromString(String str) {
         try {
-            val = str;
+            val = Integer.parseInt(str);
         } catch (Exception e) {
             val = defalutVal;
         }

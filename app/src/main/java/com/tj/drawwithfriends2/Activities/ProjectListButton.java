@@ -1,8 +1,10 @@
-package com.tj.drawwithfriends2;
+package com.tj.drawwithfriends2.Activities;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+
+import com.tj.drawwithfriends2.Settings.ProjectFiles;
 
 import java.io.File;
 

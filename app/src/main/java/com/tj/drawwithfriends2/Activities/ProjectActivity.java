@@ -1,4 +1,4 @@
-package com.tj.drawwithfriends2;
+package com.tj.drawwithfriends2.Activities;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -23,6 +23,9 @@ import android.widget.SeekBar;
 import com.tj.drawwithfriends2.Input.CircleInputTool;
 import com.tj.drawwithfriends2.Input.Input;
 import com.tj.drawwithfriends2.Input.PencilInputTool;
+import com.tj.drawwithfriends2.Input.InputTransporter;
+import com.tj.drawwithfriends2.R;
+import com.tj.drawwithfriends2.Settings.ProjectFiles;
 
 import java.io.File;
 import java.io.Serializable;

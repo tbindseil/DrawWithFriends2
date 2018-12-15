@@ -3,8 +3,7 @@ package com.tj.drawwithfriends2.Input;
 import android.graphics.Point;
 import android.view.MotionEvent;
 
-import com.tj.drawwithfriends2.InputTransporter;
-import com.tj.drawwithfriends2.Zoom;
+import com.tj.drawwithfriends2.Settings.Zoom;
 
 /**
  * Created by TJ on 8/9/2018.

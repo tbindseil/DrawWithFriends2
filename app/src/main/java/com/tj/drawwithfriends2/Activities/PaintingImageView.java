@@ -1,4 +1,4 @@
-package com.tj.drawwithfriends2;
+package com.tj.drawwithfriends2.Activities;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.tj.drawwithfriends2.Input.InputTool;
+import com.tj.drawwithfriends2.Input.InputTransporter;
+import com.tj.drawwithfriends2.Settings.Zoom;
 
 /**
  * Created by TJ on 9/29/2018.

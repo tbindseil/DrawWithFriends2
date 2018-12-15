@@ -1,4 +1,4 @@
-package com.tj.drawwithfriends2;
+package com.tj.drawwithfriends2.Activities;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,6 +14,8 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+
+import com.tj.drawwithfriends2.Settings.Zoom;
 
 /**
  * Created by TJ on 10/6/2018.

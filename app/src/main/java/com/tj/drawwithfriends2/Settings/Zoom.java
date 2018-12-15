@@ -1,6 +1,4 @@
-package com.tj.drawwithfriends2;
-
-import android.util.Log;
+package com.tj.drawwithfriends2.Settings;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -15,9 +13,9 @@ public class Zoom extends Configurable {
     private static final int DEFAULT_YOFFSET = 0;
     private static final int DEFAULT_ZOOM_LEVEL = 0;
 
-    private ConfigurationInt xOffset; // these are always in terms of bitmap pixels
-    private ConfigurationInt yOffset;
-    private ConfigurationInt zoomLevel; // level 0 is zoomed out
+    private final ConfigurationInt xOffset; // these are always in terms of bitmap pixels
+    private final ConfigurationInt yOffset;
+    private final ConfigurationInt zoomLevel; // level 0 is zoomed out
     private final int ultimateWidth; // dimensions of bitmap
     private final int ultimateHeight;
     private int zoomBoost; // width of pixel that is maximum without missing part of the picture, with zoom level of 0
@@ -27,9 +25,9 @@ public class Zoom extends Configurable {
 
     public Zoom(int ultimateWidth, int ultimateHeight) throws Exception {
         super();
-        xOffset = new ConfigurationInt(0);
-        yOffset = new ConfigurationInt(0);
-        zoomLevel = new ConfigurationInt(0);
+        xOffset = new ConfigurationInt(DEFAULT_XOFFSET);
+        yOffset = new ConfigurationInt(DEFAULT_YOFFSET);
+        zoomLevel = new ConfigurationInt(DEFAULT_ZOOM_LEVEL);
         settings.put("xoff", xOffset);
         settings.put("yoff", yOffset);
         settings.put("zoomlevel", zoomLevel);

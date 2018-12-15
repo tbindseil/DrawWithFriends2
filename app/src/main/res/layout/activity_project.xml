@@ -5,7 +5,7 @@
     android:id="@+id/projectConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tj.drawwithfriends2.ProjectActivity">
+    tools:context="com.tj.drawwithfriends2.Activities.ProjectActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/projectToolBar"
@@ -70,7 +70,7 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <com.tj.drawwithfriends2.PaintingImageView
+    <com.tj.drawwithfriends2.Activities.PaintingImageView
         android:id="@+id/mainCanvas"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -142,7 +142,7 @@
                 android:background="@color/actionBarPrimary" />
         </LinearLayout>
 
-        <com.tj.drawwithfriends2.ZoomImageView
+        <com.tj.drawwithfriends2.Activities.ZoomImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/zoomImage"

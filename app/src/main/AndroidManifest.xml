@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
         <activity
-            android:name=".ChooseOrCreateActivity"
+            android:name=".Activities.ChooseOrCreateActivity"
             android:theme="@style/AppTheme.NoActionBar"> <!-- ADD THIS LINE -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,8 +19,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ProjectActivity"
-            android:parentActivityName="com.tj.drawwithfriends2.ChooseOrCreateActivity"
+            android:name=".Activities.ProjectActivity"
+            android:parentActivityName="com.tj.drawwithfriends2.Activities.ChooseOrCreateActivity"
             android:theme="@style/AppTheme.NoActionBar"> <!-- ADD THIS LINE -->
         </activity>
     </application>
