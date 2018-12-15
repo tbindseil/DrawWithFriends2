@@ -15,7 +15,6 @@ public class Zoom extends Configurable {
     private static final int DEFAULT_YOFFSET = 0;
     private static final int DEFAULT_ZOOM_LEVEL = 0;
 
-    private Configuration xOffsett;
     private int xOffset; // these are always in terms of bitmap pixels
     private int yOffset;
     private final int ultimateWidth; // dimensions of bitmap
@@ -28,9 +27,12 @@ public class Zoom extends Configurable {
 
     public Zoom(int ultimateWidth, int ultimateHeight) throws Exception {
         super();
-        settings.put("xoff", new Configuration(Integer.toString(DEFAULT_XOFFSET)));
+        xOffset = 0;
+        yOffset = 0;
+        zoomLevel = 0;
+        /*settings.put("xoff", new Configuration(Integer.toString(DEFAULT_XOFFSET)));
         settings.put("yoff", new Configuration(Integer.toString(DEFAULT_YOFFSET)));
-        settings.put("zoomlevel", new Configuration(Integer.toString(DEFAULT_ZOOM_LEVEL)));
+        settings.put("zoomlevel", new Configuration(Integer.toString(DEFAULT_ZOOM_LEVEL)));*/
 
         this.ultimateWidth = ultimateWidth;
         this.ultimateHeight = ultimateHeight;

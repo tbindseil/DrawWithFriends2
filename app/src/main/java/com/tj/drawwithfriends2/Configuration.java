@@ -9,19 +9,11 @@ import java.io.OutputStream;
 // note: this base class keeps track of value as string for writing
 // and reading settings
 public abstract class Configuration {
-    private String val;
-
-    public Configuration(String val) throws Exception {
-        if (val.isEmpty() || val.charAt(0) == ':') {
-            throw new Exception("invalid val");
-        }
-
-        this.val = val;
+    public Configuration() throws Exception {
     }
 
     public void write(String tag, OutputStream fileOutputStream) throws Exception {
-        // val string can't contain colons at beginning, configurable is marked by ::
-        String valStr = val.toString();
+        String valStr = getString();
         if (valStr.isEmpty() || valStr.charAt(0) == ':') {
             throw new Exception("invalid string!");
         }
@@ -35,6 +27,8 @@ public abstract class Configuration {
         }
     }
 
+    // anything involving the actual value is done by the base class
+    public abstract void returnToDefault();
     public abstract String getString();
     public abstract void fromString(String str);
 }

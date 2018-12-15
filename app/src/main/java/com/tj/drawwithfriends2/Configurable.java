@@ -55,8 +55,7 @@ public abstract class Configurable {
 
             String[] tokens = nextLine.split(":");
             Configuration curr = settings.get(tokens[0]);
-            curr.setVal(tokens[1]);
-            settings.put(tokens[0], new Configuration(tokens[1]));
+            curr.fromString(tokens[1]);
         }
 
         return "";
