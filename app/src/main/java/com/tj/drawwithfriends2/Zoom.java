@@ -15,6 +15,7 @@ public class Zoom extends Configurable {
     private static final int DEFAULT_YOFFSET = 0;
     private static final int DEFAULT_ZOOM_LEVEL = 0;
 
+    private Configuration xOffsett;
     private int xOffset; // these are always in terms of bitmap pixels
     private int yOffset;
     private final int ultimateWidth; // dimensions of bitmap

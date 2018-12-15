@@ -6,17 +6,16 @@ import java.io.OutputStream;
  * Created by TJ on 12/8/2018.
  */
 
-// Note, I'm just storing things as strings, and
-// its the responsibility of the owner to parse the strings
-public class Configuration {
-    final private String defaultVal;
+// note: this base class keeps track of value as string for writing
+// and reading settings
+public abstract class Configuration {
     private String val;
 
     public Configuration(String val) throws Exception {
         if (val.isEmpty() || val.charAt(0) == ':') {
             throw new Exception("invalid val");
         }
-        this.defaultVal = val;
+
         this.val = val;
     }
 
@@ -36,15 +35,6 @@ public class Configuration {
         }
     }
 
-    public void setVal(String val) {
-        this.val = val;
-    }
-
-    public void returnToDefault() {
-        this.val = defaultVal;
-    }
-
-    public String getVal() {
-        return val;
-    }
+    public abstract String getString();
+    public abstract void fromString(String str);
 }

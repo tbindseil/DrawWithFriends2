@@ -7,16 +7,20 @@ package com.tj.drawwithfriends2;
 public class BasicSettings extends Configurable {
     private final String DEFAULT_TITLE = "Enter Title";
 
+    private final ConfigurationString title;
+
     public BasicSettings() throws Exception {
         super();
-        settings.put("title", new Configuration(DEFAULT_TITLE));
+
+        title = new ConfigurationString(DEFAULT_TITLE);
+        settings.put("title", title);
     }
 
     public void setTitle(String title) {
-        settings.get("title").setVal(title);
+        this.title.setString(title);
     }
 
     public String getTitle() {
-       return settings.get("title").getVal();
+       return title.getString();
     }
 }
