@@ -53,6 +53,7 @@ public class ProjectFiles implements Serializable {
     private Map<String, Configurable> configurablesMap;
     private File config; // TODO lock config file... and probably others... in fact, let this TODO represent all synchronization
     private static final String BASIC_SETTINGS_TAG = "basicSettings";
+    private static final String ZOOM_SETTING_TAG = "zoomSettings";
     private BasicSettings basicSettings;
     // TODO add these to config file
     private Zoom currZoom;
@@ -64,9 +65,7 @@ public class ProjectFiles implements Serializable {
 
         initFiles();
 
-        initConfigurablesMap();
-
-        loadBasicSettings();
+        quickStart();
     }
 
     // create new
@@ -83,8 +82,7 @@ public class ProjectFiles implements Serializable {
         inputsFile.createNewFile();
         inputsFile.setWritable(true);
 
-        initConfigurablesMap();
-
+        quickStart();
         setTitle(title);
     }
 
@@ -96,10 +94,12 @@ public class ProjectFiles implements Serializable {
 
     private void initConfigurablesMap() throws Exception {
         basicSettings = new BasicSettings();
+        currZoom = new Zoom(ultimatePixelArray.getWidth(), ultimatePixelArray.getHeight());
 
         configurablesMap = new HashMap<>();
 
         configurablesMap.put(BASIC_SETTINGS_TAG, basicSettings);
+        configurablesMap.put(ZOOM_SETTING_TAG, currZoom);
     }
 
     private void defaultSettings() {
@@ -112,15 +112,22 @@ public class ProjectFiles implements Serializable {
     // when listing projects, so just load basic settings until one
     // project is chosen
     private void loadBasicSettings() {
+        if (basicSettings == null) {
+            Log.e("loadBasicSettings", "error, basic settings should be instantiated");
+            return;
+        }
         try {
             BufferedReader fr = new BufferedReader(new FileReader(config));
             String nextConfigurableTag = fr.readLine();
-            while (!nextConfigurableTag.equals(BASIC_SETTINGS_TAG + "::")) {
+            while (!nextConfigurableTag.equals(BASIC_SETTINGS_TAG + "::") &&
+                    !nextConfigurableTag.equals("")) {
                 fr.readLine();
             }
-            basicSettings.init(fr);
+            if (!nextConfigurableTag.equals("")) {
+                basicSettings.init(fr);
+            }
         } catch(Exception e){
-            Log.e("readConfigFile", e.toString());
+            Log.e("loadBasicSettings", e.toString());
             e.printStackTrace();
         }
     }
@@ -155,7 +162,7 @@ public class ProjectFiles implements Serializable {
      * ...
      * ...
      */
-    private void saveSettings() {
+    public void saveSettings() {
         config.delete();
         try {
             config.createNewFile();
@@ -241,6 +248,16 @@ public class ProjectFiles implements Serializable {
         return inputs; // no inputs to load
     }
 
+    public void quickStart() throws Exception {
+        basicSettings = new BasicSettings();
+
+        configurablesMap = new HashMap<>();
+
+        configurablesMap.put(BASIC_SETTINGS_TAG, basicSettings);
+
+        loadBasicSettings();
+    }
+
     public void fullStart() throws Exception {
         // create file
         File ultimatePixelsFile = new File(this.dir, ULTIMATE_FILE_NAME);
@@ -251,8 +268,9 @@ public class ProjectFiles implements Serializable {
             ultimatePixelArray = new UltimatePixelArray(ultimatePixelsFile);
         }
 
+        initConfigurablesMap();
+
         loadSettings();
-        currZoom = new Zoom(ultimatePixelArray.getWidth(), ultimatePixelArray.getHeight());
     }
 
     public void processInput(Input next) {

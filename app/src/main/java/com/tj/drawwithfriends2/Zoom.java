@@ -15,24 +15,24 @@ public class Zoom extends Configurable {
     private static final int DEFAULT_YOFFSET = 0;
     private static final int DEFAULT_ZOOM_LEVEL = 0;
 
-    private int xOffset; // these are always in terms of bitmap pixels
-    private int yOffset;
+    private ConfigurationInt xOffset; // these are always in terms of bitmap pixels
+    private ConfigurationInt yOffset;
+    private ConfigurationInt zoomLevel; // level 0 is zoomed out
     private final int ultimateWidth; // dimensions of bitmap
     private final int ultimateHeight;
     private int zoomBoost; // width of pixel that is maximum without missing part of the picture, with zoom level of 0
-    private int zoomLevel; // level 0 is zoomed out
 
     private double pixelsWide;
     private double pixelsTall;
 
     public Zoom(int ultimateWidth, int ultimateHeight) throws Exception {
         super();
-        xOffset = 0;
-        yOffset = 0;
-        zoomLevel = 0;
-        /*settings.put("xoff", new Configuration(Integer.toString(DEFAULT_XOFFSET)));
-        settings.put("yoff", new Configuration(Integer.toString(DEFAULT_YOFFSET)));
-        settings.put("zoomlevel", new Configuration(Integer.toString(DEFAULT_ZOOM_LEVEL)));*/
+        xOffset = new ConfigurationInt(0);
+        yOffset = new ConfigurationInt(0);
+        zoomLevel = new ConfigurationInt(0);
+        settings.put("xoff", xOffset);
+        settings.put("yoff", yOffset);
+        settings.put("zoomlevel", zoomLevel);
 
         this.ultimateWidth = ultimateWidth;
         this.ultimateHeight = ultimateHeight;
@@ -44,20 +44,20 @@ public class Zoom extends Configurable {
     }
 
     public int getxOffset() {
-        return xOffset;
+        return xOffset.getInt();
     }
 
     public void setxOffset(int xOffset) {
-        this.xOffset = xOffset;
+        this.xOffset.setInt(xOffset);
         boundChanges();
     }
 
     public int getyOffset() {
-        return yOffset;
+        return yOffset.getInt();
     }
 
     public void setyOffset(int yOffset) {
-        this.yOffset = yOffset;
+        this.yOffset.setInt(yOffset);
         boundChanges();
     }
 
@@ -79,43 +79,42 @@ public class Zoom extends Configurable {
     private void boundChanges() {
         // xOff = current x offset + distance moved bounded by 0 and width - currWidth
         // same for y
-        int xOff = xOffset;
-        int yOff = yOffset;
+        int xOff = xOffset.getInt();
+        int yOff = yOffset.getInt();
         xOff = max(xOff, 0);
         yOff = max(yOff, 0);
         xOff = min(xOff, ultimateWidth - (int)((float)ultimateWidth * ((float)zoomBoost / (float)getPixelWidth())));
         yOff = min(yOff, ultimateHeight - (int)((float)ultimateHeight * ((float)zoomBoost / (float)getPixelWidth())));
-        xOffset = xOff;
-        yOffset = yOff;
+        xOffset.setInt(xOff);
+        yOffset.setInt(yOff);
     }
 
     public int currXToUltimateX(int currX) {
-        return currX + xOffset;
+        return currX + xOffset.getInt();
     }
 
     public int currYToUltimateY(int currY) {
-        return currY + yOffset;
+        return currY + yOffset.getInt();
     }
 
     public int getZoomLevel() {
-        return zoomLevel;
+        return zoomLevel.getInt();
     }
 
     // TODO stay centered when zooming
     public void setZoomLevel(int level) {
-        zoomLevel = level;
+        zoomLevel.setInt(level);
     }
 
     public int getZoomBoost() { return zoomBoost; }
 
     public int getPixelWidth() {
-        return zoomLevel + zoomBoost;
+        return zoomLevel.getInt() + zoomBoost;
     }
 
     public void restore(int savedXOffset, int savedYOffset, int savedZoomLevel) {
-        this.xOffset = savedXOffset;
-        this.yOffset = savedYOffset;
-        this.zoomLevel = savedZoomLevel;
+        this.xOffset.setInt(savedXOffset);
+        this.yOffset.setInt(savedYOffset);
+        this.zoomLevel.setInt(savedZoomLevel);
     }
-
 }

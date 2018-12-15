@@ -1,5 +1,7 @@
 package com.tj.drawwithfriends2;
 
+import android.util.Log;
+
 import java.io.OutputStream;
 
 /**
@@ -9,6 +11,8 @@ import java.io.OutputStream;
 // note: this base class keeps track of value as string for writing
 // and reading settings
 public abstract class Configuration {
+    static String lineSeperator = "\n";
+
     public Configuration() throws Exception {
     }
 
@@ -21,7 +25,7 @@ public abstract class Configuration {
         String toWrite = tag + ":" + valStr;
         try {
             fileOutputStream.write(toWrite.getBytes());
-            fileOutputStream.write(System.getProperty("line.seperator").getBytes());
+            fileOutputStream.write(lineSeperator.getBytes());
         } catch (Exception e) {
             throw e;
         }

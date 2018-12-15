@@ -61,9 +61,8 @@ public class ProjectActivity extends AppCompatActivity {
         try {
             File dirName = (File) ser;
             currProject = new ProjectFiles(dirName);
-            myToolbar.setTitle(currProject.getTitle());
-            Log.e("debug", "initting");
             currProject.fullStart();
+            myToolbar.setTitle(currProject.getTitle());
         } catch (Exception e) {
             myToolbar.setTitle("error");
             Log.e("ProjectActivity", "exception loading edits or getting title");
@@ -333,6 +332,7 @@ public class ProjectActivity extends AppCompatActivity {
             break;
 
             case android.R.id.home:
+                currProject.saveSettings();
                 onBackPressed();
                 return true;
             default:
