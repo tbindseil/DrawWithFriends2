@@ -160,6 +160,7 @@ public class ProjectActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        currProject.saveSettings();
         // see processInput TODO currProject.saveInputs();
     }
 
@@ -332,7 +333,6 @@ public class ProjectActivity extends AppCompatActivity {
             break;
 
             case android.R.id.home:
-                currProject.saveSettings();
                 onBackPressed();
                 return true;
             default:
