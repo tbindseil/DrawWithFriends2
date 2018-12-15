@@ -5,7 +5,7 @@ package com.tj.drawwithfriends2;
  */
 
 public class BasicSettings extends Configurable {
-    private final String DEFAULT_TITLE = "Masterpiece";
+    private final String DEFAULT_TITLE = "Enter Title";
 
     public BasicSettings() throws Exception {
         super();

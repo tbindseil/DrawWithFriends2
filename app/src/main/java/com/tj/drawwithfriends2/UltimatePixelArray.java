@@ -28,9 +28,13 @@ public class UltimatePixelArray {
     private Bitmap mostRecent;
 
     public UltimatePixelArray(int width, int height, File file) throws Exception {
+        this.width = width;
+        this.height = height;
         this.file = file;
 
         create(width, height);
+
+        SetDimensions();
     }
 
     public UltimatePixelArray(File file) throws Exception {
@@ -38,8 +42,15 @@ public class UltimatePixelArray {
 
         load();
 
+        SetDimensions();
+
         // this is whack yo
         // setAlpha();
+    }
+
+    private void SetDimensions() {
+        width = mostRecent.getWidth();
+        height = mostRecent.getHeight();
     }
 
     public Bitmap getBitmap() {
@@ -73,8 +84,6 @@ public class UltimatePixelArray {
 
     private void load() {
         mostRecent = BitmapFactory.decodeFile(file.getAbsolutePath());
-        width = mostRecent.getWidth();
-        height = mostRecent.getHeight();
     }
 
     private void write() {

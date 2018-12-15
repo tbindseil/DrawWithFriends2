@@ -115,10 +115,9 @@ public class ProjectFiles implements Serializable {
         try {
             BufferedReader fr = new BufferedReader(new FileReader(config));
             String nextConfigurableTag = fr.readLine();
-            do {
-                // start here next time, read until "::"
-                // TODO maybe a map of tags to configurables
-            } while (!nextConfigurableTag.equals(BASIC_SETTINGS_TAG));
+            while (!nextConfigurableTag.equals(BASIC_SETTINGS_TAG + "::")) {
+                fr.readLine();
+            }
             basicSettings.init(fr);
         } catch(Exception e){
             Log.e("readConfigFile", e.toString());
@@ -130,8 +129,15 @@ public class ProjectFiles implements Serializable {
         try {
             BufferedReader fr = new BufferedReader(new FileReader(config));
             String nextConfigurableTag = fr.readLine();
-            // TODO maybe a map of tags to configurables
-            basicSettings.init(fr);
+            while (!nextConfigurableTag.equals("")) {
+                if (nextConfigurableTag.endsWith("::")) {
+                    Configurable currEntry = configurablesMap.get(nextConfigurableTag.substring(0, nextConfigurableTag.length() - 2));
+                    nextConfigurableTag = currEntry.init(fr);
+                } else {
+                    Log.e("loadSettings", "error: read string: " + nextConfigurableTag + " not a tag");
+                    return;
+                }
+            }
         } catch (Exception e) {
             Log.e("readConfigFile", e.toString());
             e.printStackTrace();
@@ -243,7 +249,6 @@ public class ProjectFiles implements Serializable {
             ultimatePixelArray = new UltimatePixelArray(DEFAULT_WIDTH, DEFAULT_HEIGHT, ultimatePixelsFile);
         } else {
             ultimatePixelArray = new UltimatePixelArray(ultimatePixelsFile);
-
         }
 
         loadSettings();
