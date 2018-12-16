@@ -1,5 +1,7 @@
 package com.tj.drawwithfriends2.Settings;
 
+import android.util.Log;
+
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.subtractExact;
@@ -41,6 +43,11 @@ public class Zoom extends Configurable {
         this.pixelsTall = -1;
     }
 
+    @Override
+    protected void PostLoad() {
+        boundChanges();
+    }
+
     public int getxOffset() {
         return xOffset.getInt();
     }
@@ -64,6 +71,8 @@ public class Zoom extends Configurable {
         this.pixelsTall = pixelsTall;
         zoomBoost = Math.min((int)(this.pixelsWide / ultimateWidth),
                 (int)(this.pixelsTall / ultimateHeight));
+
+        setZoomLevel(zoomLevel.getInt());
     }
 
     public int getUltimateWidth() {
@@ -87,6 +96,8 @@ public class Zoom extends Configurable {
         yOffset.setInt(yOff);
     }
 
+    // note: when at zoom level 0, we have an interesting predicament because
+    // the xOffset and yOffset aren't giving correct values,
     public int currXToUltimateX(int currX) {
         return currX + xOffset.getInt();
     }
@@ -99,9 +110,32 @@ public class Zoom extends Configurable {
         return zoomLevel.getInt();
     }
 
-    // TODO stay centered when zooming
     public void setZoomLevel(int level) {
-        zoomLevel.setInt(level);
+        if (level == 0) {
+            int xShift = (int) ((pixelsWide - (ultimateWidth * zoomBoost)) / 2.0);
+            int yShift = (int) ((pixelsTall - (ultimateHeight * zoomBoost)) / 2.0);
+            xShift *= -1;
+            yShift *= -1;
+            xShift = xShift / zoomBoost;
+            yShift = yShift / zoomBoost;
+            xOffset.setInt(xShift);
+            yOffset.setInt(yShift);
+
+            zoomLevel.setInt(level);
+        } else {
+            // handle centering logic
+            int oldCenterX = (int)(((pixelsWide / getPixelWidth()) - xOffset.getInt()) / 2);
+            int oldCenterY = (int)(((pixelsTall / getPixelWidth()) - yOffset.getInt()) / 2);
+
+            zoomLevel.setInt(level);
+
+            int newCenterX = (int)(((pixelsWide / getPixelWidth()) - xOffset.getInt()) / 2);
+            int newCenterY = (int)(((pixelsTall / getPixelWidth()) - yOffset.getInt()) / 2);
+
+            xOffset.setInt(xOffset.getInt() + (oldCenterX - newCenterX));
+            yOffset.setInt(yOffset.getInt() + (oldCenterY - newCenterY));
+            boundChanges();
+        }
     }
 
     public int getZoomBoost() { return zoomBoost; }

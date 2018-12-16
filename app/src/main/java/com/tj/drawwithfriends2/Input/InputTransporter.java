@@ -240,6 +240,45 @@ public class InputTransporter {
         // TODO
     }
 
+    /**
+     *
+     * there are redundant imprintOnto's being called when we have a lot
+     * of handletouches, this is leading to exceptions,
+     *
+     * I would like to only draw queued inputs once,
+     * this leads to a couple options, first we can have 2 bitmaps,
+     * one is representative of the last time the png file was written,
+     * and the other is representative of the last bitmap displayed on screen was
+     *
+     * this is a lot of memory, so I don't think its valid,
+     *
+     * as of now I have the chosen the first bitmap option, and this requiring the reduntant
+     * draws spoken of at the beginning of this comment
+     *
+     * if I chose the second option, I will not have optomization in all the cases,
+     * particularly if a long pencil draw happens, the input never fininshes, and therefore,
+     * it is never valid to not draw it even in the second bitmap scenario
+     *
+     * this means things need to change if I am to cause this optimization to happen
+     *
+     * the first thing that comes to mind is to break apart the pencil input from what is
+     * essentially now many lines and dots to one input per line or dot, and somehow group them
+     * together using another means, the reason I want to group them together is so that they
+     * can all be undone with a single undo
+     *
+     * another options is essentially doing what I had originally done on an earlier iteration,
+     * and that is to draw the inputs directly to the screen bitmap, not have any sort of queueing
+     * for inputs, (maybe queueing would be needed for the dots and lines of the inputs themselves)
+     * and when its time to save intermittently, we just write the currently displayed bitmap,
+     * in this scenario, the inputs would still be saved and managed how they are now (ie pencil
+     * inputs are still all that is done until finger is lifted) and can still be undo in the
+     * originally planned way.
+     *
+     * now, honestly I was thinking we were getting out of memory errors, but that doesn't make
+     * sense so I'm going in search of the root of the exception
+     *
+     */
+
     public Bitmap drawQueuedInputs() {
         Bitmap drawTo = projectFiles.getBitmap();
         Input[] toIt = new Input[toSave.size()];

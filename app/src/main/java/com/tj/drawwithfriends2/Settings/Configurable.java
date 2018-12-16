@@ -48,6 +48,7 @@ public abstract class Configurable {
         String nextLine;
         while ((nextLine = br.readLine()) != null) {
             if (nextLine.contains("::")) {
+                PostLoad();
                 return nextLine;
             }
 
@@ -56,6 +57,7 @@ public abstract class Configurable {
             curr.fromString(tokens[1]);
         }
 
+        PostLoad();
         return "";
     }
 
@@ -65,5 +67,10 @@ public abstract class Configurable {
             Map.Entry<String, Configuration> currSetting = (Map.Entry<String, Configuration>) it.next();
             currSetting.getValue().returnToDefault();
         }
+
+        PostLoad();
     }
+
+    // an opportunity for inheriting classes to handle loaded settings
+    protected void PostLoad() {}
 }

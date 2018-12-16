@@ -1,6 +1,7 @@
 package com.tj.drawwithfriends2.Input;
 
 import android.graphics.Point;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.tj.drawwithfriends2.Settings.Zoom;
@@ -31,7 +32,6 @@ public class PencilInputTool extends InputTool {
         }
 
         // convert from absolute position on the screen to where in my grid the point is
-        // TODO i think my scaling is off for some reason
         int currX = pixelXToCurrX(event.getX());
         int currY = pixelYToCurrY(event.getY());
 

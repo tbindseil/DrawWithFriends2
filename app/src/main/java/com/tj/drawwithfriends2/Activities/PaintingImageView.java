@@ -124,22 +124,8 @@ public class PaintingImageView extends AppCompatImageView {
 
         canvas.scale(currZoom.getPixelWidth(), currZoom.getPixelWidth());
 
-        int xShift, yShift;
-        if (currZoom.getZoomLevel() == 0) {
-            // center zoomed out picture
-            xShift = (getWidth() - (currZoom.getUltimateWidth() * currZoom.getZoomBoost())) / 2;
-            yShift = (getHeight() - (currZoom.getUltimateHeight() * currZoom.getZoomBoost())) / 2;
-            if (currZoom.getZoomBoost() == -1 ) { // TODO
-                return;
-            }
-            xShift = xShift / currZoom.getZoomBoost();
-            yShift = yShift / currZoom.getZoomBoost();
-        } else {
-            xShift = currZoom.getxOffset();
-            yShift = currZoom.getyOffset();
-            xShift *= -1;
-            yShift *= -1;
-        }
+        int xShift = currZoom.getxOffset() * -1;
+        int yShift = currZoom.getyOffset() * -1;
 
         canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
 
