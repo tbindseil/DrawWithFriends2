@@ -80,7 +80,9 @@ public class ZoomImageView extends AppCompatImageView {
 
         canvas.scale(currZoom.getZoomBoost(), currZoom.getZoomBoost());
 
-        canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
+        synchronized (bitmap) {
+            canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
+        }
 
         if (currZoom.getZoomLevel() == 0) {
             // fully zoomed out

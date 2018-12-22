@@ -3,6 +3,7 @@ package com.tj.drawwithfriends2.Input;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.util.Log;
+import android.util.TimingLogger;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.System.nanoTime;
 
 /**
  * Created by TJ on 8/14/2018.
@@ -41,6 +44,7 @@ public class Input implements InputSaver {
                 e.printStackTrace();
             }
         }
+
         return mutable;
     }
 

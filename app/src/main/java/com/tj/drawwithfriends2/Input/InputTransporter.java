@@ -242,8 +242,12 @@ public class InputTransporter {
 
     /**
      *
+     * start here
+     *
      * there are redundant imprintOnto's being called when we have a lot
-     * of handletouches, this is leading to exceptions,
+     * of handletouches, this is leading to exceptions, not exceptions, just slow
+     * and actually it is worse with bigger thickness regardless of size of painting,
+     * so it is definetly the extra imprint ontos
      *
      * I would like to only draw queued inputs once,
      * this leads to a couple options, first we can have 2 bitmaps,
@@ -280,16 +284,18 @@ public class InputTransporter {
      */
 
     public Bitmap drawQueuedInputs() {
-        Bitmap drawTo = projectFiles.getBitmap();
-        Input[] toIt = new Input[toSave.size()];
-        toSave.toArray(toIt);
-        for (int i = 0; i < toIt.length; i++) {
-            drawTo = toIt[i].imprintOnto(drawTo);
+        synchronized (projectFiles.getBitmap()) {
+            Bitmap drawTo = projectFiles.getBitmap();
+            Input[] toIt = new Input[toSave.size()];
+            toSave.toArray(toIt);
+            for (int i = 0; i < toIt.length; i++) {
+                drawTo = toIt[i].imprintOnto(drawTo);
+            }
+
+            drawTo = nextInput.imprintOnto(drawTo);
+
+            return drawTo;
         }
-
-        drawTo = nextInput.imprintOnto(drawTo);
-
-        return drawTo;
     }
 
     public void clearInputs() {

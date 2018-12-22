@@ -127,7 +127,9 @@ public class PaintingImageView extends AppCompatImageView {
         int xShift = currZoom.getxOffset() * -1;
         int yShift = currZoom.getyOffset() * -1;
 
-        canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
+        synchronized (bitmap) {
+            canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
+        }
 
         // restore state
         canvas.restore();

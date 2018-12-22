@@ -14,9 +14,11 @@ import java.io.FileOutputStream;
  */
 
 public class UltimatePixelArray {
-
     private int width, height;
     private File file;
+
+    // after initial load or create, access must be synchronized because
+    // points are added by ui thread and the bitmap is compressed to file by bg thread
     private Bitmap mostRecent;
 
     public UltimatePixelArray(int width, int height, File file) throws Exception {
@@ -52,7 +54,9 @@ public class UltimatePixelArray {
             pixelArray[i] = 0xffffffff;
         }
 
-        mostRecent = Bitmap.createBitmap(pixelArray, width, height, Bitmap.Config.ARGB_8888);
+        synchronized (mostRecent) {
+            mostRecent = Bitmap.createBitmap(pixelArray, width, height, Bitmap.Config.ARGB_8888);
+        }
     }
 
     private void create(int width, int height) throws Exception {
@@ -76,18 +80,21 @@ public class UltimatePixelArray {
     }
 
     private void write() {
-        // compress and write to file
-        try {
-            FileOutputStream os = new FileOutputStream(file);
-            mostRecent.compress(Bitmap.CompressFormat.PNG, 100, os);
-        } catch (Exception e) {
-            Log.e("FillPixels", "exception with new image" + e.toString());
+        synchronized (mostRecent) {
+            // compress and write to file
+            try {
+                FileOutputStream os = new FileOutputStream(file);
+                mostRecent.compress(Bitmap.CompressFormat.PNG, 100, os);
+            } catch (Exception e) {
+                Log.e("FillPixels", "exception with new image" + e.toString());
+            }
         }
     }
 
     public void update(Input next) {
-        // apply the edit
-        mostRecent = next.imprintOnto(mostRecent);
+        synchronized (mostRecent) {
+            mostRecent = next.imprintOnto(mostRecent);
+        }
 
         write();
     }
