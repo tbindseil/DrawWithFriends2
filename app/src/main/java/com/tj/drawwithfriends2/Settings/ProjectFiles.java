@@ -41,8 +41,8 @@ public class ProjectFiles implements Serializable {
     private File inputsFile;
 
     // project defaults
-    private static final int DEFAULT_WIDTH = 784;//192;//784;
-    private static final int DEFAULT_HEIGHT = 1024;//256;//1024;
+    private static final int DEFAULT_WIDTH = 1200;//192;//784;
+    private static final int DEFAULT_HEIGHT = 1600;//256;//1024;
 
     private static final int DEFAULT_COLOR = Color.RED;
     private static final int DEFAULT_THICKNESS = 1;
