@@ -40,8 +40,8 @@ public class Input implements InputSaver {
                 mutable.setPixel(p.x, p.y, pointToColorMap.get(p));
             } catch (Exception e) {
                 Log.e("imprintOnto", "exception: " + e.toString());
-                Log.e("imprintOnto", "stackTrace: ");
-                e.printStackTrace();
+                //Log.e("imprintOnto", "stackTrace: ");
+                //e.printStackTrace();
             }
         }
 
