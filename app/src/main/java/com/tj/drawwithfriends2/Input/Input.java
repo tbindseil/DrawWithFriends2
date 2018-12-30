@@ -31,6 +31,10 @@ public class Input implements InputSaver {
         pointToColorMap.put(new HashPoint(x, y), color);
     }
 
+    public void clear() {
+        pointToColorMap.clear();
+    }
+
     public Map<HashPoint, Integer> getPointToColorMap() { return pointToColorMap; }
 
     public Bitmap imprintOnto(Bitmap underlying) {

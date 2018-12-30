@@ -2,6 +2,8 @@ package com.tj.drawwithfriends2.Input;
 
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.os.SystemClock;
+import android.view.View;
 
 import com.tj.drawwithfriends2.Settings.ProjectFiles;
 
@@ -21,13 +23,22 @@ public class InputTransporter {
 
     private Queue<Input> toSave;
     private ProjectFiles projectFiles;
-    private Thread backgroundThread;
+    private Thread saveInputThread;
+
+    Boolean writeToA;
+    private Input auxilaryInputA;
+    private Input auxilaryInputB;
+    private Thread updatePaintingThread;
 
     private InputTransporter() {
         inputs = new ArrayList<>();
         nextInput = new Input();
 
         toSave = null;
+
+        writeToA = true;
+        auxilaryInputA = new Input();
+        auxilaryInputB = new Input();
     }
 
     public static InputTransporter getInstance() {
@@ -39,11 +50,11 @@ public class InputTransporter {
         inputs = projectFiles.loadInputs();
     }
 
-    public void startTransporter(Queue<Input> inputs) {
+    public void startTransporter(Queue<Input> inputs, final View painting) {
         toSave = inputs;
 
-        // create background task
-        backgroundThread = new Thread(new Runnable() {
+        // create input saving task
+        saveInputThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
@@ -64,15 +75,68 @@ public class InputTransporter {
                 }
             }
         });
-        backgroundThread.start();
+        saveInputThread.start();
+
+        // create painting updating task(s?)
+        updatePaintingThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    // just lock the whole method ?
+                    // it has to honor the ordering
+                    // i probably only have to lock until the boolean is flipped
+                    Input relevantInput;
+
+                    synchronized (writeToA) {
+                        if (writeToA) {
+                            relevantInput = auxilaryInputA;
+                        } else {
+                            relevantInput = auxilaryInputB;
+                        }
+                        writeToA = !writeToA;
+                    }
+
+                    projectFiles.updatePainting(relevantInput);
+                    relevantInput.clear();
+
+                    painting.invalidate();
+
+                    SystemClock.sleep(17);
+                }
+            }
+        });
     }
 
     public void addPoint(int x, int y, int c) {
-        nextInput.addPoint(x, y, c);
+        addPoint(x, y, c, nextInput);
+
+        synchronized (writeToA) {
+            if (writeToA) {
+                addPoint(x, y, c, auxilaryInputA);
+            } else {
+                addPoint(x, y, c, auxilaryInputB);
+            }
+        }
     }
+
+    public void addPoint(int x, int y, int c, Input addTo) {
+        addTo.addPoint(x, y, c);
+    }
+
+    // sorry future self, this is kinda shitty but basically if an overload without an Input
+    // is called i am assuming it is going to the next input and conversly if an overload is
+    // to go to the next input, then the overload is called with no Input parameter
 
     public void drawCircle(int x, int y, int radius, int c) {
         drawCircle(x, y, radius, c, nextInput);
+
+        synchronized (writeToA) {
+            if (writeToA) {
+                drawCircle(x, y, radius, c, auxilaryInputA);
+            } else {
+                drawCircle(x, y, radius, c, auxilaryInputB);
+            }
+        }
     }
 
     public void drawCircle(int x0, int y0, int radius, int color, Input addTo) {
@@ -109,6 +173,14 @@ public class InputTransporter {
 
     public void fillCircle(int x0, int y0, int radius, int color) {
         fillCircle(x0, y0, radius, color, nextInput);
+
+        synchronized (writeToA) {
+            if (writeToA) {
+                fillCircle(x0, y0, radius, color, auxilaryInputA);
+            } else {
+                fillCircle(x0, y0, radius, color, auxilaryInputB);
+            }
+        }
     }
 
     public void coolPattern(int x0, int y0, int radius, int color, Input addTo) {
@@ -132,6 +204,13 @@ public class InputTransporter {
 
     public void drawLine(Point currPoint, Point lastPoint, int color, int thickness) {
         drawLine(currPoint, lastPoint, color, thickness, nextInput);
+        synchronized (writeToA) {
+            if (writeToA) {
+                drawLine(currPoint, lastPoint, color, thickness, auxilaryInputA);
+            } else {
+                drawLine(currPoint, lastPoint, color, thickness, auxilaryInputB);
+            }
+        }
     }
 
     public void drawLine(Point currPoint, Point lastPoint, int color, int thickness, Input addTo) {
@@ -166,6 +245,14 @@ public class InputTransporter {
 
     public void drawLine(Point currPoint, Point lastPoint, int color) {
         drawLine(currPoint, lastPoint, color, nextInput);
+
+        synchronized (writeToA) {
+            if (writeToA) {
+                drawLine(currPoint, lastPoint, color, auxilaryInputA);
+            } else {
+                drawLine(currPoint, lastPoint, color, auxilaryInputB);
+            }
+        }
     }
 
     public void drawLine(Point currPoint, Point lastPoint, int color, Input addTo) {
@@ -232,6 +319,7 @@ public class InputTransporter {
     }
 
     public void finishInput() {
+        inputs.add(nextInput);
         toSave.add(nextInput);
         nextInput = new Input();
     }

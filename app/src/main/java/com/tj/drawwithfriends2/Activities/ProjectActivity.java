@@ -156,8 +156,8 @@ public class ProjectActivity extends AppCompatActivity {
         // start input transporter
         InputTransporter.getInstance().setProjectFiles(currProject);
         Queue<Input> toSave = new LinkedBlockingQueue<>();
-        InputTransporter.getInstance().startTransporter(toSave);
-        projectPicture.updatePaintingImage();
+        InputTransporter.getInstance().startTransporter(toSave, projectPicture);
+        //projectPicture.updatePaintingImage();
     }
 
     @Override
@@ -232,7 +232,8 @@ public class ProjectActivity extends AppCompatActivity {
     private void resetCurrFocus() {
         currFocus.setVisibility(View.INVISIBLE);
         currFocus = normalLayout;
-        projectPicture.updatePaintingImage();
+        projectPicture.invalidate();
+        //projectPicture.updatePaintingImage();
         currFocus.setVisibility(View.VISIBLE);
     }
 
@@ -264,7 +265,8 @@ public class ProjectActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_save:
                 currProject.erase();
-                projectPicture.updatePaintingImage();
+                projectPicture.invalidate();
+                //projectPicture.updatePaintingImage();
                 // todo implement a flush method or something
                 // currProject.saveInputs();
                 break;
@@ -294,7 +296,8 @@ public class ProjectActivity extends AppCompatActivity {
                         int currY = Integer.parseInt(tokens[1]);
 
                         InputTransporter.getInstance().addPoint(currX, currY, Color.BLUE);
-                        projectPicture.updatePaintingImage();
+                        //projectPicture.updatePaintingImage();
+                        projectPicture.invalidate();
                     }
                 });
 

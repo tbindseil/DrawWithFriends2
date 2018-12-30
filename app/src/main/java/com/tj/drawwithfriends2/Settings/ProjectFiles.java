@@ -277,7 +277,25 @@ public class ProjectFiles implements Serializable {
         saveInput(next);
 
         // TODO put the following on its own super fucking low prio thread
-        ultimatePixelArray.update(next);
+        // no longer done here, queued and upon touch and drawn upon frame update
+        // ultimatePixelArray.update(next);
+    }
+
+    public void updatePainting(Input update) {
+        ultimatePixelArray.update(update);
+    }
+
+    public void putRecentDrawsOnBitmapBeforeItsDisplayed() {
+        // all drawn input is duplicated to the current input and
+        // the auxillary input owned by the inputtransporter
+        // Right before draw, we copy all dots from auxilary input
+        // to bitmap and clear auxilary input, then clear the aux input
+        // obviosly we need to lock the bitmap, but only because we eventually
+        // need to handle internet input
+
+        // this doesn't take into account the backup handling, but well see if its still needed
+
+        // i think the idea here for locking is gonna be the ping pong buffer, two aux inputs to clear and write to
     }
 
     public void erase() {

@@ -94,7 +94,6 @@ public class PaintingImageView extends AppCompatImageView {
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         currTool.handleTouch(motionEvent);
-        updatePaintingImage();
         return true;
     }
 
@@ -127,9 +126,9 @@ public class PaintingImageView extends AppCompatImageView {
         int xShift = currZoom.getxOffset() * -1;
         int yShift = currZoom.getyOffset() * -1;
 
-        synchronized (bitmap) {
+        //synchronized (bitmap) {
             canvas.drawBitmap(bitmap, xShift, yShift, new Paint());
-        }
+        //}
 
         // restore state
         canvas.restore();

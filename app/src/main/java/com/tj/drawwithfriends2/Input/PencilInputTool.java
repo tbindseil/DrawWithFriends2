@@ -6,6 +6,9 @@ import android.view.MotionEvent;
 
 import com.tj.drawwithfriends2.Settings.Zoom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by TJ on 8/9/2018.
  */
@@ -30,6 +33,16 @@ public class PencilInputTool extends InputTool {
             InputTransporter.getInstance().finishInput();
             return;
         }
+
+        /* this is actually going to be useful
+        String debug = "historical x: ";
+        for (int i = 0; i < event.getHistorySize(); i++) {
+            debug += event.getHistoricalX(i);
+            debug += ", ";
+        }
+
+        Log.e("debug", debug);
+        Log.e("debug", "curr x is " + event.getX()); */
 
         // convert from absolute position on the screen to where in my grid the point is
         int currX = pixelXToCurrX(event.getX());
