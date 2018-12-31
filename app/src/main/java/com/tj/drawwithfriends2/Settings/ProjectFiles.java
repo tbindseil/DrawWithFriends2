@@ -276,6 +276,7 @@ public class ProjectFiles implements Serializable {
     public void processInput(Input next) {
         saveInput(next);
 
+        ultimatePixelArray.write();
         // TODO put the following on its own super fucking low prio thread
         // no longer done here, queued and upon touch and drawn upon frame update
         // ultimatePixelArray.update(next);

@@ -79,7 +79,7 @@ public class UltimatePixelArray {
         mostRecent = BitmapFactory.decodeFile(file.getAbsolutePath());
     }
 
-    private void write() {
+    public void write() {
         synchronized (mostRecent) {
             // compress and write to file
             try {
@@ -96,7 +96,7 @@ public class UltimatePixelArray {
             mostRecent = next.imprintOnto(mostRecent);
         }
 
-        write();
+        //write();
     }
 
     public int getWidth() {

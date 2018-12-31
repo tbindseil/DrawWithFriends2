@@ -24,7 +24,7 @@ public class CircleInputTool extends InputTool {
             int ultimateX = currZoom.currXToUltimateX(currX);
             int ultimateY = currZoom.currYToUltimateY(currY);
             InputTransporter.getInstance().drawCircle(ultimateX, ultimateY, thickness, color);
-            InputTransporter.getInstance().addPoint(currX, currY, color);
+            //InputTransporter.getInstance().addPoint(currX, currY, color);
             InputTransporter.getInstance().finishInput();
         }
     }

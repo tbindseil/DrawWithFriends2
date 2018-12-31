@@ -2,9 +2,17 @@ package com.tj.drawwithfriends2.Input;
 
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.tj.drawwithfriends2.Activities.PaintingImageView;
+import com.tj.drawwithfriends2.R;
 import com.tj.drawwithfriends2.Settings.ProjectFiles;
 
 import java.util.ArrayList;
@@ -29,6 +37,8 @@ public class InputTransporter {
     private Input auxilaryInputA;
     private Input auxilaryInputB;
     private Thread updatePaintingThread;
+    private Handler mHanler;
+    public static final int REDRAW = 0; // only message being passed so far just means refresh
 
     private InputTransporter() {
         inputs = new ArrayList<>();
@@ -37,8 +47,8 @@ public class InputTransporter {
         toSave = null;
 
         writeToA = true;
-        auxilaryInputA = new Input();
-        auxilaryInputB = new Input();
+        auxilaryInputA = new Input(true);
+        auxilaryInputB = new Input(true);
     }
 
     public static InputTransporter getInstance() {
@@ -50,7 +60,7 @@ public class InputTransporter {
         inputs = projectFiles.loadInputs();
     }
 
-    public void startTransporter(Queue<Input> inputs, final View painting) {
+    public void startTransporter(Queue<Input> inputs, final PaintingImageView painting) {
         toSave = inputs;
 
         // create input saving task
@@ -72,6 +82,8 @@ public class InputTransporter {
                     // that no drawing occurred when i used more than one finger. then
                     // i think i touched the back button
                     toSave.remove();
+
+                    SystemClock.sleep(60000); // TODO send updates when input finishes
                 }
             }
         });
@@ -99,12 +111,29 @@ public class InputTransporter {
                     projectFiles.updatePainting(relevantInput);
                     relevantInput.clear();
 
-                    painting.invalidate();
+                    // painting.invalidate(); can only happen on ui thread
+                    Message updateMessage = mHanler.obtainMessage(REDRAW, null);
+                    updateMessage.sendToTarget();
 
                     SystemClock.sleep(17);
                 }
             }
         });
+        updatePaintingThread.start();
+
+        // start handler to run on ui thread to update painting
+        mHanler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message message) {
+                int state = message.what;
+                if (state == REDRAW) {
+                    painting.setBitmap(projectFiles.getBitmap());
+                    painting.invalidate();
+                } else {
+                    Log.e("Debug", "error! got invalid state " + state + " on handler");
+                }
+            }
+        };
     }
 
     public void addPoint(int x, int y, int c) {
@@ -168,7 +197,7 @@ public class InputTransporter {
                 err += dx - (radius << 1);
             }
         }
-        addPoint(x0, y0, color);
+        //addPoint(x0, y0, color);
     }
 
     public void fillCircle(int x0, int y0, int radius, int color) {

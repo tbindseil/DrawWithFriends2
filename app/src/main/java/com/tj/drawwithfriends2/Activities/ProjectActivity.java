@@ -297,7 +297,7 @@ public class ProjectActivity extends AppCompatActivity {
 
                         InputTransporter.getInstance().addPoint(currX, currY, Color.BLUE);
                         //projectPicture.updatePaintingImage();
-                        projectPicture.invalidate();
+                        //projectPicture.invalidate();
                     }
                 });
 

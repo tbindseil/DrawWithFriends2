@@ -23,8 +23,16 @@ public class Input implements InputSaver {
     // Note: these will always represents UltimateCoordinates
     Map<HashPoint, Integer> pointToColorMap;
 
+    private boolean isAux;
+
     public Input() {
         pointToColorMap = new HashMap<>();
+        isAux = false;
+    }
+
+    public Input(boolean isAux) {
+        pointToColorMap = new HashMap<>();
+        this.isAux = isAux;
     }
 
     public void addPoint(int x, int y, int color) {
@@ -38,6 +46,9 @@ public class Input implements InputSaver {
     public Map<HashPoint, Integer> getPointToColorMap() { return pointToColorMap; }
 
     public Bitmap imprintOnto(Bitmap underlying) {
+        if (isAux) {
+            Log.e("debug", "imprint onto");
+        }
         Bitmap mutable = underlying.copy(Bitmap.Config.ARGB_8888, true);
         for (Point p: pointToColorMap.keySet()) {
             try {
