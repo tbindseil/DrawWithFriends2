@@ -97,22 +97,6 @@ public class PaintingImageView extends AppCompatImageView {
         return true;
     }
 
-    public void updatePaintingImage() {
-        // got a weird exception saying that toDraw was null when scaling
-        // got it again....
-        Bitmap toDraw;
-        try {
-            toDraw = InputTransporter.getInstance().drawQueuedInputs();
-        } catch (Exception e) {
-            //Log.e("updatePaintingImage", "exception: " + e.toString());
-            //Log.e("updatePaintingImage", "stacktrace:");
-            //e.printStackTrace();
-            return;
-        }
-        bitmap = toDraw;
-        invalidate();
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
         // no anti aliasing

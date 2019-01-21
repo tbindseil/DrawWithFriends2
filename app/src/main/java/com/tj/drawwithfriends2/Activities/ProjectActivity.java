@@ -263,8 +263,8 @@ public class ProjectActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_save:
-                currProject.erase();
+            case R.id.action_clear:
+                currProject.clear();
                 projectPicture.invalidate();
                 //projectPicture.updatePaintingImage();
                 // todo implement a flush method or something

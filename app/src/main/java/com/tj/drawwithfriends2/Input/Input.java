@@ -46,9 +46,6 @@ public class Input implements InputSaver {
     public Map<HashPoint, Integer> getPointToColorMap() { return pointToColorMap; }
 
     public Bitmap imprintOnto(Bitmap underlying) {
-        if (isAux) {
-            Log.e("debug", "imprint onto");
-        }
         Bitmap mutable = underlying.copy(Bitmap.Config.ARGB_8888, true);
         for (Point p: pointToColorMap.keySet()) {
             try {

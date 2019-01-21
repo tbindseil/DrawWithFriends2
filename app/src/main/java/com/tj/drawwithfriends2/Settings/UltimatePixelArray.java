@@ -99,6 +99,10 @@ public class UltimatePixelArray {
         //write();
     }
 
+    public void delete() {
+        file.delete();
+    }
+
     public int getWidth() {
         return width;
     }

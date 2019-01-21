@@ -3,6 +3,7 @@ package com.tj.drawwithfriends2.Input;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -18,7 +19,12 @@ import com.tj.drawwithfriends2.Settings.ProjectFiles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by TJ on 8/26/2018.
@@ -27,11 +33,14 @@ public class InputTransporter {
     private static final InputTransporter instance = new InputTransporter();
 
     private List<Input> inputs;
-    private Input nextInput;
+    // next input might have to be a per writer thing
+    //private Input nextInput;
 
     private Queue<Input> toSave;
     private ProjectFiles projectFiles;
     private Thread saveInputThread;
+
+    private ThreadPoolExecutor commandThreadPool;
 
     Boolean writeToA;
     private Input auxilaryInputA;
@@ -42,7 +51,7 @@ public class InputTransporter {
 
     private InputTransporter() {
         inputs = new ArrayList<>();
-        nextInput = new Input();
+        //nextInput = new Input();
 
         toSave = null;
 
@@ -89,7 +98,11 @@ public class InputTransporter {
         });
         saveInputThread.start();
 
-        // create painting updating task(s?)
+        LinkedBlockingQueue<Runnable> commandQueue = new LinkedBlockingQueue<>();
+        commandThreadPool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
+                Runtime.getRuntime().availableProcessors(), 10000000, TimeUnit.SECONDS,
+                commandQueue);
+
         updatePaintingThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -136,8 +149,20 @@ public class InputTransporter {
         };
     }
 
-    public void addPoint(int x, int y, int c) {
-        addPoint(x, y, c, nextInput);
+    // drawing stuff below
+    public void queueDrawPoint(final int x, final int y, final int c) {
+        commandThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                addPoint(x, y, c);
+            }
+        });
+    }
+
+    private void addPoint(int x, int y, int c) {
+        /*synchronized (nextInput) {
+            addPoint(x, y, c, nextInput);
+        }*/
 
         synchronized (writeToA) {
             if (writeToA) {
@@ -148,16 +173,23 @@ public class InputTransporter {
         }
     }
 
-    public void addPoint(int x, int y, int c, Input addTo) {
+    private void addPoint(int x, int y, int c, Input addTo) {
         addTo.addPoint(x, y, c);
     }
 
-    // sorry future self, this is kinda shitty but basically if an overload without an Input
-    // is called i am assuming it is going to the next input and conversly if an overload is
-    // to go to the next input, then the overload is called with no Input parameter
+    public void queueDrawCircle(final int x, final int y, final int radius, final int c) {
+        commandThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                drawCircle(x, y, radius, c);
+            }
+        });
+    }
 
-    public void drawCircle(int x, int y, int radius, int c) {
-        drawCircle(x, y, radius, c, nextInput);
+    private void drawCircle(int x, int y, int radius, int c) {
+        /*synchronized (nextInput) {
+            drawCircle(x, y, radius, c, nextInput);
+        }*/
 
         synchronized (writeToA) {
             if (writeToA) {
@@ -168,7 +200,7 @@ public class InputTransporter {
         }
     }
 
-    public void drawCircle(int x0, int y0, int radius, int color, Input addTo) {
+    private void drawCircle(int x0, int y0, int radius, int color, Input addTo) {
         int x = radius - 1;
         int y = 0;
         int dx = 1;
@@ -200,8 +232,19 @@ public class InputTransporter {
         //addPoint(x0, y0, color);
     }
 
-    public void fillCircle(int x0, int y0, int radius, int color) {
-        fillCircle(x0, y0, radius, color, nextInput);
+    public void queueFillCircle(final int x0, final int y0, final int radius, final int color) {
+        commandThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                fillCircle(x0, y0, radius, color);
+            }
+        });
+    }
+
+    private void fillCircle(int x0, int y0, int radius, int color) {
+        /*synchronized (nextInput) {
+            fillCircle(x0, y0, radius, color, nextInput);
+        }*/
 
         synchronized (writeToA) {
             if (writeToA) {
@@ -212,15 +255,7 @@ public class InputTransporter {
         }
     }
 
-    public void coolPattern(int x0, int y0, int radius, int color, Input addTo) {
-        drawCircle(x0, y0, radius, color, addTo);
-
-        if (radius > 0) {
-            fillCircle(x0, y0, radius - 1, color, addTo);
-        }
-    }
-
-    public  void fillCircle(int x0, int y0, int radius, int color, Input addTo) {
+    private  void fillCircle(int x0, int y0, int radius, int color, Input addTo) {
         int radiusSqrd = radius * radius;
         for (int x = x0 - radius, deltaX = 0 - radius; x < x0 + radius; x++, deltaX++) {
             for (int y = y0 - radius, deltaY = 0 - radius; y < y0 + radius; y++, deltaY++) {
@@ -231,18 +266,38 @@ public class InputTransporter {
         }
     }
 
-    public void drawLine(Point currPoint, Point lastPoint, int color, int thickness) {
-        drawLine(currPoint, lastPoint, color, thickness, nextInput);
+    private void coolPattern(int x0, int y0, int radius, int color, Input addTo) {
+        drawCircle(x0, y0, radius, color, addTo);
+
+        if (radius > 0) {
+            fillCircle(x0, y0, radius - 1, color, addTo);
+        }
+    }
+
+    public void queueFillLine(final Point currPoint, final Point lastPoint, final int color, final int thickness) {
+        commandThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                fillLine(currPoint, lastPoint, color, thickness);
+            }
+        });
+    }
+
+    private void fillLine(Point currPoint, Point lastPoint, int color, int thickness) {
+        /*synchronized (nextInput) {
+            fillLine(currPoint, lastPoint, color, thickness, nextInput);
+        }*/
+
         synchronized (writeToA) {
             if (writeToA) {
-                drawLine(currPoint, lastPoint, color, thickness, auxilaryInputA);
+                fillLine(currPoint, lastPoint, color, thickness, auxilaryInputA);
             } else {
-                drawLine(currPoint, lastPoint, color, thickness, auxilaryInputB);
+                fillLine(currPoint, lastPoint, color, thickness, auxilaryInputB);
             }
         }
     }
 
-    public void drawLine(Point currPoint, Point lastPoint, int color, int thickness, Input addTo) {
+    private void fillLine(Point currPoint, Point lastPoint, int color, int thickness, Input addTo) {
         Input start = new Input();
 
         fillCircle(currPoint.x, currPoint.y, thickness, color, addTo);
@@ -272,8 +327,19 @@ public class InputTransporter {
         }
     }
 
-    public void drawLine(Point currPoint, Point lastPoint, int color) {
-        drawLine(currPoint, lastPoint, color, nextInput);
+    public void queueDrawLine(final Point currPoint, final Point lastPoint, final int color) {
+        commandThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                drawLine(currPoint, lastPoint, color);
+            }
+        });
+    }
+
+    private void drawLine(Point currPoint, Point lastPoint, int color) {
+        /*synchronized (nextInput) {
+            drawLine(currPoint, lastPoint, color, nextInput);
+        }*/
 
         synchronized (writeToA) {
             if (writeToA) {
@@ -284,7 +350,7 @@ public class InputTransporter {
         }
     }
 
-    public void drawLine(Point currPoint, Point lastPoint, int color, Input addTo) {
+    private void drawLine(Point currPoint, Point lastPoint, int color, Input addTo) {
         int x0 = lastPoint.x;
         int y0 = lastPoint.y;
         int x1 = currPoint.x;
@@ -348,75 +414,21 @@ public class InputTransporter {
     }
 
     public void finishInput() {
-        inputs.add(nextInput);
+        // at the time of input completion, how many more draw commands are needed to complete the input
+        int activeCount = commandThreadPool.getActiveCount();
+        int queuedCount = commandThreadPool.getQueue().size();
+
+        /*inputs.add(nextInput);
         toSave.add(nextInput);
-        nextInput = new Input();
+        nextInput = new Input();*/
     }
 
     public void popInput() {
         // TODO
     }
 
-    /**
-     *
-     * start here
-     *
-     * there are redundant imprintOnto's being called when we have a lot
-     * of handletouches, this is leading to exceptions, not exceptions, just slow
-     * and actually it is worse with bigger thickness regardless of size of painting,
-     * so it is definetly the extra imprint ontos
-     *
-     * I would like to only draw queued inputs once,
-     * this leads to a couple options, first we can have 2 bitmaps,
-     * one is representative of the last time the png file was written,
-     * and the other is representative of the last bitmap displayed on screen was
-     *
-     * this is a lot of memory, so I don't think its valid,
-     *
-     * as of now I have the chosen the first bitmap option, and this requiring the reduntant
-     * draws spoken of at the beginning of this comment
-     *
-     * if I chose the second option, I will not have optomization in all the cases,
-     * particularly if a long pencil draw happens, the input never fininshes, and therefore,
-     * it is never valid to not draw it even in the second bitmap scenario
-     *
-     * this means things need to change if I am to cause this optimization to happen
-     *
-     * the first thing that comes to mind is to break apart the pencil input from what is
-     * essentially now many lines and dots to one input per line or dot, and somehow group them
-     * together using another means, the reason I want to group them together is so that they
-     * can all be undone with a single undo
-     *
-     * another options is essentially doing what I had originally done on an earlier iteration,
-     * and that is to draw the inputs directly to the screen bitmap, not have any sort of queueing
-     * for inputs, (maybe queueing would be needed for the dots and lines of the inputs themselves)
-     * and when its time to save intermittently, we just write the currently displayed bitmap,
-     * in this scenario, the inputs would still be saved and managed how they are now (ie pencil
-     * inputs are still all that is done until finger is lifted) and can still be undo in the
-     * originally planned way.
-     *
-     * now, honestly I was thinking we were getting out of memory errors, but that doesn't make
-     * sense so I'm going in search of the root of the exception
-     *
-     */
-
-    public Bitmap drawQueuedInputs() {
-        synchronized (projectFiles.getBitmap()) {
-            Bitmap drawTo = projectFiles.getBitmap();
-            Input[] toIt = new Input[toSave.size()];
-            toSave.toArray(toIt);
-            for (int i = 0; i < toIt.length; i++) {
-                drawTo = toIt[i].imprintOnto(drawTo);
-            }
-
-            drawTo = nextInput.imprintOnto(drawTo);
-
-            return drawTo;
-        }
-    }
-
     public void clearInputs() {
         inputs.clear();
-        nextInput = new Input();
+        // nextInput = new Input();
     }
 }

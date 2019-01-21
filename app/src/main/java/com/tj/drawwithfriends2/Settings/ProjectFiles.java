@@ -299,8 +299,16 @@ public class ProjectFiles implements Serializable {
         // i think the idea here for locking is gonna be the ping pong buffer, two aux inputs to clear and write to
     }
 
-    public void erase() {
+    public void clear() {
         ultimatePixelArray.erase();
         InputTransporter.getInstance().clearInputs();
+    }
+
+    public void delete() {
+        config.delete();
+        inputsFile.delete();
+        File ultimatePixelsFile = new File(this.dir, ULTIMATE_FILE_NAME);
+        ultimatePixelsFile.delete();
+        dir.delete();
     }
 }

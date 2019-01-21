@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tj.drawwithfriends2.R;
@@ -63,6 +65,8 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
 
         for (File projectFile: appRoot) {
             try {
+                RelativeLayout r = new RelativeLayout(this);
+
                 ProjectListButton next = new ProjectListButton(this, projectFile);
                 next.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -70,7 +74,27 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
                         handleProjectChosen(v);
                     }
                 });
-                fileListLayout.addView(next);
+
+                ProjectDeleteButton delete = new ProjectDeleteButton(this, projectFile);
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deleteProject(v);
+                    }
+                });
+                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+                delete.setLayoutParams(lp);
+                delete.setId(View.generateViewId());
+
+                lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                lp.addRule(RelativeLayout.LEFT_OF, delete.getId());
+                next.setLayoutParams(lp);
+
+                r.addView(next);
+                r.addView(delete);
+
+                fileListLayout.addView(r);
             } catch (Exception e) {
                 Log.e("ChooseOrCreateActivity", "exception " + e.getMessage() + " in displayProejcts");
             }
@@ -95,6 +119,16 @@ public class ChooseOrCreateActivity extends AppCompatActivity {
         }
         else {
             Log.e("ChooseOrCreate", "handleProjectChosen called with non ProjectListButton");
+            return;
+        }
+    }
+
+    private void deleteProject(View view) {
+        if (view instanceof ProjectDeleteButton) {
+            ((ProjectDeleteButton)view).getProjectFile().delete();
+            displayProjects();
+        } else {
+            Log.e("ChooseOrCreate", "bad argument");
             return;
         }
     }
