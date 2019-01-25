@@ -23,16 +23,8 @@ public class Input implements InputSaver {
     // Note: these will always represents UltimateCoordinates
     Map<HashPoint, Integer> pointToColorMap;
 
-    private boolean isAux;
-
     public Input() {
         pointToColorMap = new HashMap<>();
-        isAux = false;
-    }
-
-    public Input(boolean isAux) {
-        pointToColorMap = new HashMap<>();
-        this.isAux = isAux;
     }
 
     public void addPoint(int x, int y, int color) {

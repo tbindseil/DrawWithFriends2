@@ -56,8 +56,8 @@ public class InputTransporter {
         toSave = null;
 
         writeToA = true;
-        auxilaryInputA = new Input(true);
-        auxilaryInputB = new Input(true);
+        auxilaryInputA = new Input();
+        auxilaryInputB = new Input();
     }
 
     public static InputTransporter getInstance() {
@@ -99,8 +99,9 @@ public class InputTransporter {
         saveInputThread.start();
 
         LinkedBlockingQueue<Runnable> commandQueue = new LinkedBlockingQueue<>();
-        commandThreadPool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
-                Runtime.getRuntime().availableProcessors(), 10000000, TimeUnit.SECONDS,
+        commandThreadPool = new ThreadPoolExecutor(1,
+                // Runtime.getRuntime().availableProcessors(), 10000000, TimeUnit.SECONDS,
+                1, 10000000, TimeUnit.SECONDS, // for now i am just using 1 thread
                 commandQueue);
 
         updatePaintingThread = new Thread(new Runnable() {
@@ -417,6 +418,7 @@ public class InputTransporter {
         // at the time of input completion, how many more draw commands are needed to complete the input
         int activeCount = commandThreadPool.getActiveCount();
         int queuedCount = commandThreadPool.getQueue().size();
+        // maybe i could queue commands based off what input they are drawing too?
 
         /*inputs.add(nextInput);
         toSave.add(nextInput);

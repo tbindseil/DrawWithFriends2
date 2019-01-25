@@ -295,7 +295,7 @@ public class ProjectActivity extends AppCompatActivity {
                         int currX = Integer.parseInt(tokens[0]);
                         int currY = Integer.parseInt(tokens[1]);
 
-                        InputTransporter.getInstance().addPoint(currX, currY, Color.BLUE);
+                        InputTransporter.getInstance().queueDrawPoint(currX, currY, Color.BLUE);
                         //projectPicture.updatePaintingImage();
                         //projectPicture.invalidate();
                     }
