@@ -3,6 +3,7 @@ package com.tj.drawwithfriends2.Activities;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.SystemClock;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -27,8 +28,13 @@ import com.tj.drawwithfriends2.Input.InputTransporter;
 import com.tj.drawwithfriends2.R;
 import com.tj.drawwithfriends2.Settings.ProjectFiles;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.net.Socket;
+import java.nio.Buffer;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -53,6 +59,9 @@ public class ProjectActivity extends AppCompatActivity {
     private SeekBar zoomSeekBar;
 
     private View currFocus;
+
+
+    private Thread networkInputThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +167,40 @@ public class ProjectActivity extends AppCompatActivity {
         Queue<Input> toSave = new LinkedBlockingQueue<>();
         InputTransporter.getInstance().startTransporter(toSave, projectPicture);
         //projectPicture.updatePaintingImage();
+
+
+
+
+        // hacky network stuff
+        networkInputThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // connect to socket
+                BufferedReader br = null;
+                InputStreamReader is = null;
+                try {
+                    Socket s = new Socket("192.168.1.89", 3000, null, 0);
+                    is = new InputStreamReader(s.getInputStream());
+                    br = new BufferedReader(is);
+                } catch (Exception e) {
+                    Log.e("Debug", "exception opening socket");
+                    Log.e("Debug", e.toString());
+                }
+                char msg[] = new char[100];
+                while (true) {
+                    try {
+                        int bytesRead = is.read(msg, 0, msg.length - 1);
+                        msg[bytesRead] = '\0';
+                    } catch (Exception e) {
+                        Log.e("Debug", "exceptoin reading line");
+                        Log.e("Deubg", e.toString());
+                        break;
+                    }
+                    Log.e("REC_MSG", String.copyValueOf(msg));
+                }
+            }
+        });
+        networkInputThread.start();
     }
 
     @Override
