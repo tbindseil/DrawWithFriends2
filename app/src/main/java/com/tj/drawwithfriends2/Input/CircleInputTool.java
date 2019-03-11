@@ -24,17 +24,7 @@ public class CircleInputTool extends InputTool {
             int ultimateX = currZoom.currXToUltimateX(currX);
             int ultimateY = currZoom.currYToUltimateY(currY);
             InputTransporter.getInstance().queueDrawCircle(ultimateX, ultimateY, thickness, color);
-            //InputTransporter.getInstance().addPoint(currX, currY, color);
             InputTransporter.getInstance().finishInput();
         }
     }
 }
-
-/*
-
-change draw/fillX to queueDrawFillX where a draw command is added to queue,
-then can have both a touch and an update call it on different threads
-
-also can then check performance of queueDraw/FillX and draw/fillX
-
- */

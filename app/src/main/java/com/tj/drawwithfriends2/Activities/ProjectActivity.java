@@ -61,8 +61,6 @@ public class ProjectActivity extends AppCompatActivity {
     private View currFocus;
 
 
-    private Thread networkInputThread;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,40 +165,6 @@ public class ProjectActivity extends AppCompatActivity {
         Queue<Input> toSave = new LinkedBlockingQueue<>();
         InputTransporter.getInstance().startTransporter(toSave, projectPicture);
         //projectPicture.updatePaintingImage();
-
-
-
-
-        // hacky network stuff
-        networkInputThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // connect to socket
-                BufferedReader br = null;
-                InputStreamReader is = null;
-                try {
-                    Socket s = new Socket("192.168.1.89", 3000, null, 0);
-                    is = new InputStreamReader(s.getInputStream());
-                    br = new BufferedReader(is);
-                } catch (Exception e) {
-                    Log.e("Debug", "exception opening socket");
-                    Log.e("Debug", e.toString());
-                }
-                char msg[] = new char[100];
-                while (true) {
-                    try {
-                        int bytesRead = is.read(msg, 0, msg.length - 1);
-                        msg[bytesRead] = '\0';
-                    } catch (Exception e) {
-                        Log.e("Debug", "exceptoin reading line");
-                        Log.e("Deubg", e.toString());
-                        break;
-                    }
-                    Log.e("REC_MSG", String.copyValueOf(msg));
-                }
-            }
-        });
-        networkInputThread.start();
     }
 
     @Override

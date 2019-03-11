@@ -16,6 +16,10 @@ import com.tj.drawwithfriends2.Activities.PaintingImageView;
 import com.tj.drawwithfriends2.R;
 import com.tj.drawwithfriends2.Settings.ProjectFiles;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +51,10 @@ public class InputTransporter {
     private Input auxilaryInputB;
     private Thread updatePaintingThread;
     private Handler mHanler;
+    private Thread networkInputThread;
     public static final int REDRAW = 0; // only message being passed so far just means refresh
+
+    public static final int CIRCLE = 1;
 
     private InputTransporter() {
         inputs = new ArrayList<>();
@@ -134,6 +141,42 @@ public class InputTransporter {
             }
         });
         updatePaintingThread.start();
+
+        // hacky network stuff
+        networkInputThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // connect to socket
+                DataInputStream dataIn = null;
+                try {
+                    Socket s = new Socket("192.168.1.89", 3000, null, 0);
+                    dataIn = new DataInputStream(s.getInputStream());
+                } catch (Exception e) {
+                    Log.e("Debug", "exception opening socket");
+                    Log.e("Debug", e.toString());
+                }
+                while (true) {
+                    try {
+                        int inputType = dataIn.readInt();
+                        if (inputType == CIRCLE) {
+                            int radius = dataIn.readInt();
+                            int x = dataIn.readInt();
+                            int y = dataIn.readInt();
+                            int color = dataIn.readInt();
+                            Log.e("Debug", "radius is " + radius + " x is " + x + " y is " + y + " color is " + color);
+                            InputTransporter.getInstance().queueDrawCircle(x,  y, radius, color);
+                        } else {
+                            Log.e("Debug", "seriously?, inputType is " + inputType);
+                        }
+                    } catch (Exception e) {
+                        Log.e("Debug", "exceptoin reading line");
+                        Log.e("Deubg", e.toString());
+                        break;
+                    }
+                }
+            }
+        });
+        networkInputThread.start();
 
         // start handler to run on ui thread to update painting
         mHanler = new Handler(Looper.getMainLooper()) {
