@@ -37,35 +37,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:onClick="handleColorClick"
-                android:text="color" />
+                android:text="Color" />
 
             <Button
                 android:id="@+id/thicknessButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:onClick="handleThicknessClick"
-                android:text="thickness" />
-
-            <Button
-                android:id="@+id/pencilButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:onClick="handlePencilClick"
-                android:text="pencil" />
+                android:text="Thickness" />
 
             <Button
                 android:id="@+id/shapeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:onClick="handleShapeClick"
-                android:text="Circle" />
+                android:text="Free Draw" />
 
             <Button
                 android:id="@+id/zoomButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:onClick="handleZoomClick"
-                android:text="zoom" />
+                android:text="Zoom" />
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -82,6 +75,39 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@android:color/holo_red_dark" />
 
+    <LinearLayout
+        android:id="@+id/colorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputConfigLayout"
+        app:layout_constraintVertical_bias="0.4">
+
+        <SeekBar
+            android:id="@+id/redSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/actionBarPrimary" />
+
+        <SeekBar
+            android:id="@+id/greenSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/actionBarPrimary" />
+
+        <SeekBar
+            android:id="@+id/blueSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/actionBarPrimary" />
+
+    </LinearLayout>
+
     <SeekBar
         android:id="@+id/thicknessSeekBar"
         android:layout_width="match_parent"
@@ -94,6 +120,62 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputConfigLayout"
         app:layout_constraintVertical_bias="0.6" />
+
+    <HorizontalScrollView
+        android:id="@+id/shapeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:visibility="invisible"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/projectToolBar"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/freeDraw"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:onClick="handleFreeDrawClick"
+                android:text="Free Draw" />
+
+            <Button
+                android:id="@+id/lineDraw"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:onClick="handleLineDrawClick"
+                android:text="Line Draw" />
+
+            <Button
+                android:id="@+id/circleDraw"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:onClick="handleCircleDrawClick"
+                android:text="Circle Draw" />
+
+            <Button
+                android:id="@+id/rectangleDraw"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:onClick="handleRectangleDrawClick"
+                android:text="Rectangle Draw" />
+
+            <Button
+                android:id="@+id/triangleDraw"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:onClick="handleTriangleDrawClick"
+                android:text="Triangle Draw" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -147,39 +229,6 @@
             android:layout_height="match_parent"
             android:id="@+id/zoomImage"
             android:background="@color/white"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/colorLayout"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:orientation="vertical"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputConfigLayout"
-        app:layout_constraintVertical_bias="0.4">
-
-        <SeekBar
-            android:id="@+id/redSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@color/actionBarPrimary" />
-
-        <SeekBar
-            android:id="@+id/greenSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@color/actionBarPrimary" />
-
-        <SeekBar
-            android:id="@+id/blueSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@color/actionBarPrimary" />
-
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

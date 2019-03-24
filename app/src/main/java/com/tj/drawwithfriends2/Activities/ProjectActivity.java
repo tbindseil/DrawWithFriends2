@@ -3,7 +3,6 @@ package com.tj.drawwithfriends2.Activities;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.os.SystemClock;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
@@ -28,13 +28,8 @@ import com.tj.drawwithfriends2.Input.InputTransporter;
 import com.tj.drawwithfriends2.R;
 import com.tj.drawwithfriends2.Settings.ProjectFiles;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.Socket;
-import java.nio.Buffer;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -53,6 +48,9 @@ public class ProjectActivity extends AppCompatActivity {
     private Button colorButton;
     private int color;
     private int red, green, blue;
+
+    private HorizontalScrollView shapeLayout;
+    private Button shapeButton;
 
     private LinearLayout zoomLayout;
     private ZoomImageView zoomImage;
@@ -138,6 +136,14 @@ public class ProjectActivity extends AppCompatActivity {
         });
 
         colorButton = findViewById(R.id.colorButton);
+        // TODO save color and initialize from settings
+        colorButton.setBackgroundColor(Color.RED);
+        int oppositeColor = ~Color.RED;
+        oppositeColor |= (0xff000000);
+        colorButton.setTextColor(oppositeColor);
+
+        shapeLayout = findViewById(R.id.shapeLayout);
+        shapeButton = findViewById(R.id.shapeButton);
 
         zoomLayout = findViewById(R.id.zoomLayout);
         zoomImage = findViewById(R.id.zoomImage);
@@ -179,17 +185,44 @@ public class ProjectActivity extends AppCompatActivity {
         currFocus = colorSeekBars;
     }
 
-    public void handlePencilClick(View view) {
-        projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom(), color, thickness));
-    }
-
     public void handleThicknessClick(View view) {
         thicknessBar.setVisibility(View.VISIBLE);
         currFocus = thicknessBar;
     }
 
     public void handleShapeClick(View view) {
+        shapeLayout.setVisibility(View.VISIBLE);
+        currFocus = shapeLayout;
+    }
+
+    public void handleFreeDrawClick(View view) {
+        projectPicture.setInputTool(new PencilInputTool(currProject.getCurrZoom(), color, thickness));
+        shapeButton.setText("Free Draw");
+        resetCurrFocus();
+    }
+
+    public void handleLineDrawClick(View view) {
+        // TODO
+        shapeButton.setText("Line Draw");
+        resetCurrFocus();
+    }
+
+    public void handleCircleDrawClick(View view) {
         projectPicture.setInputTool(new CircleInputTool(currProject.getCurrZoom(), color, thickness));
+        shapeButton.setText("Circle Draw");
+        resetCurrFocus();
+    }
+
+    public void handleRectangleDrawClick(View view) {
+        // TODO
+        shapeButton.setText("Rectangle Draw");
+        resetCurrFocus();
+    }
+
+    public void handleTriangleDrawClick(View view) {
+        // TODO
+        shapeButton.setText("Triangle Draw");
+        resetCurrFocus();
     }
 
     public void handleZoomClick(View view) {
