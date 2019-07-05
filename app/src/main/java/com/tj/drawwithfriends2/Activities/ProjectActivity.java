@@ -23,6 +23,7 @@ import android.widget.SeekBar;
 
 import com.tj.drawwithfriends2.Input.CircleInputTool;
 import com.tj.drawwithfriends2.Input.Input;
+import com.tj.drawwithfriends2.Input.LineInputTool;
 import com.tj.drawwithfriends2.Input.PencilInputTool;
 import com.tj.drawwithfriends2.Input.InputTransporter;
 import com.tj.drawwithfriends2.R;
@@ -202,7 +203,7 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     public void handleLineDrawClick(View view) {
-        // TODO
+        projectPicture.setInputTool(new LineInputTool(currProject.getCurrZoom(), color, thickness));
         shapeButton.setText("Line Draw");
         resetCurrFocus();
     }
